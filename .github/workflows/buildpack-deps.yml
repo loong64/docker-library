@@ -1,0 +1,55 @@
+name: buildpack-deps
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 21 * * 0'
+
+jobs:
+  buildpack-deps:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [buildpack-deps]
+        os: [debian]
+        suite: [trixie, sid]
+  
+    steps:
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Checkout ${{ matrix.name }}
+        uses: actions/checkout@v4
+
+      - name: Setup QEMU
+        run: docker run --rm --privileged ghcr.io/loong64/qemu-user-static --reset -p yes
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.name }} curl image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.name }}/${{ matrix.os }}/${{ matrix.suite }}/curl
+          platforms: linux/loong64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-curl
+          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Build and push ${{ matrix.name }} scm image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.name }}/${{ matrix.os }}/${{ matrix.suite }}/scm
+          platforms: linux/loong64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-scm
+          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
