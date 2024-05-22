@@ -1,0 +1,39 @@
+name: GitHub CI
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 22 * * 0
+
+jobs:
+  generate-jobs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [golang]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check ${{ matrix.app }}
+        run: |
+          branch_name="renovate_${{ matrix.app }}_version_latest"
+          commit_message="build(${{ matrix.app }}): bump ${{ matrix.app }} to latest"
+          if git branch -a | grep -q "${branch_name}"; then
+            git push origin --delete ${branch_name} || true
+            git branch -D ${branch_name} || true
+          fi
+          git checkout -b ${branch_name}
+          cd ${{ matrix.app }}
+          bash update.sh
+          cd ..
+          git diff
+          if ! git diff --quiet; then
+            git commit -am "${commit_message}" || true
+            git push origin ${branch_name} -f || true
+            gh pr create --title "${commit_message}" --body "This PR updates ${{ matrix.app }} to the latest version." --base main --head ${branch_name}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

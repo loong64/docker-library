@@ -1,0 +1,170 @@
+{{
+	def is_alpine:
+		env.variant | startswith("alpine")
+	;
+	def alpine_version:
+		env.variant | ltrimstr("alpine")
+-}}
+{{ if is_alpine then ( -}}
+FROM alpine:{{ alpine_version }} AS build
+{{ ) else ( -}}
+FROM ghcr.io/loong64/buildpack-deps:{{ env.variant }}-scm AS build
+{{ ) end -}}
+
+ENV PATH /usr/local/go/bin:$PATH
+
+ENV GOLANG_VERSION {{ .version }}
+
+{{
+	def os_arches:
+		if is_alpine then
+			{
+				# https://dl-cdn.alpinelinux.org/alpine/edge/main/
+				# https://dl-cdn.alpinelinux.org/alpine/latest-stable/main/
+				amd64: "x86_64",
+				arm32v6: "armhf",
+				arm32v7: "armv7",
+				arm64v8: "aarch64",
+				i386: "x86",
+				ppc64le: "ppc64le",
+				riscv64: "riscv64",
+				s390x: "s390x",
+			}
+		else
+			{
+				# https://salsa.debian.org/dpkg-team/dpkg/-/blob/main/data/cputable
+				# https://wiki.debian.org/ArchitectureSpecificsMemo#Architecture_baselines
+				# https://deb.debian.org/debian/dists/unstable/Release ("Architectures:")
+				# http://deb.debian.org/debian/dists/unstable/main/
+				# http://deb.debian.org/debian/dists/stable/main/
+				# https://deb.debian.org/debian-ports/dists/unstable/main/
+				amd64: "amd64",
+				arm32v5: "armel",
+				arm32v7: "armhf",
+				arm64v8: "arm64",
+				i386: "i386",
+				mips64le: "mips64el",
+				ppc64le: "ppc64el",
+				riscv64: "riscv64",
+				s390x: "s390x",
+				loong64: "loong64",
+			}
+		end
+-}}
+RUN set -eux; \
+{{ if is_alpine then ( -}}
+	apk add --no-cache --virtual .fetch-deps \
+		ca-certificates \
+		gnupg \
+# busybox's "tar" doesn't handle directory mtime correctly, so our SOURCE_DATE_EPOCH lookup doesn't work (the mtime of "/usr/local/go" always ends up being the extraction timestamp)
+		tar \
+	; \
+	arch="$(apk --print-arch)"; \
+{{ ) else ( -}}
+	arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
+{{ ) end -}}
+	url=; \
+	case "$arch" in \
+{{
+	[
+		.arches | to_entries[]
+		| select(.value.supported)
+		| .key as $bashbrewArch
+		| (
+			os_arches
+			| .[$bashbrewArch] // empty
+		) as $osArch
+		| .value
+		| (
+-}}
+		{{ $osArch | @sh }}) \
+			url={{ .url | @sh }}; \
+			sha256={{ .sha256 | @sh }}; \
+			;; \
+{{
+		)
+	] | add
+-}}
+		*) echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
+	esac; \
+	\
+	wget -O go.tgz.asc "$url.asc"; \
+	wget -O go.tgz "$url"{{ if is_alpine then "" else " --progress=dot:giga" end }}; \
+	echo "$sha256 *go.tgz" | sha256sum -c -; \
+	\
+# https://github.com/golang/go/issues/14739#issuecomment-324767697
+	GNUPGHOME="$(mktemp -d)"; export GNUPGHOME; \
+# https://www.google.com/linuxrepositories/
+	gpg --batch --keyserver keyserver.ubuntu.com --recv-keys 'EB4C 1BFD 4F04 2F6D DDCC  EC91 7721 F63B D38B 4796'; \
+# let's also fetch the specific subkey of that key explicitly that we expect "go.tgz.asc" to be signed by, just to make sure we definitely have it
+	gpg --batch --keyserver keyserver.ubuntu.com --recv-keys '2F52 8D36 D67B 69ED F998  D857 78BD 6547 3CB3 BD13'; \
+	gpg --batch --verify go.tgz.asc go.tgz; \
+	gpgconf --kill all; \
+	rm -rf "$GNUPGHOME" go.tgz.asc; \
+	\
+	tar -C /usr/local -xzf go.tgz; \
+	rm go.tgz; \
+	\
+# save the timestamp from the tarball so we can restore it for reproducibility, if necessary (see below)
+	SOURCE_DATE_EPOCH="$(stat -c '%Y' /usr/local/go)"; \
+	export SOURCE_DATE_EPOCH; \
+# for logging validation/edification
+	date --date "@$SOURCE_DATE_EPOCH" --rfc-2822; \
+	\
+{{ if .arches["arm32v7"].url // "" | contains("armv6") then ( -}}
+	if [ "$arch" = {{ os_arches["arm32v7"] | @sh }} ]; then \
+		[ -s /usr/local/go/go.env ]; \
+		before="$(go env GOARM)"; [ "$before" != {{ .arches["arm32v7"].env["GOARM"] | @sh }} ]; \
+		{ \
+			echo; \
+			echo '# https://github.com/docker-library/golang/issues/494'; \
+			echo {{ "GOARM=\(.arches["arm32v7"].env["GOARM"])" | @sh }}; \
+		} >> /usr/local/go/go.env; \
+		after="$(go env GOARM)"; [ "$after" = {{ .arches["arm32v7"].env["GOARM"] | @sh }} ]; \
+# (re-)clamp timestamp for reproducibility (allows "COPY --link" to be more clever/useful)
+		date="$(date -d "@$SOURCE_DATE_EPOCH" '+%Y%m%d%H%M.%S')"; \
+		touch -t "$date" /usr/local/go/go.env /usr/local/go; \
+	fi; \
+	\
+{{ ) else "" end -}}
+{{ if is_alpine then ( -}}
+	apk del --no-network .fetch-deps; \
+	\
+{{ ) else "" end -}}
+# smoke test
+	go version; \
+# make sure our reproducibile timestamp is probably still correct (best-effort inline reproducibility test)
+	epoch="$(stat -c '%Y' /usr/local/go)"; \
+	[ "$SOURCE_DATE_EPOCH" = "$epoch" ]
+
+{{ if is_alpine then ( -}}
+FROM alpine:{{ alpine_version }}
+
+RUN apk add --no-cache ca-certificates
+{{ ) else ( -}}
+FROM ghcr.io/loong64/buildpack-deps:{{ env.variant }}-scm
+
+# install cgo-related dependencies
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		g++ \
+		gcc \
+		libc6-dev \
+		make \
+		pkg-config \
+	; \
+	rm -rf /var/lib/apt/lists/*
+{{ ) end -}}
+
+ENV GOLANG_VERSION {{ .version }}
+
+# don't auto-upgrade the gotoolchain
+# https://github.com/docker-library/golang/issues/472
+ENV GOTOOLCHAIN=local
+
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+COPY --from=build --link /usr/local/go/ /usr/local/go/
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
+WORKDIR $GOPATH
