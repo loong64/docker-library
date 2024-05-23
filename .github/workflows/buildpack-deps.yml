@@ -1,6 +1,11 @@
 name: buildpack-deps
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'buildpack-deps/**'
   workflow_dispatch:
   schedule:
     - cron: '0 21 * * 0'
