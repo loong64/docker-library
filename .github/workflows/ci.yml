@@ -30,11 +30,12 @@ jobs:
           chmod +x *.sh
           ./update.sh
           cd ..
-          git diff
-          if ! git diff --quiet; then
-            git commit -am "${commit_message}" || true
-            git push origin ${branch_name} -f || true
-            gh pr create --title "${commit_message}" --body "This PR updates ${{ matrix.app }} to the latest version." --base main --head ${branch_name}
+          git status
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git commit -am "${commit_message}" || exit 0
+          git push origin ${branch_name} -f
+          gh pr create --title "${commit_message}" --body "This PR updates ${{ matrix.app }} to the latest version." --base main --head ${branch_name}
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
