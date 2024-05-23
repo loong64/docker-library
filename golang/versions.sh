@@ -36,7 +36,7 @@ versions=( "${versions[@]%/}" )
 # https://github.com/golang/go/issues/34864
 # https://github.com/golang/website/blob/41e922072f17ab2826d9479338314c025602a3a1/internal/dl/server.go#L174-L182 ... (the only way to get "unstable" releases is via "all", so we get to sort through "archive" releases too)
 goVersions="$(
-	wget -4 -qO- 'https://golang.org/dl/?mode=json&include=all' | jq -c '
+	wget -qO- 'https://golang.org/dl/?mode=json&include=all' | jq -c '
 		[
 			.[]
 			| ( .version | ltrimstr("go") ) as $version

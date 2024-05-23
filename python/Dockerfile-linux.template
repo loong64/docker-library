@@ -1,0 +1,308 @@
+{{
+	def is_alpine:
+		env.variant | startswith("alpine")
+	;
+	def is_slim:
+		env.variant | startswith("slim-")
+	;
+	def rcVersion:
+		env.version | rtrimstr("-rc")
+-}}
+{{ if is_alpine then ( -}}
+FROM alpine:{{ env.variant | ltrimstr("alpine") }}
+{{ ) elif is_slim then ( -}}
+FROM ghcr.io/loong64/debian:{{ env.variant | ltrimstr("slim-") }}-slim
+{{ ) else ( -}}
+FROM ghcr.io/loong64/buildpack-deps:{{ env.variant }}
+{{ ) end -}}
+
+# ensure local python is preferred over distribution python
+ENV PATH /usr/local/bin:$PATH
+
+{{ if [ "3.8", "3.9", "3.10", "3.11", "3.12" ] | index(rcVersion) then ( -}}
+{{ # only set LANG on versions less than 3.13 -}}
+# cannot remove LANG even though https://bugs.python.org/issue19846 is fixed
+# last attempted removal of LANG broke many users:
+# https://github.com/docker-library/python/pull/570
+ENV LANG C.UTF-8
+
+{{ ) else "" end -}}
+# runtime dependencies
+{{ if is_alpine then ( -}}
+RUN set -eux; \
+	apk add --no-cache \
+		ca-certificates \
+		tzdata \
+	;
+{{ ) else ( -}}
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+{{ if is_slim then ( -}}
+		ca-certificates \
+		netbase \
+		tzdata \
+{{ ) else ( -}}
+		libbluetooth-dev \
+		tk-dev \
+		uuid-dev \
+{{ ) end -}}
+	; \
+	rm -rf /var/lib/apt/lists/*
+{{ ) end -}}
+
+ENV GPG_KEY {{
+	{
+		# gpg: key B26995E310250568: public key "\xc5\x81ukasz Langa (GPG langa.pl) <lukasz@langa.pl>" imported
+		"3.8": "E3FF2839C048B25C084DEBE9B26995E310250568",
+		# https://www.python.org/dev/peps/pep-0569/#release-manager-and-crew
+
+		# gpg: key B26995E310250568: public key "\xc5\x81ukasz Langa (GPG langa.pl) <lukasz@langa.pl>" imported
+		"3.9": "E3FF2839C048B25C084DEBE9B26995E310250568",
+		# https://www.python.org/dev/peps/pep-0596/#release-manager-and-crew
+
+		# gpg: key 64E628F8D684696D: public key "Pablo Galindo Salgado <pablogsal@gmail.com>" imported
+		"3.10": "A035C8C19219BA821ECEA86B64E628F8D684696D",
+		# https://www.python.org/dev/peps/pep-0619/#release-manager-and-crew
+
+		# gpg: key 64E628F8D684696D: public key "Pablo Galindo Salgado <pablogsal@gmail.com>" imported
+		"3.11": "A035C8C19219BA821ECEA86B64E628F8D684696D",
+		# https://www.python.org/dev/peps/pep-0664/#release-manager-and-crew
+
+		# gpg: key A821E680E5FA6305: public key "Thomas Wouters <thomas@python.org>" imported
+		"3.12": "7169605F62C751356D054A26A821E680E5FA6305",
+		# https://www.python.org/dev/peps/pep-0693/#release-manager-and-crew
+
+		# gpg: key A821E680E5FA6305: public key "Thomas Wouters <thomas@python.org>" imported
+		"3.13": "7169605F62C751356D054A26A821E680E5FA6305",
+		# https://peps.python.org/pep-0719/#release-manager-and-crew
+	}[rcVersion]
+}}
+ENV PYTHON_VERSION {{ .version }}
+
+RUN set -eux; \
+	\
+{{ if is_alpine then ( -}}
+	apk add --no-cache --virtual .build-deps \
+		gnupg \
+		tar \
+		xz \
+		\
+		bluez-dev \
+		bzip2-dev \
+		dpkg-dev dpkg \
+		expat-dev \
+		findutils \
+		gcc \
+		gdbm-dev \
+		libc-dev \
+		libffi-dev \
+		libnsl-dev \
+		libtirpc-dev \
+		linux-headers \
+		make \
+		ncurses-dev \
+		openssl-dev \
+		pax-utils \
+		readline-dev \
+		sqlite-dev \
+		tcl-dev \
+		tk \
+		tk-dev \
+		util-linux-dev \
+		xz-dev \
+		zlib-dev \
+	; \
+	\
+{{ ) elif is_slim then ( -}}
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		dpkg-dev \
+		gcc \
+		gnupg \
+		libbluetooth-dev \
+		libbz2-dev \
+		libc6-dev \
+		libdb-dev \
+		libexpat1-dev \
+		libffi-dev \
+		libgdbm-dev \
+		liblzma-dev \
+		libncursesw5-dev \
+		libreadline-dev \
+		libsqlite3-dev \
+		libssl-dev \
+		make \
+		tk-dev \
+		uuid-dev \
+		wget \
+		xz-utils \
+		zlib1g-dev \
+	; \
+	\
+{{ ) else "" end -}}
+	wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz"; \
+	wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc"; \
+	GNUPGHOME="$(mktemp -d)"; export GNUPGHOME; \
+	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$GPG_KEY"; \
+	gpg --batch --verify python.tar.xz.asc python.tar.xz; \
+	gpgconf --kill all; \
+	rm -rf "$GNUPGHOME" python.tar.xz.asc; \
+	mkdir -p /usr/src/python; \
+	tar --extract --directory /usr/src/python --strip-components=1 --file python.tar.xz; \
+	rm python.tar.xz; \
+	\
+	cd /usr/src/python; \
+	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
+	./configure \
+		--build="$gnuArch" \
+		--enable-loadable-sqlite-extensions \
+		--enable-optimizations \
+		--enable-option-checking=fatal \
+		--enable-shared \
+{{
+	# <3.10 does not have -fno-semantic-interposition enabled and --with-lto does nothing for performance
+	if [ "3.8", "3.9" ] | index(rcVersion) then "" else (
+-}}
+		--with-lto \
+{{ ) end -}}
+		--with-system-expat \
+		--without-ensurepip \
+	; \
+	nproc="$(nproc)"; \
+{{ if is_alpine then ( -}}
+# set thread stack size to 1MB so we don't segfault before we hit sys.getrecursionlimit()
+# https://github.com/alpinelinux/aports/commit/2026e1259422d4e0cf92391ca2d3844356c649d0
+	EXTRA_CFLAGS="-DTHREAD_STACK_SIZE=0x100000"; \
+{{ ) else ( -}}
+	EXTRA_CFLAGS="$(dpkg-buildflags --get CFLAGS)"; \
+	LDFLAGS="$(dpkg-buildflags --get LDFLAGS)"; \
+{{ ) end -}}
+{{ if is_slim or is_alpine then ( -}}
+	LDFLAGS="${LDFLAGS:--Wl},--strip-all"; \
+{{ ) else "" end -}}
+	make -j "$nproc" \
+		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
+		"LDFLAGS=${LDFLAGS:-}" \
+		"PROFILE_TASK=${PROFILE_TASK:-}" \
+	; \
+# https://github.com/docker-library/python/issues/784
+# prevent accidental usage of a system installed libpython of the same version
+	rm python; \
+	make -j "$nproc" \
+		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
+		"LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
+		"PROFILE_TASK=${PROFILE_TASK:-}" \
+		python \
+	; \
+	make install; \
+{{ if is_alpine or is_slim then "" else ( -}}
+	\
+# enable GDB to load debugging data: https://github.com/docker-library/python/pull/701
+	bin="$(readlink -ve /usr/local/bin/python3)"; \
+	dir="$(dirname "$bin")"; \
+	mkdir -p "/usr/share/gdb/auto-load/$dir"; \
+	cp -vL Tools/gdb/libpython.py "/usr/share/gdb/auto-load/$bin-gdb.py"; \
+{{ ) end -}}
+	\
+	cd /; \
+	rm -rf /usr/src/python; \
+	\
+	find /usr/local -depth \
+		\( \
+			\( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
+			-o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) \
+{{ if [ "3.8" ] | index(env.version) then ( -}}
+			-o \( -type f -a -name 'wininst-*.exe' \) \
+{{
+	) else
+		# "wininst-*.exe" is not installed for Unix platforms on Python 3.9+: https://github.com/python/cpython/pull/14511
+		""
+	end
+-}}
+		\) -exec rm -rf '{}' + \
+	; \
+	\
+{{ if is_alpine then ( -}}
+	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
+		| tr ',' '\n' \
+		| sort -u \
+		| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+		| xargs -rt apk add --no-network --virtual .python-rundeps \
+	; \
+	apk del --no-network .build-deps; \
+{{ ) else ( -}}
+	ldconfig; \
+{{ if is_slim then ( -}}
+	\
+	apt-mark auto '.*' > /dev/null; \
+	apt-mark manual $savedAptMark; \
+	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+		| sort -u \
+		| xargs -r dpkg-query --search \
+		| cut -d: -f1 \
+		| sort -u \
+		| xargs -r apt-mark manual \
+	; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*; \
+{{ ) else "" end -}}
+{{ ) end -}}
+	\
+	python3 --version
+
+# make some useful symlinks that are expected to exist ("/usr/local/bin/python" and friends)
+RUN set -eux; \
+	for src in idle3 pydoc3 python3 python3-config; do \
+		dst="$(echo "$src" | tr -d 3)"; \
+		[ -s "/usr/local/bin/$src" ]; \
+		[ ! -e "/usr/local/bin/$dst" ]; \
+		ln -svT "$src" "/usr/local/bin/$dst"; \
+	done
+
+# if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
+ENV PYTHON_PIP_VERSION {{ .pip.version }}
+{{ if .setuptools then ( -}}
+# https://github.com/docker-library/python/issues/365
+ENV PYTHON_SETUPTOOLS_VERSION {{ .setuptools.version }}
+{{ ) else "" end -}}
+# https://github.com/pypa/get-pip
+ENV PYTHON_GET_PIP_URL {{ ."get-pip".url }}
+ENV PYTHON_GET_PIP_SHA256 {{ ."get-pip".sha256 }}
+
+RUN set -eux; \
+	\
+{{ if is_slim then ( -}}
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends wget; \
+	\
+{{ ) else "" end -}}
+	wget -O get-pip.py "$PYTHON_GET_PIP_URL"; \
+	echo "$PYTHON_GET_PIP_SHA256 *get-pip.py" | sha256sum -c -; \
+	\
+{{ if is_slim then ( -}}
+	apt-mark auto '.*' > /dev/null; \
+	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark > /dev/null; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*; \
+	\
+{{ ) else "" end -}}
+	export PYTHONDONTWRITEBYTECODE=1; \
+	\
+	python get-pip.py \
+		--disable-pip-version-check \
+		--no-cache-dir \
+		--no-compile \
+		"pip==$PYTHON_PIP_VERSION" \
+{{ if .setuptools then ( -}}
+		"setuptools==$PYTHON_SETUPTOOLS_VERSION" \
+{{ ) else "" end -}}
+	; \
+	rm -f get-pip.py; \
+	\
+	pip --version
+
+CMD ["python3"]

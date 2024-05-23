@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app: [golang]
+        app: [golang, python]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
