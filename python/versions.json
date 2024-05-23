@@ -13,9 +13,7 @@
     },
     "variants": [
       "trixie",
-      "slim-trixie",
-      "sid",
-      "slim-sid"
+      "slim-trixie"
     ],
     "version": "3.10.14"
   },
@@ -33,9 +31,7 @@
     },
     "variants": [
       "trixie",
-      "slim-trixie",
-      "sid",
-      "slim-sid"
+      "slim-trixie"
     ],
     "version": "3.11.9"
   },
@@ -50,9 +46,7 @@
     },
     "variants": [
       "trixie",
-      "slim-trixie",
-      "sid",
-      "slim-sid"
+      "slim-trixie"
     ],
     "version": "3.12.3"
   },
@@ -67,9 +61,7 @@
     },
     "variants": [
       "trixie",
-      "slim-trixie",
-      "sid",
-      "slim-sid"
+      "slim-trixie"
     ],
     "version": "3.13.0b1"
   },
@@ -87,9 +79,7 @@
     },
     "variants": [
       "trixie",
-      "slim-trixie",
-      "sid",
-      "slim-sid"
+      "slim-trixie"
     ],
     "version": "3.9.19"
   }
