@@ -27,7 +27,8 @@ jobs:
           fi
           git checkout -b ${branch_name}
           cd ${{ matrix.app }}
-          bash update.sh
+          chmod +x *.sh
+          ./update.sh
           cd ..
           git diff
           if ! git diff --quiet; then
