@@ -30,6 +30,33 @@
 - ghcr.io/loong64/golang:1.22-sid
 - ghcr.io/loong64/golang:1.22-trixie
 
+[python](https://github.com/loong64/docker-library/pkgs/container/python)
+- ghcr.io/loong64/python:3.9
+- ghcr.io/loong64/python:3.9-sid
+- ghcr.io/loong64/python:3.9-trixie
+- ghcr.io/loong64/python:3.9-slim-sid
+- ghcr.io/loong64/python:3.9-slim-trixie
+- ghcr.io/loong64/python:3.10
+- ghcr.io/loong64/python:3.10-sid
+- ghcr.io/loong64/python:3.10-trixie
+- ghcr.io/loong64/python:3.10-slim-sid
+- ghcr.io/loong64/python:3.10-slim-trixie
+- ghcr.io/loong64/python:3.11
+- ghcr.io/loong64/python:3.11-sid
+- ghcr.io/loong64/python:3.11-trixie
+- ghcr.io/loong64/python:3.11-slim-sid
+- ghcr.io/loong64/python:3.11-slim-trixie
+- ghcr.io/loong64/python:3.12
+- ghcr.io/loong64/python:3.12-sid
+- ghcr.io/loong64/python:3.12-trixie
+- ghcr.io/loong64/python:3.12-slim-sid
+- ghcr.io/loong64/python:3.12-slim-trixie
+- ghcr.io/loong64/python:3.13-rc
+- ghcr.io/loong64/python:3.13-rc-sid
+- ghcr.io/loong64/python:3.13-rc-trixie
+- ghcr.io/loong64/python:3.13-rc-slim-sid
+- ghcr.io/loong64/python:3.13-rc-slim-trixie
+
 ## 使用方法
 
 ```bash
