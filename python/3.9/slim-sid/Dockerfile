@@ -115,7 +115,8 @@ RUN set -eux; \
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 		| sort -u \
 		| xargs -r dpkg-query --search \
-		| awk -F: '/^[a-z0-9][a-z0-9\.\+-]*:/ {print $1}' \
+		| grep -P '^[a-z0-9][a-z0-9\.\+-]*:' \
+		| cut -d: -f1 \
 		| sort -u \
 		| xargs -r apt-mark manual \
 	; \
