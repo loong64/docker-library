@@ -71,7 +71,7 @@
       "sid",
       "slim-sid"
     ],
-    "version": "3.13.0b1"
+    "version": "3.13.0b2"
   },
   "3.9": {
     "get-pip": {
