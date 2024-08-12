@@ -2,8 +2,6 @@ name: golang
 
 on:
   push:
-    branches:
-      - 'renovate*'
     paths:
       - 'golang/**'
   workflow_dispatch:

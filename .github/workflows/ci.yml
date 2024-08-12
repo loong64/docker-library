@@ -4,7 +4,7 @@ on:
   push:
   workflow_dispatch:
   schedule:
-    - cron: 0 22 * * 0
+    - cron: 0 20 * * 0
 
 jobs:
   generate-jobs:
@@ -18,13 +18,7 @@ jobs:
 
       - name: Check ${{ matrix.app }}
         run: |
-          branch_name="renovate_${{ matrix.app }}_version_latest"
           commit_message="build(${{ matrix.app }}): bump ${{ matrix.app }} to latest"
-          if git branch -a | grep -q "${branch_name}"; then
-            git push origin --delete ${branch_name} || true
-            git branch -D ${branch_name} || true
-          fi
-          git checkout -b ${branch_name}
           cd ${{ matrix.app }}
           chmod +x *.sh
           ./update.sh
@@ -33,7 +27,6 @@ jobs:
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git commit -am "${commit_message}" || exit 0
-          git push origin ${branch_name} -f
-          gh pr create --title "${commit_message}" --body "This PR updates ${{ matrix.app }} to the latest version." --base main --head ${branch_name}
+          git push origin HEAD:main
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
