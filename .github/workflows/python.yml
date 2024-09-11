@@ -16,7 +16,7 @@ jobs:
         name: [python]
         suite: [trixie, slim-trixie, sid, slim-sid]
         version: ['3.9', '3.10', '3.11', '3.12', '3.13-rc']
-  
+
     steps:
       - uses: docker/setup-buildx-action@v3
 
