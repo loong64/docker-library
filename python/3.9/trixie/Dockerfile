@@ -25,7 +25,7 @@ RUN set -eux; \
 	rm -rf /var/lib/apt/lists/*
 
 ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
-ENV PYTHON_VERSION 3.9.19
+ENV PYTHON_VERSION 3.9.20
 
 RUN set -eux; \
 	\
@@ -120,6 +120,8 @@ RUN set -eux; \
 		--no-compile \
 		"pip==$PYTHON_PIP_VERSION" \
 		"setuptools==$PYTHON_SETUPTOOLS_VERSION" \
+		# get-pip.py installs wheel by default, adding in case get-pip defaults change
+		wheel \
 	; \
 	rm -f get-pip.py; \
 	\

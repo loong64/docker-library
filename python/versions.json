@@ -17,7 +17,7 @@
       "sid",
       "slim-sid"
     ],
-    "version": "3.10.14"
+    "version": "3.10.15"
   },
   "3.11": {
     "get-pip": {
@@ -37,7 +37,7 @@
       "sid",
       "slim-sid"
     ],
-    "version": "3.11.9"
+    "version": "3.11.10"
   },
   "3.12": {
     "get-pip": {
@@ -54,7 +54,7 @@
       "sid",
       "slim-sid"
     ],
-    "version": "3.12.5"
+    "version": "3.12.6"
   },
   "3.13-rc": {
     "get-pip": {
@@ -63,7 +63,7 @@
       "version": "https://github.com/pypa/get-pip/commit/def4aec84b261b939137dd1c69eff0aabb4a7bf4"
     },
     "pip": {
-      "version": "24.1.1"
+      "version": "24.2"
     },
     "variants": [
       "trixie",
@@ -71,7 +71,7 @@
       "sid",
       "slim-sid"
     ],
-    "version": "3.13.0rc1"
+    "version": "3.13.0rc2"
   },
   "3.9": {
     "get-pip": {
@@ -91,6 +91,6 @@
       "sid",
       "slim-sid"
     ],
-    "version": "3.9.19"
+    "version": "3.9.20"
   }
 }
