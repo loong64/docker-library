@@ -39,7 +39,7 @@ jobs:
           echo "full_version=${full_version}" >> $GITHUB_ENV
 
       - name: Build and push ${{ matrix.name }} ${{ matrix.version }} image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/
           platforms: linux/loong64

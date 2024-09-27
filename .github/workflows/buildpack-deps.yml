@@ -1,9 +1,6 @@
 name: buildpack-deps
 
 on:
-  push:
-    paths:
-      - 'buildpack-deps/**'
   workflow_dispatch:
   schedule:
     - cron: '0 21 * * 0'
@@ -16,7 +13,7 @@ jobs:
         name: [buildpack-deps]
         os: [debian]
         suite: [trixie, sid]
-  
+
     steps:
       - uses: docker/setup-buildx-action@v3
 
@@ -34,7 +31,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push ${{ matrix.name }} curl image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.name }}/${{ matrix.os }}/${{ matrix.suite }}/curl
           platforms: linux/loong64
@@ -44,9 +41,9 @@ jobs:
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      
+
       - name: Build and push ${{ matrix.name }} scm image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.name }}/${{ matrix.os }}/${{ matrix.suite }}/scm
           platforms: linux/loong64
@@ -56,9 +53,9 @@ jobs:
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      
+
       - name: Build and push ${{ matrix.name }} ${{ matrix.suite }} image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.name }}/${{ matrix.os }}/${{ matrix.suite }}
           platforms: linux/loong64
