@@ -1,4 +1,4 @@
-name: golang
+name: node
 
 on:
   workflow_dispatch:
@@ -6,13 +6,13 @@ on:
     - cron: '20 21 * * 0'
 
 jobs:
-  golang:
+  node:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: [golang]
-        suite: [trixie, slim-trixie]
-        version: ['1.22', '1.23']
+        name: [node]
+        suite: [trixie]
+        version: ['18', '20']
 
     steps:
       - uses: docker/setup-buildx-action@v3
@@ -32,7 +32,7 @@ jobs:
 
       - name: Get Version
         run: |
-          full_version=$(grep -m1 -oP "ENV GOLANG_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
+          full_version=$(grep -m1 -oP "ENV NODE_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
           echo "full_version=${full_version}" >> $GITHUB_ENV
 
       - name: Build and push ${{ matrix.name }} ${{ matrix.version }} image

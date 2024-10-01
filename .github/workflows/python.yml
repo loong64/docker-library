@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         name: [python]
-        suite: [trixie, slim-trixie, sid, slim-sid]
+        suite: [trixie, slim-trixie]
         version: ['3.9', '3.10', '3.11', '3.12', '3.13-rc']
 
     steps:

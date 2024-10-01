@@ -12,7 +12,7 @@ jobs:
       matrix:
         name: [buildpack-deps]
         os: [debian]
-        suite: [trixie, sid]
+        suite: [trixie]
 
     steps:
       - uses: docker/setup-buildx-action@v3

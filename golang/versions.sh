@@ -160,8 +160,7 @@ for version in "${versions[@]}"; do
 			)
 		),
 		variants: [
-			"trixie",
-			"sid"
+			"trixie"
 		],
 	}')"
 
