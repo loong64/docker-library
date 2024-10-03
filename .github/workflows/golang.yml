@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         name: [golang]
-        suite: [trixie, slim-trixie]
+        suite: [trixie]
         version: ['1.22', '1.23']
 
     steps:
