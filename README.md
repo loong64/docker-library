@@ -46,9 +46,9 @@
 - ghcr.io/loong64/python:3.12
 - ghcr.io/loong64/python:3.12-trixie
 - ghcr.io/loong64/python:3.12-slim-trixie
-- ghcr.io/loong64/python:3.13-rc
-- ghcr.io/loong64/python:3.13-rc-trixie
-- ghcr.io/loong64/python:3.13-rc-slim-trixie
+- ghcr.io/loong64/python:3.13
+- ghcr.io/loong64/python:3.13-trixie
+- ghcr.io/loong64/python:3.13-slim-trixie
 
 ## 使用方法
 
