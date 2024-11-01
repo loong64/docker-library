@@ -15,7 +15,7 @@ jobs:
 
       - name: Check for changes
         run: |
-          apps=("golang" "python")
+          apps=("golang" "node" "python")
           commit_message="build(app): bump app to latest"
           for app in "${apps[@]}"; do
             pushd $app

@@ -1,9 +1,6 @@
 name: python
 
 on:
-  push:
-    paths:
-      - 'python/**'
   workflow_dispatch:
   schedule:
     - cron: '20 21 * * 0'
