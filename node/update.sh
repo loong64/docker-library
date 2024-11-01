@@ -15,7 +15,9 @@ for version in "${versions[@]}"; do
         echo "Node.js version not found"
         exit 0
     fi
+    echo "$version: ${fullVersion#v}"
     for variant in "${variants[@]}"; do
+        echo "processing $version/$variant ..."
         sed -i "s/ENV NODE_VERSION .*/ENV NODE_VERSION ${fullVersion#v}/g" "$version/$variant/Dockerfile"
     done
 done
