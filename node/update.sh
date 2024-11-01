@@ -16,6 +16,6 @@ for version in "${versions[@]}"; do
         exit 0
     fi
     for variant in "${variants[@]}"; do
-        sed -i "s/ENV NODE_VERSION .*/ENV NODE_VERSION $fullVersion/g" "$version/$variant/Dockerfile"
+        sed -i "s/ENV NODE_VERSION .*/ENV NODE_VERSION ${fullVersion#v}/g" "$version/$variant/Dockerfile"
     done
 done
