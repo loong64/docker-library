@@ -26,6 +26,8 @@
 - ghcr.io/loong64/golang:1.21-trixie
 - ghcr.io/loong64/golang:1.22
 - ghcr.io/loong64/golang:1.22-trixie
+- ghcr.io/loong64/golang:1.23
+- ghcr.io/loong64/golang:1.23-trixie
 
 [node](https://github.com/loong64/docker-library/pkgs/container/node)
 - ghcr.io/loong64/node:18
