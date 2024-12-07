@@ -35,7 +35,7 @@ jobs:
           full_version=$(grep -m1 -oP "ENV NODE_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
           echo "full_version=${full_version}" >> $GITHUB_ENV
 
-      - name: Build and push ${{ matrix.name }} ${{ matrix.version }} image
+      - name: Build and push slim image
         if: matrix.suite == 'trixie-slim'
         uses: docker/build-push-action@v6
         with:
