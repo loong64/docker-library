@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         name: [node]
-        suite: [trixie]
+        suite: [trixie, trixie-slim]
         version: ['18', '20']
 
     steps:
