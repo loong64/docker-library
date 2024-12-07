@@ -33,6 +33,8 @@ jobs:
       - name: Get Version
         run: |
           full_version=$(grep -m1 -oP "ENV NODE_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
+          short_version=$(echo $full_version | cut -d'.' -f1,2)
+          echo "short_version=${short_version}" >> $GITHUB_ENV
           echo "full_version=${full_version}" >> $GITHUB_ENV
 
       - name: Build and push slim image
@@ -44,6 +46,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.short_version }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
@@ -58,8 +61,10 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.short_version }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.short_version }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
