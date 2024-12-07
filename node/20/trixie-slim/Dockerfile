@@ -7,7 +7,7 @@ ENV NODE_VERSION 20.18.1
 
 RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && case "${dpkgArch##*-}" in \
-      loong64) ARCH='loong64';; \
+      loong64) ARCH='loong64' OPENSSL_ARCH='linux*-loongarch64';; \
       *) echo "unsupported architecture"; exit 1 ;; \
     esac \
     && set -ex \
@@ -47,6 +47,7 @@ RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
       | cut -d: -f1 \
       | sort -u \
       | xargs -r apt-mark manual \
+    && apt-mark manual debian-ports-archive-keyring \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
     # smoke tests
