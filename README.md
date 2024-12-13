@@ -40,7 +40,7 @@
 - ghcr.io/loong64/node:18-slim-trixie
 - ghcr.io/loong64/node:20
 - ghcr.io/loong64/node:20-trixie
-- - ghcr.io/loong64/node:20-slim-trixie
+- ghcr.io/loong64/node:20-slim-trixie
 
 [python](https://github.com/loong64/docker-library/pkgs/container/python)
 - ghcr.io/loong64/python:3.9-alpine
