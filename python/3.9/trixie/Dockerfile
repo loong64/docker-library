@@ -26,10 +26,12 @@ RUN set -eux; \
 
 ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
 ENV PYTHON_VERSION 3.9.21
+ENV PYTHON_SHA256 3126f59592c9b0d798584755f2bf7b081fa1ca35ce7a6fea980108d752a05bb1
 
 RUN set -eux; \
 	\
 	wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz"; \
+	echo "$PYTHON_SHA256 *python.tar.xz" | sha256sum -c -; \
 	wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc"; \
 	GNUPGHOME="$(mktemp -d)"; export GNUPGHOME; \
 	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$GPG_KEY"; \
@@ -48,7 +50,6 @@ RUN set -eux; \
 		--enable-optimizations \
 		--enable-option-checking=fatal \
 		--enable-shared \
-		--with-system-expat \
 		--with-ensurepip \
 	; \
 	nproc="$(nproc)"; \
@@ -57,7 +58,6 @@ RUN set -eux; \
 	make -j "$nproc" \
 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
 		"LDFLAGS=${LDFLAGS:-}" \
-		"PROFILE_TASK=${PROFILE_TASK:-}" \
 	; \
 # https://github.com/docker-library/python/issues/784
 # prevent accidental usage of a system installed libpython of the same version
@@ -65,7 +65,6 @@ RUN set -eux; \
 	make -j "$nproc" \
 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
 		"LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
-		"PROFILE_TASK=${PROFILE_TASK:-}" \
 		python \
 	; \
 	make install; \

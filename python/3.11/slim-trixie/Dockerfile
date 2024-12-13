@@ -26,6 +26,7 @@ RUN set -eux; \
 
 ENV GPG_KEY A035C8C19219BA821ECEA86B64E628F8D684696D
 ENV PYTHON_VERSION 3.11.11
+ENV PYTHON_SHA256 2a9920c7a0cd236de33644ed980a13cbbc21058bfdc528febb6081575ed73be3
 
 RUN set -eux; \
 	\
@@ -39,7 +40,6 @@ RUN set -eux; \
 		libbz2-dev \
 		libc6-dev \
 		libdb-dev \
-		libexpat1-dev \
 		libffi-dev \
 		libgdbm-dev \
 		liblzma-dev \
@@ -56,6 +56,7 @@ RUN set -eux; \
 	; \
 	\
 	wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz"; \
+	echo "$PYTHON_SHA256 *python.tar.xz" | sha256sum -c -; \
 	wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc"; \
 	GNUPGHOME="$(mktemp -d)"; export GNUPGHOME; \
 	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$GPG_KEY"; \
@@ -75,7 +76,6 @@ RUN set -eux; \
 		--enable-option-checking=fatal \
 		--enable-shared \
 		--with-lto \
-		--with-system-expat \
 		--with-ensurepip \
 	; \
 	nproc="$(nproc)"; \
@@ -85,7 +85,6 @@ RUN set -eux; \
 	make -j "$nproc" \
 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
 		"LDFLAGS=${LDFLAGS:-}" \
-		"PROFILE_TASK=${PROFILE_TASK:-}" \
 	; \
 # https://github.com/docker-library/python/issues/784
 # prevent accidental usage of a system installed libpython of the same version
@@ -93,7 +92,6 @@ RUN set -eux; \
 	make -j "$nproc" \
 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
 		"LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
-		"PROFILE_TASK=${PROFILE_TASK:-}" \
 		python \
 	; \
 	make install; \

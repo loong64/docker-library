@@ -390,7 +390,9 @@
       }
     },
     "variants": [
-      "trixie"
+      "trixie",
+      "bullseye",
+      "alpine3.21"
     ]
   },
   "1.23": {
@@ -795,7 +797,9 @@
       }
     },
     "variants": [
-      "trixie"
+      "trixie",
+      "bullseye",
+      "alpine3.21"
     ]
   }
 }
