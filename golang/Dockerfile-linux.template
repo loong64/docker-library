@@ -6,7 +6,7 @@
 		env.variant | ltrimstr("alpine")
 -}}
 {{ if is_alpine then ( -}}
-FROM alpine:{{ alpine_version }} AS build
+FROM ghcr.io/loong64/alpine:{{ alpine_version }} AS build
 {{ ) else ( -}}
 FROM ghcr.io/loong64/buildpack-deps:{{ env.variant }}-scm AS build
 {{ ) end -}}
@@ -29,6 +29,7 @@ ENV GOLANG_VERSION {{ .version }}
 				ppc64le: "ppc64le",
 				riscv64: "riscv64",
 				s390x: "s390x",
+				loong64: "loong64",
 			}
 		else
 			{
@@ -148,7 +149,7 @@ RUN set -eux; \
 	find /target -newer /target/usr/local/go -exec sh -c 'ls -ld "$@" && exit "$#"' -- '{}' +
 
 {{ if is_alpine then ( -}}
-FROM alpine:{{ alpine_version }}
+FROM ghcr.io/loong64/alpine:{{ alpine_version }}
 
 RUN apk add --no-cache ca-certificates
 {{ ) else ( -}}

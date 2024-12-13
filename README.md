@@ -9,6 +9,11 @@
 |-----------------|-----------|---------------|
 | loongarch64     | loong64   | linux/loong64 |
 
+[alpine](https://github.com/loong64/docker-debian-build/pkgs/container/alpine)
+
+- ghcr.io/loong64/alpine:3
+- ghcr.io/loong64/alpine:3.21
+
 [debian](https://github.com/loong64/docker-debian-build/pkgs/container/debian)
 
 - ghcr.io/loong64/debian:sid
@@ -22,11 +27,11 @@
 - ghcr.io/loong64/buildpack-deps:trixie
 
 [golang](https://github.com/loong64/docker-library/pkgs/container/golang)
-- ghcr.io/loong64/golang:1.21
+- ghcr.io/loong64/golang:1.21-alpine
 - ghcr.io/loong64/golang:1.21-trixie
-- ghcr.io/loong64/golang:1.22
+- ghcr.io/loong64/golang:1.22-alpine
 - ghcr.io/loong64/golang:1.22-trixie
-- ghcr.io/loong64/golang:1.23
+- ghcr.io/loong64/golang:1.23-alpine
 - ghcr.io/loong64/golang:1.23-trixie
 
 [node](https://github.com/loong64/docker-library/pkgs/container/node)
@@ -38,19 +43,19 @@
 - - ghcr.io/loong64/node:20-slim-trixie
 
 [python](https://github.com/loong64/docker-library/pkgs/container/python)
-- ghcr.io/loong64/python:3.9
+- ghcr.io/loong64/python:3.9-alpine
 - ghcr.io/loong64/python:3.9-trixie
 - ghcr.io/loong64/python:3.9-slim-trixie
-- ghcr.io/loong64/python:3.10
+- ghcr.io/loong64/python:3.10-alpine
 - ghcr.io/loong64/python:3.10-trixie
 - ghcr.io/loong64/python:3.10-slim-trixie
-- ghcr.io/loong64/python:3.11
+- ghcr.io/loong64/python:3.11-alpine
 - ghcr.io/loong64/python:3.11-trixie
 - ghcr.io/loong64/python:3.11-slim-trixie
-- ghcr.io/loong64/python:3.12
+- ghcr.io/loong64/python:3.12-alpine
 - ghcr.io/loong64/python:3.12-trixie
 - ghcr.io/loong64/python:3.12-slim-trixie
-- ghcr.io/loong64/python:3.13
+- ghcr.io/loong64/python:3.13-alpine
 - ghcr.io/loong64/python:3.13-trixie
 - ghcr.io/loong64/python:3.13-slim-trixie
 

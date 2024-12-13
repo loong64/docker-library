@@ -13,8 +13,8 @@ potentiallySupportedArches=(
 	ppc64le
 	riscv64
 	s390x
-	windows-amd64
 	loong64
+	windows-amd64
 
 	# special case (fallback)
 	src
@@ -160,7 +160,12 @@ for version in "${versions[@]}"; do
 			)
 		),
 		variants: [
-			"trixie"
+			"trixie",
+			"bullseye",
+			(
+				"3.21",
+				empty
+			| "alpine" + .)
 		],
 	}')"
 

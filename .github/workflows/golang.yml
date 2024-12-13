@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: [golang]
-        suite: [trixie]
+        name: ['golang']
+        suite: ['trixie', 'alpine3.21']
         version: ['1.22', '1.23']
 
     steps:
@@ -34,6 +34,11 @@ jobs:
         run: |
           full_version=$(grep -m1 -oP "ENV GOLANG_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
           echo "full_version=${full_version}" >> $GITHUB_ENV
+          suite=${{ matrix.suite }}
+          if echo ${{ matrix.suite }} | grep -q 'alpine'; then
+            suite=alpine
+          fi
+          echo "suite=${suite}" >> $GITHUB_ENV
 
       - name: Build and push ${{ matrix.name }} ${{ matrix.version }} image
         uses: docker/build-push-action@v6
@@ -42,10 +47,9 @@ jobs:
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{  env.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ env.suite }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max

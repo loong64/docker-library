@@ -2,10 +2,6 @@
 set -Eeuo pipefail
 shopt -s nullglob
 
-# https://github.com/docker-library/python/issues/365
-minimumSetuptoolsVersion='57.5.0'
-# for historical reasons, setuptools gets pinned to either the version bundled with each Python version or this, whichever is higher
-
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 versions=( "$@" )
@@ -17,24 +13,64 @@ else
 fi
 versions=( "${versions[@]%/}" )
 
-has_linux_version() {
-	local dir="$1"; shift
+declare -A checksums=()
+check_file() {
 	local dirVersion="$1"; shift
 	local fullVersion="$1"; shift
+	local type="${1:-source}" # "source" or "windows"
 
-	if ! wget -q -O /dev/null -o /dev/null --spider "https://www.python.org/ftp/python/$dirVersion/Python-$fullVersion.tar.xz"; then
-		return 1
+	local filename="Python-$fullVersion.tar.xz"
+	if [ "$type" = 'windows' ]; then
+		filename="python-$fullVersion-amd64.exe"
+	fi
+	local url="https://www.python.org/ftp/python/$dirVersion/$filename"
+
+	local sigstore
+	if sigstore="$(
+		wget -qO- -o/dev/null "$url.sigstore" \
+			| jq -r '
+				.messageSignature.messageDigest
+				| if .algorithm != "SHA2_256" then
+					error("sigstore bundle not using SHA2_256")
+				else .digest end
+			'
+	)" && [ -n "$sigstore" ]; then
+		sigstore="$(base64 -d <<<"$sigstore" | hexdump -ve '/1 "%02x"')"
+		checksums["$fullVersion"]="$(jq <<<"${checksums["$fullVersion"]:-null}" --arg type "$type" --arg sha256 "$sigstore" '.[$type].sha256 = $sha256')"
+		return 0
 	fi
 
-	return 0
-}
+	# TODO is this even necessary/useful?  the sigstore-based version above is *much* faster, supports all current versions (not just 3.12+ like this), *and* should be more reliable 🤔
+	local sbom
+	if sbom="$(
+		wget -qO- -o/dev/null "$url.spdx.json" \
+			| jq --arg filename "$filename" '
+				first(
+					.packages[]
+					| select(
+						.name == "CPython"
+						and .packageFileName == $filename
+					)
+				)
+				| .checksums
+				| map({
+					key: (.algorithm // empty | ascii_downcase),
+					value: (.checksumValue // empty),
+				})
+				| if length < 1 then
+					error("no checksums found for \($filename)")
+				else . end
+				| from_entries
+				| if has("sha256") then . else
+					error("missing sha256 for \($filename); have \(.)")
+				end
+			'
+	)" && [ -n "sbom" ]; then
+		checksums["$fullVersion"]="$(jq <<<"${checksums["$fullVersion"]:-null}" --arg type "$type" --argjson sums "$sbom" '.[$type] += $sums')"
+		return 0
+	fi
 
-has_windows_version() {
-	local dir="$1"; shift
-	local dirVersion="$1"; shift
-	local fullVersion="$1"; shift
-
-	if ! wget -q -O /dev/null -o /dev/null --spider "https://www.python.org/ftp/python/$dirVersion/python-$fullVersion-amd64.exe"; then
+	if ! wget -q -O /dev/null -o /dev/null --spider "$url"; then
 		return 1
 	fi
 
@@ -72,9 +108,9 @@ for version in "${versions[@]}"; do
 		rcPossible="${possible%%[a-z]*}"
 
 		# varnish is great until it isn't (usually the directory listing we scrape below is updated/uncached significantly later than the release being available)
-		if has_linux_version "$version" "$rcPossible" "$possible"; then
+		if check_file "$rcPossible" "$possible"; then
 			fullVersion="$possible"
-			if has_windows_version "$version" "$rcPossible" "$possible"; then
+			if check_file "$rcPossible" "$possible" windows; then
 				hasWindows=1
 			fi
 			break
@@ -93,9 +129,9 @@ for version in "${versions[@]}"; do
 				|| true
 		) )
 		for possibleVersion in "${possibleVersions[@]}"; do
-			if has_linux_version "$version" "$rcPossible" "$possibleVersion"; then
+			if check_file "$rcPossible" "$possibleVersion"; then
 				fullVersion="$possibleVersion"
-				if has_windows_version "$version" "$rcPossible" "$possible"; then
+				if check_file "$rcPossible" "$possible" windows; then
 					hasWindows=1
 				fi
 				break
@@ -126,7 +162,7 @@ for version in "${versions[@]}"; do
 	# TODO remove setuptools version handling entirely once Python 3.11 is EOL
 	setuptoolsVersion="$(sed -nre 's/^_SETUPTOOLS_VERSION[[:space:]]*=[[:space:]]*"(.*?)".*/\1/p' <<<"$ensurepipVersions")"
 	case "$rcVersion" in
-		3.8 | 3.9 | 3.10 | 3.11)
+		3.9 | 3.10 | 3.11)
 			if [ -z "$setuptoolsVersion" ]; then
 				echo >&2 "error: $version: missing setuptools version"
 				exit 1
@@ -135,14 +171,6 @@ for version in "${versions[@]}"; do
 				echo >&2 "error: $version: setuptools version ($setuptoolsVersion) seems to be invalid?"
 				exit 1
 			fi
-
-			# TODO remove this once Python 3.8 is either "new enough setuptools" or EOL
-			setuptoolsVersion="$(
-				{
-					echo "$setuptoolsVersion"
-					echo "$minimumSetuptoolsVersion"
-				} | sort -rV | head -1
-			)"
 
 			# https://github.com/docker-library/python/issues/781 (TODO remove this if 3.10 and 3.11 embed a newer setuptools and this section no longer applies)
 			if [ "$setuptoolsVersion" = '65.5.0' ]; then
@@ -162,14 +190,19 @@ for version in "${versions[@]}"; do
 	echo "$version: $fullVersion"
 
 	export fullVersion pipVersion setuptoolsVersion hasWindows
-	json="$(jq <<<"$json" -c '
-		.[env.version] = {
+	doc="$(jq -nc '
+		{
 			version: env.fullVersion,
 			variants: [
 				(
 					"trixie",
 					empty
-				| ., "slim-" + .) # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
+				| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
+				(
+					"3.21",
+					"3.20",
+					empty
+				| "alpine" + .)
 			],
 		} + if env.setuptoolsVersion != "" then {
 			setuptools: {
@@ -177,6 +210,12 @@ for version in "${versions[@]}"; do
 			},
 		} else {} end
 	')"
+
+	if [ -n "${checksums["$fullVersion"]:-}" ]; then
+		doc="$(jq <<<"$doc" -c --argjson checksums "${checksums["$fullVersion"]}" '.checksums = $checksums')"
+	fi
+
+	json="$(jq <<<"$json" -c --argjson doc "$doc" '.[env.version] = $doc')"
 done
 
 jq <<<"$json" -S . > versions.json

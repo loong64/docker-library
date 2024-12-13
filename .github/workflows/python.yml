@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: [python]
-        suite: [trixie, slim-trixie]
+        name: ['python']
+        suite: ['trixie', 'slim-trixie', 'alpine3.21']
         version: ['3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
@@ -34,6 +34,11 @@ jobs:
         run: |
           full_version=$(grep -m1 -oP "ENV PYTHON_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
           echo "full_version=${full_version}" >> $GITHUB_ENV
+          suite=${{ matrix.suite }}
+          if echo ${{ matrix.suite }} | grep -q 'alpine'; then
+            suite=alpine
+          fi
+          echo "suite=${suite}" >> $GITHUB_ENV
       
       - name: Build and push slim image
         if: matrix.suite == 'trixie-slim'
@@ -43,8 +48,8 @@ jobs:
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ env.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ env.suite }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -57,7 +62,6 @@ jobs:
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
