@@ -41,7 +41,7 @@ RUN set -eux; \
 			url='https://dl.google.com/go/go1.23.4.linux-386.tar.gz'; \
 			sha256='4a4a0e7587ef8c8a326439b957027f2791795e2d29d4ae3885b4091a48f843bc'; \
 			;; \
-		'loong64') \
+		'loongarch64') \
 			url='https://dl.google.com/go/go1.23.4.linux-loong64.tar.gz'; \
 			sha256='4f469179a335a1a7bb9f991ad0c567f3d3eeb9b412ecd192206ab5c3e1a52b5a'; \
 			;; \

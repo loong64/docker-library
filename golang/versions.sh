@@ -161,7 +161,6 @@ for version in "${versions[@]}"; do
 		),
 		variants: [
 			"trixie",
-			"bullseye",
 			(
 				"3.21",
 				empty

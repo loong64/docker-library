@@ -33,38 +33,33 @@ jobs:
       - name: Get Version
         run: |
           full_version=$(grep -m1 -oP "ENV NODE_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
-          short_version=$(echo $full_version | cut -d'.' -f1,2)
-          echo "short_version=${short_version}" >> $GITHUB_ENV
           echo "full_version=${full_version}" >> $GITHUB_ENV
 
-      - name: Build and push slim image
-        if: matrix.suite == 'trixie-slim'
-        uses: docker/build-push-action@v6
-        with:
-          context: ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/
-          platforms: linux/loong64
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.short_version }}-${{ matrix.suite }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          version=${{ matrix.version }}
+          image_tag=${version}
+          full_image_tag=${full_version}
 
-      - name: Build and push ${{ matrix.name }} ${{ matrix.version }} image
-        if: matrix.suite == 'trixie'
+          if echo ${{ matrix.suite }} | grep -q 'alpine'; then
+            image_tag=${version}-alpine
+            full_image_tag=${full_version}-alpine
+          fi
+          if echo ${{ matrix.suite }} | grep -q 'slim'; then
+            image_tag=${version}-slim
+            full_image_tag=${full_version}-slim
+          fi
+          echo "image_tag=${image_tag}" >> $GITHUB_ENV
+          echo "full_image_tag=${full_image_tag}" >> $GITHUB_ENV
+
+      - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.short_version }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.short_version }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha

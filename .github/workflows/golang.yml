@@ -34,11 +34,21 @@ jobs:
         run: |
           full_version=$(grep -m1 -oP "ENV GOLANG_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
           echo "full_version=${full_version}" >> $GITHUB_ENV
-          suite=${{ matrix.suite }}
+          
+          version=${{ matrix.version }}
+          image_tag=${version}
+          full_image_tag=${full_version}
+
           if echo ${{ matrix.suite }} | grep -q 'alpine'; then
-            suite=alpine
+            image_tag=${version}-alpine
+            full_image_tag=${full_version}-alpine
           fi
-          echo "suite=${suite}" >> $GITHUB_ENV
+          if echo ${{ matrix.suite }} | grep -q 'slim'; then
+            image_tag=${version}-slim
+            full_image_tag=${full_version}-slim
+          fi
+          echo "image_tag=${image_tag}" >> $GITHUB_ENV
+          echo "full_image_tag=${full_image_tag}" >> $GITHUB_ENV
 
       - name: Build and push ${{ matrix.name }} ${{ matrix.version }} image
         uses: docker/build-push-action@v6
@@ -47,9 +57,10 @@ jobs:
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{  env.suite }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ env.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max

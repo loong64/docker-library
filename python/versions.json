@@ -11,8 +11,7 @@
     "variants": [
       "trixie",
       "slim-trixie",
-      "alpine3.21",
-      "alpine3.20"
+      "alpine3.21"
     ],
     "version": "3.10.16"
   },
@@ -28,8 +27,7 @@
     "variants": [
       "trixie",
       "slim-trixie",
-      "alpine3.21",
-      "alpine3.20"
+      "alpine3.21"
     ],
     "version": "3.11.11"
   },
@@ -45,8 +43,7 @@
     "variants": [
       "trixie",
       "slim-trixie",
-      "alpine3.21",
-      "alpine3.20"
+      "alpine3.21"
     ],
     "version": "3.12.8"
   },
@@ -62,8 +59,7 @@
     "variants": [
       "trixie",
       "slim-trixie",
-      "alpine3.21",
-      "alpine3.20"
+      "alpine3.21"
     ],
     "version": "3.13.1"
   },
@@ -79,8 +75,7 @@
     "variants": [
       "trixie",
       "slim-trixie",
-      "alpine3.21",
-      "alpine3.20"
+      "alpine3.21"
     ],
     "version": "3.9.21"
   }
