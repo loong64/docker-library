@@ -5,17 +5,20 @@ ENV NODE_VERSION 23.4.0
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
     && apk add --no-cache \
+        libatomic \
         libstdc++ \
     && apk add --no-cache --virtual .build-deps \
         curl \
     && ARCH= OPENSSL_ARCH='linux*' && alpineArch="$(apk --print-arch)" \
       && case "${alpineArch##*-}" in \
-        loongarch64) ARCH='loong64' OPENSSL_ARCH='linux*-loongarch64';; \
+        loongarch64) ARCH='loong64' OPENSSL_ARCH='linux*-loongarch64' \
+        CHECKSUM=$(curl -sSL --compressed "https://github.com/loong64/node/releases/download/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz.sha256" | cut -d ' ' -f 1);; \
         *) ;; \
       esac \
   && if [ -n "${CHECKSUM}" ]; then \
     set -eu; \
     curl -fsSLO --compressed "https://github.com/loong64/node/releases/download/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz"; \
+    echo "$CHECKSUM  node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz" | sha256sum -c - \
       && tar -xJf "node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
       && ln -s /usr/local/bin/node /usr/local/bin/nodejs; \
   else \
