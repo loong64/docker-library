@@ -35,12 +35,14 @@
 - ghcr.io/loong64/golang:1.23-trixie
 
 [node](https://github.com/loong64/docker-library/pkgs/container/node)
-- ghcr.io/loong64/node:18
+- ghcr.io/loong64/node:18-alpine
 - ghcr.io/loong64/node:18-trixie
 - ghcr.io/loong64/node:18-slim-trixie
-- ghcr.io/loong64/node:20
+- ghcr.io/loong64/node:20-alpine
 - ghcr.io/loong64/node:20-trixie
 - ghcr.io/loong64/node:20-slim-trixie
+- ghcr.io/loong64/node:22-alpine
+- ghcr.io/loong64/node:23-alpine
 
 [python](https://github.com/loong64/docker-library/pkgs/container/python)
 - ghcr.io/loong64/python:3.9-alpine
