@@ -1,9 +1,9 @@
-name: node
+name: build(node)
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '20 21 * * 0'
+    - cron: '0 0 3 * *'
 
 jobs:
   node:

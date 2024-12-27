@@ -37,10 +37,10 @@
 [node](https://github.com/loong64/docker-library/pkgs/container/node)
 - ghcr.io/loong64/node:18-alpine
 - ghcr.io/loong64/node:18-trixie
-- ghcr.io/loong64/node:18-slim-trixie
+- ghcr.io/loong64/node:18-trixie-slim
 - ghcr.io/loong64/node:20-alpine
 - ghcr.io/loong64/node:20-trixie
-- ghcr.io/loong64/node:20-slim-trixie
+- ghcr.io/loong64/node:20-trixie-slim
 - ghcr.io/loong64/node:22-alpine
 - ghcr.io/loong64/node:23-alpine
 

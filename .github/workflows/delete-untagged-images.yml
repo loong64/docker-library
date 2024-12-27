@@ -1,0 +1,29 @@
+# 清理 ghcr.io 上的无标签镜像, 建议每年执行一次即可(会导致镜像下载量清空)
+name: Delete Untagged
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-jobs:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GH_TOKEN }}
+
+    - name: Delete all containers from repository without tags
+      uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+      with:
+        token: ${{ secrets.GH_TOKEN }}
+        repository_owner: ${{ github.repository_owner }}
+        repository: ${{ github.repository }}
+        untagged_only: true
+        owner_type: org # or user
+        except_untagged_multiplatform: true

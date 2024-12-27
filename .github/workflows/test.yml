@@ -1,0 +1,72 @@
+name: Check Images
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 1 * * *
+
+jobs:
+  check-python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        suite: ['trixie', 'slim-trixie', 'alpine']
+        app: ['python']
+        version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+
+    steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Setup QEMU
+      run: docker run --rm --privileged ghcr.io/loong64/qemu-user-static --reset -p yes
+
+    - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
+      run: |
+        docker run --rm --platform linux/loong64 ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }} python --version
+
+  check-golang:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        suite: ['trixie', 'alpine']
+        app: ['golang']
+        version: ['1.22', '1.23']
+
+    steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Setup QEMU
+      run: docker run --rm --privileged ghcr.io/loong64/qemu-user-static --reset -p yes
+
+    - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
+      run: |
+        docker run --rm --platform linux/loong64 ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }} go version
+
+  check-node:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        suite: ['trixie', 'trixie-slim', 'alpine']
+        app: ['node']
+        version: ['18', '20', '22', '23']
+
+    steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Setup QEMU
+      run: docker run --rm --privileged ghcr.io/loong64/qemu-user-static --reset -p yes
+
+    - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
+      run: |
+        case ${{ matrix.suite }} in
+          trixie|trixie-slim)
+            if [ "${{ matrix.version }}" -gt "20" ]; then
+              # https://github.com/nodejs/node/pull/52888
+              exit 0
+            fi
+            ;;
+        esac
+        docker run --rm --platform linux/loong64 ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }} node --version
