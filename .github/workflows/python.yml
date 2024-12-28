@@ -12,7 +12,7 @@ jobs:
       matrix:
         name: ['python']
         suite: ['trixie', 'slim-trixie', 'alpine3.21']
-        version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        version: ['3.9', '3.10', '3.11', '3.12', '3.13', '3.14-rc']
 
     steps:
       - uses: docker/setup-buildx-action@v3
