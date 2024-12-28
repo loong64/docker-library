@@ -63,6 +63,22 @@
     ],
     "version": "3.13.1"
   },
+  "3.14-rc": {
+    "checksums": {
+      "source": {
+        "sha256": "94349df207456a575a8867c20b4ca434f870e1920dcdcc8fdf797e1af49abe90"
+      },
+      "windows": {
+        "sha256": "b5ba25a9973a5cff264e62024a50633ce87c58c3baaab298f1d47d47890d6fe7"
+      }
+    },
+    "variants": [
+      "trixie",
+      "slim-trixie",
+      "alpine3.21"
+    ],
+    "version": "3.14.0a3"
+  },
   "3.9": {
     "checksums": {
       "source": {
