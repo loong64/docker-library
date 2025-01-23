@@ -1,6 +1,11 @@
 name: build(golang)
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'golang/**'
   workflow_dispatch:
   schedule:
     - cron: '0 0 3 * *'

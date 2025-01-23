@@ -1,6 +1,11 @@
 name: build(python)
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'python/**'
   workflow_dispatch:
   schedule:
     - cron: '0 0 3 * *'
