@@ -3,7 +3,7 @@ FROM ghcr.io/loong64/buildpack-deps:trixie
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
-ENV NODE_VERSION 20.18.1
+ENV NODE_VERSION 20.18.2
 
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
