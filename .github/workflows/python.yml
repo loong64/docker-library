@@ -1,6 +1,11 @@
 name: build(python)
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'python/**'
   workflow_dispatch:
   schedule:
     - cron: '0 0 3 * *'
@@ -9,6 +14,7 @@ jobs:
   python:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         name: ['python']
         suite: ['trixie', 'slim-trixie', 'alpine3.21']

@@ -9,6 +9,7 @@ jobs:
   check-python:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         suite: ['trixie', 'slim-trixie', 'alpine']
         app: ['python']
