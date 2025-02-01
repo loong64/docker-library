@@ -49,7 +49,7 @@ jobs:
 
   trigger-workflows:
     needs: generate-jobs
-    if: fromJson(needs.generate-jobs.outputs.matrix).app != '[]'
+    if: ${{ fromJson(needs.generate-jobs.outputs.matrix).include[0] }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
