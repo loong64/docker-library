@@ -43,6 +43,7 @@ RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
       | cut -d: -f1 \
       | sort -u \
       | xargs -r apt-mark manual \
+    && apt-mark manual debian-ports-archive-keyring \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
     # smoke tests
