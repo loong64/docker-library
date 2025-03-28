@@ -19,6 +19,7 @@ jobs:
         name: ['python']
         suite: ['trixie', 'slim-trixie', 'alpine3.21']
         version: ['3.9', '3.10', '3.11', '3.12', '3.13', '3.14-rc']
+        latest_version: ['3.13']
 
     steps:
       - name: Checkout ${{ matrix.name }}
@@ -77,3 +78,19 @@ jobs:
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Prepare configuration
+        run: |
+          wget -qO- https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz | sudo tar -xzf - -C /usr/local/bin/ crane
+          sudo chmod +x /usr/local/bin/crane
+          sudo chown root:root /usr/local/bin/crane
+
+      - name: Pull and Push Images
+        run: |
+          if [ "${{ matrix.suite }}" = "trixie" ] && [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
+            full_version=${{ env.full_version }}
+            minor_version=$(echo ${{ matrix.version }} | cut -d'.' -f1-2)
+            major_version=$(echo ${{ matrix.version }} | cut -d'.' -f1)
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${major_version}
+          fi

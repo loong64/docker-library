@@ -12,14 +12,19 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo wget -q -O /usr/local/bin/bashbrew https://github.com/docker-library/bashbrew/releases/latest/download/bashbrew-amd64
+          sudo chmod +x /usr/local/bin/bashbrew
+          sudo chown root:root /usr/local/bin/bashbrew
 
       - name: Check for changes
         id: set-matrix
         run: |
           declare -a changed_apps
-          apps=("golang" "node" "python")
+          apps=("golang" "node" "python" "redis")
           commit_message="build(app): bump app to latest"
           
           for app in "${apps[@]}"; do

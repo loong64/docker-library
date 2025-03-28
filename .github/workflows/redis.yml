@@ -1,25 +1,25 @@
-name: build(golang)
+name: build(redis)
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'golang/**'
+      - 'redis/**'
   workflow_dispatch:
   schedule:
     - cron: '0 0 3 * *'
 
 jobs:
-  golang:
+  redis:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        name: ['golang']
-        suite: ['trixie', 'alpine3.21']
-        version: ['1.23', '1.24']
-        latest_version: ['1.24']
+        name: ['redis']
+        suite: ['debian', 'alpine']
+        version: ['6.2', '7.0', '7.2', '7.4', '7.4-rc']
+        latest_version: ['7.4']
 
     steps:
       - name: Checkout ${{ matrix.name }}
@@ -45,21 +45,28 @@ jobs:
             echo "build=false" >> $GITHUB_ENV
             exit 0
           fi
-          full_version=$(grep -m1 -oP "ENV GOLANG_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
+          full_version=$(grep -m1 -oP "ENV REDIS_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
           echo "full_version=${full_version}" >> $GITHUB_ENV
-          
+
           version=${{ matrix.version }}
           image_tag=${version}
           full_image_tag=${full_version}
 
-          if echo ${{ matrix.suite }} | grep -q 'alpine'; then
-            image_tag=${version}-alpine
-            full_image_tag=${full_version}-alpine
-          fi
+          case ${{ matrix.suite }} in
+            debian)
+              image_tag=${version}-trixie
+              full_image_tag=${full_version}-trixie
+              ;;
+            alpine)
+              image_tag=${version}-alpine3.21
+              full_image_tag=${full_version}-alpine3.21
+              ;;
+          esac
+
           echo "image_tag=${image_tag}" >> $GITHUB_ENV
           echo "full_image_tag=${full_image_tag}" >> $GITHUB_ENV
-
-      - name: Build and push ${{ matrix.name }} ${{ matrix.version }} image
+      
+      - name: Build and push image
         if: env.build == 'true'
         uses: docker/build-push-action@v6
         with:
@@ -83,10 +90,12 @@ jobs:
 
       - name: Pull and Push Images
         run: |
-          if [ "${{ matrix.suite }}" = "trixie" ] && [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
+          if [ "${{ matrix.suite }}" = "debian" ] && [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
             full_version=${{ env.full_version }}
             minor_version=$(echo ${{ matrix.version }} | cut -d'.' -f1-2)
             major_version=$(echo ${{ matrix.version }} | cut -d'.' -f1)
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${full_version}
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${minor_version}
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${major_version}
           fi

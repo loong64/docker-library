@@ -13,44 +13,48 @@
       "version": "1.17",
       "arches": {
         "amd64": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-amd64",
-          "sha256": "bbc4136d03ab138b1ad66fa4fc051bafc6cc7ffae632b069a53657279a450de3"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-amd64",
+          "sha256": "4a2a8fcbc77d41f14fc2037ac96545e3a24dcf8ec9c7b0010f5612111838a170"
         },
         "arm64v8": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-arm64",
-          "sha256": "c3805a85d17f4454c23d7059bcb97e1ec1af272b90126e79ed002342de08389b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-arm64",
+          "sha256": "c05db37571617568478d9f71baf1b5c7623cb006db3096307e6cdd7c1dffcee7"
         },
         "arm32v5": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armel",
-          "sha256": "f9969910fa141140438c998cfa02f603bf213b11afd466dcde8fa940e700945d"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armel",
+          "sha256": "761757df6cdc208ba6d257ff6386fc7cc6fe223d8fc61d376d32edab6f68faf1"
         },
         "arm32v6": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf",
-          "sha256": "e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf",
+          "sha256": "91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643"
         },
         "i386": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-i386",
-          "sha256": "087dbb8fe479537e64f9c86fa49ff3b41dee1cbd28739a19aaef83dc8186b1ca"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-i386",
+          "sha256": "32e01bb5910fe3ead279c29d413c6889dd6083ba6738d9a231353cbb8526a78c"
+        },
+        "loong64": {
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-loong64",
+          "sha256": "4aba41555306a44336c52b6f46557910ee806e7682429d6593c906a260154109"
         },
         "mips64le": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-mips64el",
-          "sha256": "87140029d792595e660be0015341dfa1c02d1181459ae40df9f093e471d75b70"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-mips64el",
+          "sha256": "9974b6337969c2f63f481ef2994af2e546c777907315a009167cd1dd44fa759f"
         },
         "ppc64le": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-ppc64el",
-          "sha256": "1891acdcfa70046818ab6ed3c52b9d42fa10fbb7b340eb429c8c7849691dbd76"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-ppc64el",
+          "sha256": "d68337e36705f6d1796b0b6fac0458e9e504ba53a13f5b82678ed36273207dd5"
         },
         "riscv64": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-riscv64",
-          "sha256": "38a6444b57adce135c42d5a3689f616fc7803ddc7a07ff6f946f2ebc67a26ba6"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-riscv64",
+          "sha256": "4adfb89846f4e50a0a3eb5a91f32d98305d5e6e4b206e02d733377a8b15e1d38"
         },
         "s390x": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-s390x",
-          "sha256": "69873bab588192f760547ca1f75b27cfcf106e9f7403fee6fd0600bc914979d0"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-s390x",
+          "sha256": "bc8cb9738e3d1e54d9949498718022a4238e9733c2385b0b65c87b38e113be47"
         },
         "arm32v7": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf",
-          "sha256": "e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf",
+          "sha256": "91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643"
         }
       }
     }
@@ -69,44 +73,48 @@
       "version": "1.17",
       "arches": {
         "amd64": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-amd64",
-          "sha256": "bbc4136d03ab138b1ad66fa4fc051bafc6cc7ffae632b069a53657279a450de3"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-amd64",
+          "sha256": "4a2a8fcbc77d41f14fc2037ac96545e3a24dcf8ec9c7b0010f5612111838a170"
         },
         "arm64v8": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-arm64",
-          "sha256": "c3805a85d17f4454c23d7059bcb97e1ec1af272b90126e79ed002342de08389b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-arm64",
+          "sha256": "c05db37571617568478d9f71baf1b5c7623cb006db3096307e6cdd7c1dffcee7"
         },
         "arm32v5": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armel",
-          "sha256": "f9969910fa141140438c998cfa02f603bf213b11afd466dcde8fa940e700945d"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armel",
+          "sha256": "761757df6cdc208ba6d257ff6386fc7cc6fe223d8fc61d376d32edab6f68faf1"
         },
         "arm32v6": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf",
-          "sha256": "e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf",
+          "sha256": "91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643"
         },
         "i386": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-i386",
-          "sha256": "087dbb8fe479537e64f9c86fa49ff3b41dee1cbd28739a19aaef83dc8186b1ca"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-i386",
+          "sha256": "32e01bb5910fe3ead279c29d413c6889dd6083ba6738d9a231353cbb8526a78c"
+        },
+        "loong64": {
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-loong64",
+          "sha256": "4aba41555306a44336c52b6f46557910ee806e7682429d6593c906a260154109"
         },
         "mips64le": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-mips64el",
-          "sha256": "87140029d792595e660be0015341dfa1c02d1181459ae40df9f093e471d75b70"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-mips64el",
+          "sha256": "9974b6337969c2f63f481ef2994af2e546c777907315a009167cd1dd44fa759f"
         },
         "ppc64le": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-ppc64el",
-          "sha256": "1891acdcfa70046818ab6ed3c52b9d42fa10fbb7b340eb429c8c7849691dbd76"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-ppc64el",
+          "sha256": "d68337e36705f6d1796b0b6fac0458e9e504ba53a13f5b82678ed36273207dd5"
         },
         "riscv64": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-riscv64",
-          "sha256": "38a6444b57adce135c42d5a3689f616fc7803ddc7a07ff6f946f2ebc67a26ba6"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-riscv64",
+          "sha256": "4adfb89846f4e50a0a3eb5a91f32d98305d5e6e4b206e02d733377a8b15e1d38"
         },
         "s390x": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-s390x",
-          "sha256": "69873bab588192f760547ca1f75b27cfcf106e9f7403fee6fd0600bc914979d0"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-s390x",
+          "sha256": "bc8cb9738e3d1e54d9949498718022a4238e9733c2385b0b65c87b38e113be47"
         },
         "arm32v7": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf",
-          "sha256": "e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf",
+          "sha256": "91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643"
         }
       }
     }
@@ -125,44 +133,48 @@
       "version": "1.17",
       "arches": {
         "amd64": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-amd64",
-          "sha256": "bbc4136d03ab138b1ad66fa4fc051bafc6cc7ffae632b069a53657279a450de3"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-amd64",
+          "sha256": "4a2a8fcbc77d41f14fc2037ac96545e3a24dcf8ec9c7b0010f5612111838a170"
         },
         "arm64v8": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-arm64",
-          "sha256": "c3805a85d17f4454c23d7059bcb97e1ec1af272b90126e79ed002342de08389b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-arm64",
+          "sha256": "c05db37571617568478d9f71baf1b5c7623cb006db3096307e6cdd7c1dffcee7"
         },
         "arm32v5": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armel",
-          "sha256": "f9969910fa141140438c998cfa02f603bf213b11afd466dcde8fa940e700945d"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armel",
+          "sha256": "761757df6cdc208ba6d257ff6386fc7cc6fe223d8fc61d376d32edab6f68faf1"
         },
         "arm32v6": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf",
-          "sha256": "e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf",
+          "sha256": "91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643"
         },
         "i386": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-i386",
-          "sha256": "087dbb8fe479537e64f9c86fa49ff3b41dee1cbd28739a19aaef83dc8186b1ca"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-i386",
+          "sha256": "32e01bb5910fe3ead279c29d413c6889dd6083ba6738d9a231353cbb8526a78c"
+        },
+        "loong64": {
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-loong64",
+          "sha256": "4aba41555306a44336c52b6f46557910ee806e7682429d6593c906a260154109"
         },
         "mips64le": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-mips64el",
-          "sha256": "87140029d792595e660be0015341dfa1c02d1181459ae40df9f093e471d75b70"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-mips64el",
+          "sha256": "9974b6337969c2f63f481ef2994af2e546c777907315a009167cd1dd44fa759f"
         },
         "ppc64le": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-ppc64el",
-          "sha256": "1891acdcfa70046818ab6ed3c52b9d42fa10fbb7b340eb429c8c7849691dbd76"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-ppc64el",
+          "sha256": "d68337e36705f6d1796b0b6fac0458e9e504ba53a13f5b82678ed36273207dd5"
         },
         "riscv64": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-riscv64",
-          "sha256": "38a6444b57adce135c42d5a3689f616fc7803ddc7a07ff6f946f2ebc67a26ba6"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-riscv64",
+          "sha256": "4adfb89846f4e50a0a3eb5a91f32d98305d5e6e4b206e02d733377a8b15e1d38"
         },
         "s390x": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-s390x",
-          "sha256": "69873bab588192f760547ca1f75b27cfcf106e9f7403fee6fd0600bc914979d0"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-s390x",
+          "sha256": "bc8cb9738e3d1e54d9949498718022a4238e9733c2385b0b65c87b38e113be47"
         },
         "arm32v7": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf",
-          "sha256": "e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf",
+          "sha256": "91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643"
         }
       }
     }
@@ -181,44 +193,48 @@
       "version": "1.17",
       "arches": {
         "amd64": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-amd64",
-          "sha256": "bbc4136d03ab138b1ad66fa4fc051bafc6cc7ffae632b069a53657279a450de3"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-amd64",
+          "sha256": "4a2a8fcbc77d41f14fc2037ac96545e3a24dcf8ec9c7b0010f5612111838a170"
         },
         "arm64v8": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-arm64",
-          "sha256": "c3805a85d17f4454c23d7059bcb97e1ec1af272b90126e79ed002342de08389b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-arm64",
+          "sha256": "c05db37571617568478d9f71baf1b5c7623cb006db3096307e6cdd7c1dffcee7"
         },
         "arm32v5": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armel",
-          "sha256": "f9969910fa141140438c998cfa02f603bf213b11afd466dcde8fa940e700945d"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armel",
+          "sha256": "761757df6cdc208ba6d257ff6386fc7cc6fe223d8fc61d376d32edab6f68faf1"
         },
         "arm32v6": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf",
-          "sha256": "e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf",
+          "sha256": "91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643"
         },
         "i386": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-i386",
-          "sha256": "087dbb8fe479537e64f9c86fa49ff3b41dee1cbd28739a19aaef83dc8186b1ca"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-i386",
+          "sha256": "32e01bb5910fe3ead279c29d413c6889dd6083ba6738d9a231353cbb8526a78c"
+        },
+        "loong64": {
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-loong64",
+          "sha256": "4aba41555306a44336c52b6f46557910ee806e7682429d6593c906a260154109"
         },
         "mips64le": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-mips64el",
-          "sha256": "87140029d792595e660be0015341dfa1c02d1181459ae40df9f093e471d75b70"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-mips64el",
+          "sha256": "9974b6337969c2f63f481ef2994af2e546c777907315a009167cd1dd44fa759f"
         },
         "ppc64le": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-ppc64el",
-          "sha256": "1891acdcfa70046818ab6ed3c52b9d42fa10fbb7b340eb429c8c7849691dbd76"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-ppc64el",
+          "sha256": "d68337e36705f6d1796b0b6fac0458e9e504ba53a13f5b82678ed36273207dd5"
         },
         "riscv64": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-riscv64",
-          "sha256": "38a6444b57adce135c42d5a3689f616fc7803ddc7a07ff6f946f2ebc67a26ba6"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-riscv64",
+          "sha256": "4adfb89846f4e50a0a3eb5a91f32d98305d5e6e4b206e02d733377a8b15e1d38"
         },
         "s390x": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-s390x",
-          "sha256": "69873bab588192f760547ca1f75b27cfcf106e9f7403fee6fd0600bc914979d0"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-s390x",
+          "sha256": "bc8cb9738e3d1e54d9949498718022a4238e9733c2385b0b65c87b38e113be47"
         },
         "arm32v7": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf",
-          "sha256": "e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf",
+          "sha256": "91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643"
         }
       }
     }
@@ -237,44 +253,48 @@
       "version": "1.17",
       "arches": {
         "amd64": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-amd64",
-          "sha256": "bbc4136d03ab138b1ad66fa4fc051bafc6cc7ffae632b069a53657279a450de3"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-amd64",
+          "sha256": "4a2a8fcbc77d41f14fc2037ac96545e3a24dcf8ec9c7b0010f5612111838a170"
         },
         "arm64v8": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-arm64",
-          "sha256": "c3805a85d17f4454c23d7059bcb97e1ec1af272b90126e79ed002342de08389b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-arm64",
+          "sha256": "c05db37571617568478d9f71baf1b5c7623cb006db3096307e6cdd7c1dffcee7"
         },
         "arm32v5": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armel",
-          "sha256": "f9969910fa141140438c998cfa02f603bf213b11afd466dcde8fa940e700945d"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armel",
+          "sha256": "761757df6cdc208ba6d257ff6386fc7cc6fe223d8fc61d376d32edab6f68faf1"
         },
         "arm32v6": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf",
-          "sha256": "e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf",
+          "sha256": "91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643"
         },
         "i386": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-i386",
-          "sha256": "087dbb8fe479537e64f9c86fa49ff3b41dee1cbd28739a19aaef83dc8186b1ca"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-i386",
+          "sha256": "32e01bb5910fe3ead279c29d413c6889dd6083ba6738d9a231353cbb8526a78c"
+        },
+        "loong64": {
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-loong64",
+          "sha256": "4aba41555306a44336c52b6f46557910ee806e7682429d6593c906a260154109"
         },
         "mips64le": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-mips64el",
-          "sha256": "87140029d792595e660be0015341dfa1c02d1181459ae40df9f093e471d75b70"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-mips64el",
+          "sha256": "9974b6337969c2f63f481ef2994af2e546c777907315a009167cd1dd44fa759f"
         },
         "ppc64le": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-ppc64el",
-          "sha256": "1891acdcfa70046818ab6ed3c52b9d42fa10fbb7b340eb429c8c7849691dbd76"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-ppc64el",
+          "sha256": "d68337e36705f6d1796b0b6fac0458e9e504ba53a13f5b82678ed36273207dd5"
         },
         "riscv64": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-riscv64",
-          "sha256": "38a6444b57adce135c42d5a3689f616fc7803ddc7a07ff6f946f2ebc67a26ba6"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-riscv64",
+          "sha256": "4adfb89846f4e50a0a3eb5a91f32d98305d5e6e4b206e02d733377a8b15e1d38"
         },
         "s390x": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-s390x",
-          "sha256": "69873bab588192f760547ca1f75b27cfcf106e9f7403fee6fd0600bc914979d0"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-s390x",
+          "sha256": "bc8cb9738e3d1e54d9949498718022a4238e9733c2385b0b65c87b38e113be47"
         },
         "arm32v7": {
-          "url": "https://github.com/tianon/gosu/releases/download/1.17/gosu-armhf",
-          "sha256": "e5866286277ff2a2159fb9196fea13e0a59d3f1091ea46ddb985160b94b6841b"
+          "url": "https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf",
+          "sha256": "91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643"
         }
       }
     }
