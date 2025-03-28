@@ -33,6 +33,8 @@
 - ghcr.io/loong64/golang:1.22-trixie
 - ghcr.io/loong64/golang:1.23-alpine
 - ghcr.io/loong64/golang:1.23-trixie
+- ghcr.io/loong64/golang:1.24-alpine
+- ghcr.io/loong64/golang:1.24-trixie
 
 [node](https://github.com/loong64/docker-library/pkgs/container/node)
 - ghcr.io/loong64/node:18-alpine
@@ -42,7 +44,11 @@
 - ghcr.io/loong64/node:20-trixie
 - ghcr.io/loong64/node:20-trixie-slim
 - ghcr.io/loong64/node:22-alpine
+- ghcr.io/loong64/node:22-trixie
+- ghcr.io/loong64/node:22-trixie-slim
 - ghcr.io/loong64/node:23-alpine
+- ghcr.io/loong64/node:23-trixie
+- ghcr.io/loong64/node:23-trixie-slim
 
 [python](https://github.com/loong64/docker-library/pkgs/container/python)
 - ghcr.io/loong64/python:3.9-alpine
@@ -60,6 +66,12 @@
 - ghcr.io/loong64/python:3.13-alpine
 - ghcr.io/loong64/python:3.13-trixie
 - ghcr.io/loong64/python:3.13-slim-trixie
+
+[redis](https://github.com/loong64/docker-library/pkgs/container/redis)
+- ghcr.io/loong64/redis:7.2-alpine
+- ghcr.io/loong64/redis:7.2-trixie
+- ghcr.io/loong64/redis:7.4-alpine
+- ghcr.io/loong64/redis:7.4-trixie
 
 ## 使用方法
 
