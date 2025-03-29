@@ -1,25 +1,25 @@
-name: build(redis)
+name: build(postgres)
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'redis/**'
+      - 'postgres/**'
   workflow_dispatch:
   schedule:
     - cron: '0 0 3 * *'
 
 jobs:
-  redis:
+  postgres:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        name: ['redis']
-        suite: ['debian', 'alpine']
-        version: ['6.2', '7.0', '7.2', '7.4', '7.4-rc']
-        latest_version: ['7.4']
+        name: ['postgres']
+        suite: ['trixie', 'alpine3.21']
+        version: ['13', '14', '15', '16', '17']
+        latest_version: ['17']
 
     steps:
       - name: Checkout ${{ matrix.name }}
@@ -45,24 +45,17 @@ jobs:
             echo "build=false" >> $GITHUB_ENV
             exit 0
           fi
-          full_version=$(grep -m1 -oP "ENV REDIS_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
+          full_version=$(grep -m1 -oP "ENV PG_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile | cut -d'-' -f1)
           echo "full_version=${full_version}" >> $GITHUB_ENV
 
-          version=${{ matrix.version }}
+          version=$(echo ${full_version} | cut -d'.' -f1-2)
           image_tag=${version}
           full_image_tag=${full_version}
 
-          case ${{ matrix.suite }} in
-            debian)
-              image_tag=${version}-trixie
-              full_image_tag=${full_version}-trixie
-              ;;
-            alpine)
-              image_tag=${version}-alpine3.21
-              full_image_tag=${full_version}-alpine3.21
-              ;;
-          esac
-
+          if echo ${{ matrix.suite }} | grep -q 'alpine'; then
+            image_tag=${version}-alpine
+            full_image_tag=${full_version}-alpine
+          fi
           echo "image_tag=${image_tag}" >> $GITHUB_ENV
           echo "full_image_tag=${full_image_tag}" >> $GITHUB_ENV
       

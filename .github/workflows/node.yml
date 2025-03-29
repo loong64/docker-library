@@ -89,8 +89,8 @@ jobs:
         run: |
           if [ "${{ matrix.suite }}" = "trixie" ] && [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
             full_version=${{ env.full_version }}
-            minor_version=$(echo ${{ matrix.version }} | cut -d'.' -f1-2)
-            major_version=$(echo ${{ matrix.version }} | cut -d'.' -f1)
+            minor_version=$(echo ${full_version} | cut -d'.' -f1-2)
+            major_version=$(echo ${full_version} | cut -d'.' -f1)
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${major_version}
           fi
