@@ -1,0 +1,30 @@
+{
+  "11.8": {
+    "milestone": "11.8",
+    "version": "11.8.1",
+    "fullVersion": "1:11.8.1+maria~debsid",
+    "releaseStatus": "RC",
+    "supportType": "Long Term Support",
+    "base": "ubuntu:trixie",
+    "arches": [
+      "amd64",
+      "arm64v8",
+      "ppc64le",
+      "s390x"
+    ]
+  },
+  "11.4": {
+    "milestone": "11.4",
+    "version": "11.4.5",
+    "fullVersion": "1:11.4.5+maria~debsid",
+    "releaseStatus": "Stable",
+    "supportType": "Long Term Support",
+    "base": "ubuntu:trixie",
+    "arches": [
+      "amd64",
+      "arm64v8",
+      "ppc64le",
+      "s390x"
+    ]
+  }
+}
