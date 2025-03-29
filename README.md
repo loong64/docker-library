@@ -73,6 +73,19 @@
 - ghcr.io/loong64/redis:7.4-alpine
 - ghcr.io/loong64/redis:7.4-trixie
 
+[postgres](https://github.com/loong64/docker-library/pkgs/container/postgres)
+- ghcr.io/loong64/postgres:13-alpine
+- ghcr.io/loong64/postgres:13-trixie
+- ghcr.io/loong64/postgres:14-alpine
+- ghcr.io/loong64/postgres:14-trixie
+- ghcr.io/loong64/postgres:15-alpine
+- ghcr.io/loong64/postgres:15-trixie
+- ghcr.io/loong64/postgres:16-alpine
+- ghcr.io/loong64/postgres:16-trixie
+- ghcr.io/loong64/postgres:17-alpine
+- ghcr.io/loong64/postgres:17-trixie
+
+
 ## 使用方法
 
 ```bash
