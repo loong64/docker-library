@@ -85,6 +85,12 @@
 - ghcr.io/loong64/postgres:17-alpine
 - ghcr.io/loong64/postgres:17-trixie
 
+[mariadb](https://github.com/loong64/docker-library/pkgs/container/mariadb)
+- ghcr.io/loong64/mariadb:11.4
+- ghcr.io/loong64/mariadb:11.4-trixie
+- ghcr.io/loong64/mariadb:11.8-rc
+- ghcr.io/loong64/mariadb:11.8-rc-trixie
+
 
 ## 使用方法
 

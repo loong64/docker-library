@@ -81,7 +81,7 @@ jobs:
           if [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
           fi
-          if [ "${{ matrix.version }}" = "11.8"]; then
+          if [ "${{ matrix.version }}" = "11.8" ]; then
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}-rc
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}-rc
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-rc
