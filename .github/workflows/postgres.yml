@@ -48,7 +48,7 @@ jobs:
           full_version=$(grep -m1 -oP "ENV PG_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile | cut -d'-' -f1)
           echo "full_version=${full_version}" >> $GITHUB_ENV
 
-          version=$(echo ${full_version} | cut -d'.' -f1-2)
+          version=${{ matrix.version }}
           image_tag=${version}
           full_image_tag=${full_version}
 
@@ -83,7 +83,7 @@ jobs:
 
       - name: Pull and Push Images
         run: |
-          if [ "${{ matrix.suite }}" = "debian" ] && [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
+          if [ "${{ matrix.suite }}" = "trixie" ] && [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
             full_version=${{ env.full_version }}
             minor_version=$(echo ${full_version} | cut -d'.' -f1-2)
             major_version=$(echo ${full_version} | cut -d'.' -f1)
