@@ -17,12 +17,19 @@ jobs:
       fail-fast: false
       matrix:
         name: ['mariadb']
+        suite: ['trixie']
         version: ['11.4', '11.8']
         latest_version: ['11.4']
 
     steps:
       - name: Checkout ${{ matrix.name }}
         uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: build-${{ matrix.name }}-${{ matrix.suite }}-${{ matrix.version }}-${{ github.sha }}
+          restore-keys: build-${{ matrix.name }}-${{ matrix.suite }}-${{ matrix.version }}-
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
@@ -67,8 +74,8 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
       - name: Prepare configuration
         run: |
@@ -87,3 +94,8 @@ jobs:
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-rc
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-rc
           fi
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
