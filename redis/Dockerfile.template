@@ -158,6 +158,9 @@ RUN set -eux; \
 	echo "$REDIS_DOWNLOAD_SHA *redis.tar.gz" | sha256sum -c -; \
 	mkdir -p /usr/src/redis; \
 	tar -xzf redis.tar.gz -C /usr/src/redis --strip-components=1; \
+# explicitly update autoconf config.guess and config.sub so they support more arches/libcs
+	wget -O /usr/src/redis/deps/jemalloc/build-aux/config.guess 'https://git.savannah.gnu.org/cgit/config.git/plain/config.guess'; \
+	wget -O /usr/src/redis/deps/jemalloc/build-aux/config.sub 'https://git.savannah.gnu.org/cgit/config.git/plain/config.sub'; \
 	rm redis.tar.gz; \
 	\
 # disable Redis protected mode [1] as it is unnecessary in context of Docker
