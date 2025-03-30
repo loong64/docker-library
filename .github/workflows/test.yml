@@ -13,7 +13,7 @@ jobs:
       matrix:
         suite: ['trixie', 'slim-trixie', 'alpine']
         app: ['python']
-        version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        version: ['3.9', '3.10', '3.11', '3.12', '3.13', '3.14-rc']
 
     steps:
     - uses: docker/setup-qemu-action@v3
@@ -30,7 +30,7 @@ jobs:
       matrix:
         suite: ['trixie', 'alpine']
         app: ['golang']
-        version: ['1.22', '1.23']
+        version: ['1.23', '1.24']
 
     steps:
     - uses: docker/setup-qemu-action@v3
@@ -64,7 +64,7 @@ jobs:
       matrix:
         suite: ['trixie', 'alpine']
         app: ['redis']
-        version: ['7.2', '7.4']
+        version: ['6.2', '7.0', '7.2', '7.4', '7.4-rc']
 
     steps:
     - uses: docker/setup-qemu-action@v3
