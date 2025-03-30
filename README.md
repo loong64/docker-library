@@ -91,6 +91,12 @@
 - ghcr.io/loong64/mariadb:11.8-rc
 - ghcr.io/loong64/mariadb:11.8-rc-trixie
 
+[nginx](https://github.com/loong64/docker-library/pkgs/container/nginx)
+- ghcr.io/loong64/nginx:1.26-alpine
+- ghcr.io/loong64/nginx:1.26-trixie
+- ghcr.io/loong64/nginx:1.27-alpine
+- ghcr.io/loong64/nginx:1.27-trixie
+
 
 ## 使用方法
 

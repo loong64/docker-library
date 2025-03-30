@@ -69,10 +69,11 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_image_tag }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_image_tag }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_version }}-${{ matrix.suite }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -153,6 +154,7 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_version }}-${{ matrix.suite }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -219,12 +221,12 @@ jobs:
           full_image_tag=${full_version}
 
           case ${{ matrix.suite }} in
-            debian)
+            debian*)
               image_tag=${version}-trixie
               minor_image_tag=${minor_version}-trixie
               full_image_tag=${full_version}-trixie
               ;;
-            alpine)
+            alpine*)
               image_tag=${version}-alpine3.21
               minor_image_tag=${minor_version}-alpine3.21
               full_image_tag=${full_version}-alpine3.21
@@ -244,11 +246,12 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-perl
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_image_tag }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-perl
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_version }}-${{ matrix.suite }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
