@@ -1,0 +1,267 @@
+name: build(nginx)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'nginx/**'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 3 * *'
+
+jobs:
+  slim:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        name: ['nginx']
+        suite: ['alpine-slim']
+        branch: ['mainline', 'stable']
+        latest_branch: ['stable']
+
+    steps:
+      - name: Checkout ${{ matrix.name }}
+        uses: actions/checkout@v4
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Version
+        run: |
+          echo "build=true" >> $GITHUB_ENV
+          if [ ! -f "${{ matrix.name }}/${{ matrix.branch }}/${{ matrix.suite }}/Dockerfile" ]; then
+            echo "build=false" >> $GITHUB_ENV
+            exit 0
+          fi
+          full_version=$(grep "ENV NGINX_VERSION" ${{ matrix.name }}/${{ matrix.branch }}/debian/Dockerfile | awk '{print $3}')
+          echo "full_version=${full_version}" >> $GITHUB_ENV
+
+          minor_version=$(echo ${full_version} | cut -d'.' -f1-2)
+          echo "minor_version=${minor_version}" >> $GITHUB_ENV
+
+          version=${{ matrix.branch }}
+          image_tag=${version}-alpine3.21-slim
+          minor_image_tag=${minor_version}-alpine3.21-slim
+          full_image_tag=${full_version}-alpine3.21-slim
+
+          echo "image_tag=${image_tag}" >> $GITHUB_ENV
+          echo "minor_image_tag=${minor_image_tag}" >> $GITHUB_ENV
+          echo "full_image_tag=${full_image_tag}" >> $GITHUB_ENV
+      
+      - name: Build and push image
+        if: env.build == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.name }}/${{ matrix.branch }}/${{ matrix.suite }}/
+          platforms: linux/loong64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
+          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+
+  nginx:
+    runs-on: ubuntu-latest
+    needs: slim
+    strategy:
+      fail-fast: false
+      matrix:
+        name: ['nginx']
+        suite: ['debian', 'alpine']
+        branch: ['mainline', 'stable']
+        latest_branch: ['stable']
+
+    steps:
+      - name: Checkout ${{ matrix.name }}
+        uses: actions/checkout@v4
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Version
+        run: |
+          echo "build=true" >> $GITHUB_ENV
+          if [ ! -f "${{ matrix.name }}/${{ matrix.branch }}/${{ matrix.suite }}/Dockerfile" ]; then
+            echo "build=false" >> $GITHUB_ENV
+            exit 0
+          fi
+          full_version=$(grep "ENV NGINX_VERSION" ${{ matrix.name }}/${{ matrix.branch }}/debian/Dockerfile | awk '{print $3}')
+          echo "full_version=${full_version}" >> $GITHUB_ENV
+
+          minor_version=$(echo ${full_version} | cut -d'.' -f1-2)
+          echo "minor_version=${minor_version}" >> $GITHUB_ENV
+
+          version=${{ matrix.branch }}
+          image_tag=${version}
+          full_image_tag=${full_version}
+
+          case ${{ matrix.suite }} in
+            debian)
+              image_tag=${version}-trixie
+              minor_image_tag=${minor_version}-trixie
+              full_image_tag=${full_version}-trixie
+              ;;
+            alpine)
+              image_tag=${version}-alpine3.21
+              minor_image_tag=${minor_version}-alpine3.21
+              full_image_tag=${full_version}-alpine3.21
+              ;;
+          esac
+
+          echo "image_tag=${image_tag}" >> $GITHUB_ENV
+          echo "minor_image_tag=${minor_image_tag}" >> $GITHUB_ENV
+          echo "full_image_tag=${full_image_tag}" >> $GITHUB_ENV
+      
+      - name: Build and push image
+        if: env.build == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.name }}/${{ matrix.branch }}/${{ matrix.suite }}/
+          platforms: linux/loong64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
+          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Prepare configuration
+        run: |
+          wget -qO- https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz | sudo tar -xzf - -C /usr/local/bin/ crane
+          sudo chmod +x /usr/local/bin/crane
+          sudo chown root:root /usr/local/bin/crane
+
+      - name: Pull and Push Images
+        run: |
+          if [ "${{ matrix.branch }}" = "${{ matrix.latest_branch }}" ] || [ "${{ matrix.suite }}" = "debian" ]; then
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:stable
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_version }}
+          fi
+
+
+  perl:
+    runs-on: ubuntu-latest
+    needs: nginx
+    strategy:
+      fail-fast: false
+      matrix:
+        name: ['nginx']
+        suite: ['debian-perl', 'alpine-perl']
+        branch: ['mainline', 'stable']
+        latest_branch: ['stable']
+
+    steps:
+      - name: Checkout ${{ matrix.name }}
+        uses: actions/checkout@v4
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Version
+        run: |
+          echo "build=true" >> $GITHUB_ENV
+          if [ ! -f "${{ matrix.name }}/${{ matrix.branch }}/${{ matrix.suite }}/Dockerfile" ]; then
+            echo "build=false" >> $GITHUB_ENV
+            exit 0
+          fi
+          full_version=$(grep "ENV NGINX_VERSION" ${{ matrix.name }}/${{ matrix.branch }}/debian/Dockerfile | awk '{print $3}')
+          echo "full_version=${full_version}" >> $GITHUB_ENV
+
+          minor_version=$(echo ${full_version} | cut -d'.' -f1-2)
+          echo "minor_version=${minor_version}" >> $GITHUB_ENV
+
+          version=${{ matrix.branch }}
+          image_tag=${version}
+          full_image_tag=${full_version}
+
+          case ${{ matrix.suite }} in
+            debian)
+              image_tag=${version}-trixie
+              minor_image_tag=${minor_version}-trixie
+              full_image_tag=${full_version}-trixie
+              ;;
+            alpine)
+              image_tag=${version}-alpine3.21
+              minor_image_tag=${minor_version}-alpine3.21
+              full_image_tag=${full_version}-alpine3.21
+              ;;
+          esac
+
+          echo "image_tag=${image_tag}" >> $GITHUB_ENV
+          echo "minor_image_tag=${minor_image_tag}" >> $GITHUB_ENV
+          echo "full_image_tag=${full_image_tag}" >> $GITHUB_ENV
+      
+      - name: Build and push image
+        if: env.build == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.name }}/${{ matrix.branch }}/${{ matrix.suite }}/
+          platforms: linux/loong64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-perl
+          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Prepare configuration
+        run: |
+          wget -qO- https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz | sudo tar -xzf - -C /usr/local/bin/ crane
+          sudo chmod +x /usr/local/bin/crane
+          sudo chown root:root /usr/local/bin/crane
+
+      - name: Pull and Push Images
+        run: |
+          if [ "${{ matrix.branch }}" = "${{ matrix.latest_branch }}" ] || [ "${{ matrix.suite }}" = "debian" ]; then
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-perl
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_version }}-perl
+          fi
