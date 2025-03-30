@@ -106,4 +106,4 @@ jobs:
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
-        docker run --rm --platform linux/loong64 ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }} psql --version
+        docker run --rm --platform linux/loong64 ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }} mariadb --version
