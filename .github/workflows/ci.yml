@@ -50,7 +50,7 @@ jobs:
           git commit -am "${commit_message}" || exit 0
           git push origin HEAD:main
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   trigger-workflows:
     needs: generate-jobs
