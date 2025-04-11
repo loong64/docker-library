@@ -42,6 +42,7 @@ RUN set -eux; \
 		libsqlite3-dev \
 		libssl-dev \
 		make \
+		patch \
 		tk-dev \
 		uuid-dev \
 		wget \
@@ -56,6 +57,12 @@ RUN set -eux; \
 	rm python.tar.xz; \
 	\
 	cd /usr/src/python; \
+	case "$PYTHON_VERSION" in \
+		3.9.*|3.10.*|3.11.*) \
+			# Add platform triplets for 64-bit LoongArch (LA64), See: https://github.com/python/cpython/pull/30939
+			wget -O - https://github.com/loong64/docker-library/raw/refs/heads/main/python/Add-platform-triplets-for-64-bit-LoongArch.patch | patch -p1; \
+			;; \
+	esac; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 	./configure \
 		--build="$gnuArch" \
