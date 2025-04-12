@@ -90,3 +90,10 @@ jobs:
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${major_version}
           fi
+          # https://github.com/loong64/binfmt/blob/master/Dockerfile
+          GO_VERSION=1.23
+          ALPINE_VERSION=3.21
+          if [ "${{ matrix.suite }}" = "alpine${ALPINE_VERSION}" ] && [ "${{ matrix.version }}" = "${GO_VERSION}" ]; then
+            crane cp ghcr.io/loong64/golang:${GO_VERSION}-alpine${ALPINE_VERSION} ghcr.io/loong64/golang:${GO_VERSION}-alpine${ALPINE_VERSION}-loong64
+            crane index append -t ghcr.io/loong64/golang:${GO_VERSION}-alpine${ALPINE_VERSION} -m ghcr.io/loong64/golang:${GO_VERSION}-alpine${ALPINE_VERSION}-loong64 -m golang:${GO_VERSION}-alpine${ALPINE_VERSION}
+          fi
