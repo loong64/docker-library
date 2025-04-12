@@ -67,17 +67,29 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Image
+      - name: Build and Push Images
         uses: docker/build-push-action@v6
         with:
           context: ./loongarch64
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }}
-            ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.full_version }}
-            ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.minor_version }}
-            ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.major_version }}
+            ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.full_version }}-loong64
+            ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.minor_version }}-loong64
+            ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.major_version }}-loong64
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Prepare configuration
+        run: |
+          wget -qO- https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz | sudo tar -xzf - -C /usr/local/bin/ crane
+          sudo chmod +x /usr/local/bin/crane
+          sudo chown root:root /usr/local/bin/crane
+
+      - name: Merge Images
+        run: |
+          crane index append -t ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }} -m ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.full_version }}-loong64 -m alpine:${{ steps.get_version.outputs.full_version }}
+          crane cp ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }} ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.full_version }}
+          crane cp ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }} ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.minor_version }}
+          crane cp ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }} ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.major_version }}

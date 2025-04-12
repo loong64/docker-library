@@ -76,59 +76,86 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push sid Image
+      - name: Build and Push sid Images
         uses: docker/build-push-action@v6
         with:
           context: ./docker-debian-artifacts/sid
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/debian:latest
-            ghcr.io/${{ github.repository_owner }}/debian:trixie
+            ghcr.io/${{ github.repository_owner }}/debian:trixie-loong64
             ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }}
-            ghcr.io/${{ github.repository_owner }}/debian:sid
+            ghcr.io/${{ github.repository_owner }}/debian:forky-loong64
+            ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }}
+            ghcr.io/${{ github.repository_owner }}/debian:sid-loong64
             ghcr.io/${{ github.repository_owner }}/debian:sid-${{ env.serial }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Build and Push sid slim Image
+      - name: Prepare configuration
+        run: |
+          wget -qO- https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz | sudo tar -xzf - -C /usr/local/bin/ crane
+          sudo chmod +x /usr/local/bin/crane
+          sudo chown root:root /usr/local/bin/crane
+
+      - name: Merge sid Images
+        run: |
+          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:latest -m ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }} -m debian:trixie
+          crane cp ghcr.io/${{ github.repository_owner }}/debian:latest ghcr.io/${{ github.repository_owner }}/debian:trixie
+          crane cp ghcr.io/${{ github.repository_owner }}/debian:latest ghcr.io/${{ github.repository_owner }}/debian:forky
+          crane cp ghcr.io/${{ github.repository_owner }}/debian:latest ghcr.io/${{ github.repository_owner }}/debian:sid
+
+      - name: Build and Push sid slim Images
         uses: docker/build-push-action@v6
         with:
           context: ./docker-debian-artifacts/sid/slim
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/debian:trixie-slim
+            ghcr.io/${{ github.repository_owner }}/debian:trixie-slim-loong64
             ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }}-slim
-            ghcr.io/${{ github.repository_owner }}/debian:sid-slim
+            ghcr.io/${{ github.repository_owner }}/debian:forky-slim-loong64
+            ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }}-slim
+            ghcr.io/${{ github.repository_owner }}/debian:sid-slim-loong64
             ghcr.io/${{ github.repository_owner }}/debian:sid-${{ env.serial }}-slim
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Build and Push unstable Image
+      - name: Merge sid slim Images
+        run: |
+          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:trixie-slim -m ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }}-slim -m debian:trixie-slim
+          crane cp ghcr.io/${{ github.repository_owner }}/debian:trixie-slim ghcr.io/${{ github.repository_owner }}/debian:sid-slim
+          crane cp ghcr.io/${{ github.repository_owner }}/debian:trixie-slim ghcr.io/${{ github.repository_owner }}/debian:forky-slim
+
+      - name: Build and Push unstable Images
         uses: docker/build-push-action@v6
         with:
           context: ./docker-debian-artifacts/unstable
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/debian:unstable
+            ghcr.io/${{ github.repository_owner }}/debian:unstable-loong64
             ghcr.io/${{ github.repository_owner }}/debian:unstable-${{ env.serial }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Build and Push unstable slim Image
+      - name: Build and Push unstable slim Images
         uses: docker/build-push-action@v6
         with:
           context: ./docker-debian-artifacts/unstable/slim
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/debian:unstable-slim
+            ghcr.io/${{ github.repository_owner }}/debian:unstable-slim-loong64
             ghcr.io/${{ github.repository_owner }}/debian:unstable-${{ env.serial }}-slim
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Pull and unstable Images
+        run: |
+          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:unstable -m ghcr.io/${{ github.repository_owner }}/debian:unstable-${{ env.serial }} -m debian:unstable
+          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:unstable-slim -m ghcr.io/${{ github.repository_owner }}/debian:unstable-${{ env.serial }}-slim -m debian:unstable-slim
