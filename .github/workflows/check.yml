@@ -1,0 +1,49 @@
+name: Check update
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Install dependencies
+        run: |
+          sudo wget -q -O /usr/local/bin/bashbrew https://github.com/docker-library/bashbrew/releases/latest/download/bashbrew-amd64
+          sudo chmod +x /usr/local/bin/bashbrew
+          sudo chown root:root /usr/local/bin/bashbrew
+
+      - name: Check for changes
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+          need_update=false
+          for app in */; do
+            app=${app%/}
+            if [ -f "$app/update.sh" ]; then
+              pushd "$app"
+              chmod +x *.sh
+              ./update.sh
+              popd
+              if git status --porcelain -- $app | grep 'M'; then
+                need_update=true
+              fi
+            fi
+          done
+
+          if [ "$need_update" = true ]; then
+            git status
+            git commit -am "build(app): bump app to latest"
+            git push origin ${{ github.event.pull_request.head.ref }}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
