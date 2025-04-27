@@ -11,7 +11,7 @@ on:
     - cron: '0 0 3 * *'
 
 jobs:
-  golang:
+  php:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -71,8 +71,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
