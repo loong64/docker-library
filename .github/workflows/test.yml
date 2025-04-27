@@ -1,5 +1,9 @@
 name: Check Images
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   schedule:
@@ -124,3 +128,20 @@ jobs:
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
         docker run --rm --platform linux/loong64 ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }} nginx -V
+
+  check-php:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ['alpine3.21']
+        app: ['php']
+        version: ['8.3-cli', '8.3-fpm', '8.3-zts']
+
+    steps:
+    - uses: docker/setup-qemu-action@v3
+    - uses: docker/setup-buildx-action@v3
+
+    - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
+      run: |
+        docker run --rm --platform linux/loong64 ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }} /usr/local/bin/php --version
