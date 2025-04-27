@@ -1,6 +1,13 @@
 name: build(node)
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
+  pull_request:
+    paths:
+      - 'node/**'
   push:
     branches:
       - main
@@ -32,6 +39,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Login to GitHub Container Registry
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -69,7 +77,7 @@ jobs:
         with:
           context: ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/
           platforms: linux/loong64
-          push: true
+          push: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
@@ -86,6 +94,7 @@ jobs:
           sudo chown root:root /usr/local/bin/crane
 
       - name: Pull and Push Images
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
         run: |
           if [ "${{ matrix.suite }}" = "trixie" ] && [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
             full_version=${{ env.full_version }}
