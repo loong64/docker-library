@@ -1,0 +1,78 @@
+name: build(php)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'php/**'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 3 * *'
+
+jobs:
+  golang:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        name: ['php']
+        suite: ['alpine3.21/cli', 'alpine3.21/fpm', 'alpine3.21/zts']
+        version: ['8.3']
+        latest_version: ['8.3']
+
+    steps:
+      - name: Checkout ${{ matrix.name }}
+        uses: actions/checkout@v4
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Version
+        run: |
+          echo "build=true" >> $GITHUB_ENV
+          if [ ! -f "${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile" ]; then
+            echo "build=false" >> $GITHUB_ENV
+            exit 0
+          fi
+          full_version=$(grep -m1 -oP "ENV PHP_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
+          echo "full_version=${full_version}" >> $GITHUB_ENV
+          
+          version=${{ matrix.version }}
+          image_tag=${version}
+          full_image_tag=${full_version}
+
+          if echo ${{ matrix.suite }} | grep -q 'alpine'; then
+            alpine_version=$(echo ${{ matrix.suite }} |awk -F '/' '{print $1}')
+            php_type=$(echo ${{ matrix.suite }} |awk -F '/' '{print $2}')
+            image_tag=${version}-${php_type}-${alpine_version}
+            full_image_tag=${full_version}-${php_type}-${alpine_version}
+          fi
+          echo "image_tag=${image_tag}" >> $GITHUB_ENV
+          echo "full_image_tag=${full_image_tag}" >> $GITHUB_ENV
+
+      - name: Build and push ${{ matrix.name }} ${{ matrix.version }} image
+        if: env.build == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/
+          platforms: linux/loong64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
+          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
