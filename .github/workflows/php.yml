@@ -18,7 +18,7 @@ jobs:
       matrix:
         name: ['php']
         suite: ['alpine3.21/cli', 'alpine3.21/fpm', 'alpine3.21/zts']
-        version: ['8.3']
+        version: ['8.1', '8.2', '8.3']
         latest_version: ['8.3']
 
     steps:
