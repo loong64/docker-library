@@ -136,7 +136,7 @@ jobs:
       matrix:
         suite: ['alpine3.21']
         app: ['php']
-        version: ['8.3-cli', '8.3-fpm', '8.3-zts']
+        version: ['8.1-cli', '8.1-fpm', '8.1-zts', '8.2-cli', '8.2-fpm', '8.2-zts', '8.3-cli', '8.3-fpm', '8.3-zts']
 
     steps:
     - uses: docker/setup-qemu-action@v3
