@@ -1,6 +1,17 @@
 name: build(mariadb)
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - 'mariadb/**'
   push:
     branches:
       - main
