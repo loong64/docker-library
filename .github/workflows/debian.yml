@@ -30,7 +30,7 @@ jobs:
         with:
           repository: loong64/docker-debian-artifacts
           path: docker-debian-artifacts
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Build debuerreotype
         run: |
