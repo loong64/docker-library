@@ -113,8 +113,8 @@ RUN set -eux; \
 	mv src/include/pg_config_manual.h.new src/include/pg_config_manual.h; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 # explicitly update autoconf config.guess and config.sub so they support more arches/libcs
-	wget -O config/config.guess 'https://git.savannah.gnu.org/cgit/config.git/plain/config.guess'; \
-	wget -O config/config.sub 'https://git.savannah.gnu.org/cgit/config.git/plain/config.sub'; \
+	wget -O config/config.guess 'https://github.com/cgitmirror/config/raw/refs/heads/master/config.guess'; \
+	wget -O config/config.sub 'https://github.com/cgitmirror/config/raw/refs/heads/master/config.sub'; \
 	\
 # https://git.alpinelinux.org/aports/tree/community/postgresql15/APKBUILD?h=3.21-stable&id=40544ade947bec1798edb0f749f4e967e842624b#n172
 	export LLVM_CONFIG="/usr/lib/llvm19/bin/llvm-config"; \
