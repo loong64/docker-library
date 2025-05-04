@@ -33,6 +33,17 @@ jobs:
         latest_version: ['11.4']
 
     steps:
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+
       - name: Checkout ${{ matrix.name }}
         uses: actions/checkout@v4
 
