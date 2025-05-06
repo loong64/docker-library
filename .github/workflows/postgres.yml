@@ -76,7 +76,7 @@ jobs:
         with:
           context: ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/
           platforms: linux/loong64
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
