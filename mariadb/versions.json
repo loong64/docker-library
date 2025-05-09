@@ -15,8 +15,8 @@
   },
   "11.4": {
     "milestone": "11.4",
-    "version": "11.4.6",
-    "fullVersion": "1:11.4.6+maria~debsid",
+    "version": "11.4.5",
+    "fullVersion": "1:11.4.5+maria~debsid",
     "releaseStatus": "Stable",
     "supportType": "Long Term Support",
     "base": "ubuntu:trixie",
