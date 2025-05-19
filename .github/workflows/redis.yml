@@ -100,6 +100,7 @@ jobs:
           sudo chown root:root /usr/local/bin/crane
 
       - name: Pull and Push Images
+        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
         run: |
           if [ "${{ matrix.suite }}" = "debian" ] && [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
             full_version=${{ env.full_version }}
