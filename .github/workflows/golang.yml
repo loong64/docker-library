@@ -117,7 +117,7 @@ jobs:
                 -m "golang:$full_version-$suite"
               crane cp "$repo:$full_version-$suite" "$repo:$minor_version-$suite"
               if [ "$suite" = "alpine3.22" ]; then
-                for tag in alpine "$minor_version-alpine" "$major_version-alpine" 1-alpine; do
+                for tag in alpine "$minor_version-alpine" "$major_version-alpine"; do
                   crane cp "$repo:$full_version-$suite" "$repo:$tag"
                 done
               fi
