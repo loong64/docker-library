@@ -1,5 +1,5 @@
 {{ if env.variant == "alpine" then ( -}}
-FROM ghcr.io/loong64/alpine:{{ .alpine.version }}
+FROM ghcr.io/loong64/alpine:3.21
 {{ ) else ( -}}
 FROM ghcr.io/loong64/debian:trixie-slim
 {{ ) end -}}
