@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         name: ['node']
-        suite: ['trixie', 'trixie-slim', 'alpine3.21']
+        suite: ['trixie', 'trixie-slim', 'alpine3.21', 'alpine3.22']
         version: ['20', '22', '23', '24']
         latest_version: ['24']
 
@@ -64,8 +64,8 @@ jobs:
           full_image_tag=${full_version}
 
           if echo ${{ matrix.suite }} | grep -q 'alpine'; then
-            image_tag=${version}-alpine
-            full_image_tag=${full_version}-alpine
+            image_tag=${version}-${{ matrix.suite }}
+            full_image_tag=${full_version}-${{ matrix.suite }}
           fi
           if echo ${{ matrix.suite }} | grep -q 'slim'; then
             image_tag=${version}-slim
@@ -99,10 +99,34 @@ jobs:
       - name: Pull and Push Images
         if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
         run: |
-          if [ "${{ matrix.suite }}" = "trixie" ] && [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
-            full_version=${{ env.full_version }}
-            minor_version=$(echo ${full_version} | cut -d'.' -f1-2)
-            major_version=$(echo ${full_version} | cut -d'.' -f1)
-            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
-            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${major_version}
-          fi
+          full_version="${{ env.full_version }}"
+          minor_version=$(echo "$full_version" | cut -d'.' -f1-2)
+          major_version=$(echo "$full_version" | cut -d'.' -f1)
+          repo="ghcr.io/${{ github.repository_owner }}/node"
+          suite="${{ matrix.suite }}"
+          version="${{ matrix.version }}"
+          latest_version="${{ matrix.latest_version }}"
+
+          case "$suite" in
+            trixie)
+              if [ "$version" = "$latest_version" ]; then
+                crane cp "$repo:$version-$suite" "$repo:latest"
+                crane cp "$repo:$version-$suite" "$repo:$major_version"
+              fi
+              ;;
+            alpine*)
+              crane cp "$repo:$full_version-$suite" "$repo:$full_version-$suite-loong64"
+              crane index append -t "$repo:$full_version-$suite" \
+                -m "$repo:$full_version-$suite-loong64" \
+                -m "node:$full_version-$suite"
+              crane cp "$repo:$full_version-$suite" "$repo:$minor_version-$suite"
+              if [ "$suite" = "alpine3.22" ]; then
+                for tag in alpine "$minor_version-alpine" "$major_version-alpine"; do
+                  crane cp "$repo:$full_version-$suite" "$repo:$tag"
+                done
+              fi
+              ;;
+            *)
+              echo "No push actions for suite: $suite"
+              ;;
+          esac
