@@ -46,7 +46,7 @@ declare -A pkg=(
 # Remember to update pkgosschecksum when changing this
 declare -A dynpkg=(
     [mainline]=1
-    [stable]=2
+    [stable]=1
 )
 
 declare -A debian=(
@@ -73,7 +73,7 @@ declare -A rev=(
 # Used in builds for architectures not packaged by nginx.org
 declare -A pkgosschecksum=(
     [mainline]='c773d98b567bd585c17f55702bf3e4c7d82b676bfbde395270e90a704dca3c758dfe0380b3f01770542b4fd9bed1f1149af4ce28bfc54a27a96df6b700ac1745'
-    [stable]='3a4e869eded0c71e92f522e94edffea7fbfb5e78886ea7e484342fa2e028c62099a67d08860c249bf93776da97b924225e0d849dbb4697b298afe5421d7d6fea'
+    [stable]='517bc18954ccf4efddd51986584ca1f37966833ad342a297e1fe58fd0faf14c5a4dabcb23519dca433878a2927a95d6bea05a6749ee2fa67a33bf24cdc41b1e4'
 )
 
 get_packages() {
