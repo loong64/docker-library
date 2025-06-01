@@ -6,6 +6,7 @@ supportedDebianSuites=(
 	trixie
 )
 supportedAlpineVersions=(
+	3.22
 	3.21
 )
 defaultDebianSuite="${supportedDebianSuites[0]}"

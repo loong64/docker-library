@@ -119,7 +119,7 @@ jobs:
       matrix:
         suite: ['trixie', 'alpine']
         app: ['nginx']
-        version: ['1.26', '1.27']
+        version: ['1.27', '1.28']
 
     steps:
     - uses: docker/setup-qemu-action@v3
