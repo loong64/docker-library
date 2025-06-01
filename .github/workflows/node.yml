@@ -120,6 +120,7 @@ jobs:
                 -m "$repo:$full_version-$suite-loong64" \
                 -m "node:$full_version-$suite"
               crane cp "$repo:$full_version-$suite" "$repo:$minor_version-$suite"
+              crane cp "$repo:$full_version-$suite" "$repo:$major_version-$suite"
               if [ "$suite" = "alpine3.22" ]; then
                 crane cp "$repo:$full_version-$suite" "$repo:$full_version-alpine"
                 crane cp "$repo:$full_version-$suite" "$repo:$minor_version-alpine"
