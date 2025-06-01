@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['v3.21', 'edge']
+        version: ['v3.21', 'v3.22', 'edge']
+        latest_version: ['v3.22']
 
     steps:
       - uses: docker/setup-qemu-action@v3
@@ -45,7 +46,7 @@ jobs:
               full_version=$(grep -oP '(?<=alpine-minirootfs-)[0-9]+\.[0-9]+\.[0-9]+' loongarch64/Dockerfile)
               minor_version=$(echo $full_version | grep -oP '^[0-9]+\.[0-9]+')
               major_version=$(echo $full_version | grep -oP '^[0-9]+')
-              full_image_tag=alpine:latest
+              full_image_tag=alpine:${full_version}
               ;;
           esac
           echo "full_version=$full_version" >> $GITHUB_OUTPUT
@@ -76,7 +77,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.full_version }}-loong64
             ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.minor_version }}-loong64
-            ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.major_version }}-loong64
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -92,4 +92,7 @@ jobs:
           crane index append -t ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }} -m ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.full_version }}-loong64 -m alpine:${{ steps.get_version.outputs.full_version }}
           crane cp ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }} ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.full_version }}
           crane cp ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }} ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.minor_version }}
-          crane cp ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }} ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.major_version }}
+          if [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }} ghcr.io/${{ github.repository_owner }}/alpine:latest
+            crane cp ghcr.io/${{ github.repository_owner }}/${{ steps.get_version.outputs.full_image_tag }} ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.major_version }}
+          fi
