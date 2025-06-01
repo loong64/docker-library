@@ -89,8 +89,8 @@ for version in "${versions[@]}"; do
 
 	fullVersion=
 	for suite in "${supportedDebianSuites[@]}"; do
-		fetch_suite_package_list "bookworm" "$version" 'amd64'
-		suiteVersions="$(awk_package_list "bookworm" "$version" 'amd64' '
+		fetch_suite_package_list "trixie" "$version" 'amd64'
+		suiteVersions="$(awk_package_list "trixie" "$version" 'amd64' '
 			$1 == "Package" { pkg = $2 }
 			$1 == "Version" && pkg == "postgresql-" version { print $2 }
 		' | sort -V)"
@@ -107,8 +107,8 @@ for version in "${versions[@]}"; do
 		versionArches='[]'
 		fetch_suite_arches "$suite"
 		for arch in ${suiteArches["$suite"]}; do
-			fetch_suite_package_list "bookworm" "$version" "$arch"
-			archVersion="$(awk_package_list "bookworm" "$version" "$arch" '
+			fetch_suite_package_list "trixie" "$version" "$arch"
+			archVersion="$(awk_package_list "trixie" "$version" "$arch" '
 				$1 == "Package" { pkg = $2 }
 				$1 == "Version" && pkg == "postgresql-" version { print $2; exit }
 			')"
