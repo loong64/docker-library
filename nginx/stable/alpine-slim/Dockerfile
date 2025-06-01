@@ -7,7 +7,7 @@ FROM ghcr.io/loong64/alpine:3.21
 
 LABEL maintainer="NGINX Docker Maintainers <docker-maint@nginx.com>"
 
-ENV NGINX_VERSION  1.26.3
+ENV NGINX_VERSION  1.28.0
 ENV PKG_RELEASE    1
 ENV DYNPKG_RELEASE 2
 

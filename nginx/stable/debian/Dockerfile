@@ -7,7 +7,7 @@ FROM ghcr.io/loong64/debian:trixie-slim
 
 LABEL maintainer="NGINX Docker Maintainers <docker-maint@nginx.com>"
 
-ENV NGINX_VERSION   1.26.3
+ENV NGINX_VERSION   1.28.0
 ENV PKG_RELEASE     1~trixie
 ENV DYNPKG_RELEASE  2~trixie
 

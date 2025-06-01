@@ -3,7 +3,7 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM ghcr.io/loong64/nginx:1.26.3-alpine
+FROM ghcr.io/loong64/nginx:1.28.0-alpine
 
 RUN set -x \
     && apkArch="$(cat /etc/apk/arch)" \
