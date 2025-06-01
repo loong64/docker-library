@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         name: ['golang']
-        suite: ['trixie', 'alpine3.21']
+        suite: ['trixie', 'alpine3.21', 'alpine3.22']
         version: ['1.23', '1.24']
         latest_version: ['1.24']
 
@@ -64,8 +64,8 @@ jobs:
           full_image_tag=${full_version}
 
           if echo ${{ matrix.suite }} | grep -q 'alpine'; then
-            image_tag=${version}-alpine
-            full_image_tag=${full_version}-alpine
+            image_tag=${version}-${{ matrix.suite }}
+            full_image_tag=${full_version}-${{ matrix.suite }}
           fi
           echo "image_tag=${image_tag}" >> $GITHUB_ENV
           echo "full_image_tag=${full_image_tag}" >> $GITHUB_ENV
@@ -93,19 +93,36 @@ jobs:
           sudo chown root:root /usr/local/bin/crane
 
       - name: Pull and Push Images
-        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         run: |
-          if [ "${{ matrix.suite }}" = "trixie" ] && [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
-            full_version=${{ env.full_version }}
-            minor_version=$(echo ${full_version} | cut -d'.' -f1-2)
-            major_version=$(echo ${full_version} | cut -d'.' -f1)
-            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
-            crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${major_version}
-          fi
-          # https://github.com/loong64/binfmt/blob/master/Dockerfile
-          GO_VERSION=1.23
-          ALPINE_VERSION=3.21
-          if [ "${{ matrix.suite }}" = "alpine${ALPINE_VERSION}" ] && [ "${{ matrix.version }}" = "${GO_VERSION}" ]; then
-            crane cp ghcr.io/loong64/golang:${GO_VERSION}-alpine${ALPINE_VERSION} ghcr.io/loong64/golang:${GO_VERSION}-alpine${ALPINE_VERSION}-loong64
-            crane index append -t ghcr.io/loong64/golang:${GO_VERSION}-alpine${ALPINE_VERSION} -m ghcr.io/loong64/golang:${GO_VERSION}-alpine${ALPINE_VERSION}-loong64 -m golang:${GO_VERSION}-alpine${ALPINE_VERSION}
-          fi
+          full_version="${{ env.full_version }}"
+          minor_version=$(echo "$full_version" | cut -d'.' -f1-2)
+          major_version=$(echo "$full_version" | cut -d'.' -f1)
+          repo="ghcr.io/${{ github.repository_owner }}/golang"
+          suite="${{ matrix.suite }}"
+          version="${{ matrix.version }}"
+          latest_version="${{ matrix.latest_version }}"
+
+          case "$suite" in
+            trixie)
+              if [ "$version" = "$latest_version" ]; then
+                crane cp "$repo:$version-$suite" "$repo:latest"
+                crane cp "$repo:$version-$suite" "$repo:$major_version"
+              fi
+              ;;
+            alpine*)
+              crane cp "$repo:$full_version-$suite" "$repo:$full_version-$suite-loong64"
+              crane index append -t "$repo:$full_version-$suite" \
+                -m "$repo:$full_version-$suite-loong64" \
+                -m "golang:$full_version-$suite"
+              crane cp "$repo:$full_version-$suite" "$repo:$minor_version-$suite"
+              if [ "$suite" = "alpine3.22" ]; then
+                for tag in alpine "$minor_version-alpine" "$major_version-alpine" 1-alpine; do
+                  crane cp "$repo:$full_version-$suite" "$repo:$tag"
+                done
+              fi
+              ;;
+            *)
+              echo "No push actions for suite: $suite"
+              ;;
+          esac

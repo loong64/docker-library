@@ -162,6 +162,7 @@ for version in "${versions[@]}"; do
 		variants: [
 			"trixie",
 			(
+				"3.22",
 				"3.21",
 				empty
 			| "alpine" + .)
