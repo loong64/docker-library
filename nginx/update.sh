@@ -13,13 +13,13 @@ declare branches=(
 # Remember to update pkgosschecksum when changing this.
 declare -A nginx=(
     [mainline]='1.27.5'
-    [stable]='1.26.3'
+    [stable]='1.28.0'
 )
 
 # Current njs versions
 declare -A njs=(
-    [mainline]='0.8.9'
-    [stable]='0.8.9'
+    [mainline]='0.8.10'
+    [stable]='0.8.10'
 )
 
 # Current njs patchlevel version
@@ -32,7 +32,7 @@ declare -A njspkg=(
 # Current otel versions
 declare -A otel=(
     [mainline]='0.1.2'
-    [stable]='0.1.1'
+    [stable]='0.1.2'
 )
 
 # Current nginx package patchlevel version
