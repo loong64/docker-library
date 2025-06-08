@@ -135,12 +135,12 @@ RUN set -ex; \
 # we have to build postgresql-common-dev first because postgresql-$PG_MAJOR shares "debian/rules" logic with it: https://salsa.debian.org/postgresql/postgresql/-/commit/f4338a0d28cf4541956bddb0f4e444ba9dba81b9More actions
 			apt-get build-dep -y postgresql-common-dev; \
 			apt-get source --compile postgresql-common-dev; \
+			find . -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} +; \
 			_update_repo; \
 # we need DEBIAN_FRONTEND on postgresql-13 for slapd ("Please enter the password for the admin entry in your LDAP directory."); see https://bugs.debian.org/929417
 			DEBIAN_FRONTEND=noninteractive \
 			apt-get build-dep -y "postgresql-$PG_MAJOR=$PG_VERSION"; \
 			apt-get source --compile "postgresql-$PG_MAJOR=$PG_VERSION"; \
-			find . -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} +; \
 			\
 # we don't remove APT lists here because they get re-downloaded and removed later
 			\
