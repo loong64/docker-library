@@ -112,6 +112,7 @@ RUN set -ex; \
 			savedAptMark="$(apt-mark showmanual)"; \
 			\
 			tempDir="$(mktemp -d)"; \
+			chmod 755 "$tempDir"; \
 			cd "$tempDir"; \
 			\
 # create a temporary local APT repo to install from (so that dependency resolution can be handled by APT, as it should be)
@@ -137,6 +138,7 @@ RUN set -ex; \
 			_update_repo; \
 			apt-get build-dep -y "postgresql-$PG_MAJOR=$PG_VERSION"; \
 			apt-get source --compile "postgresql-$PG_MAJOR=$PG_VERSION"; \
+			find . -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} +; \
 			\
 # we don't remove APT lists here because they get re-downloaded and removed later
 			\
@@ -163,7 +165,7 @@ RUN set -ex; \
 	if [ -n "$tempDir" ]; then \
 # if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
 		apt-get purge -y --auto-remove; \
-		rm -rf "$tempDir" /etc/apt/sources.list.d/temp.list; \
+		# rm -rf "$tempDir" /etc/apt/sources.list.d/temp.list; \
 	fi; \
 	\
 # some of the steps above generate a lot of "*.pyc" files (and setting "PYTHONDONTWRITEBYTECODE" beforehand doesn't propagate properly for some reason), so we clean them up manually (as long as they aren't owned by a package)
