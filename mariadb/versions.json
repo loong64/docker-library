@@ -3,7 +3,7 @@
     "milestone": "11.8",
     "version": "11.8.2",
     "fullVersion": "1:11.8.2+maria~debsid",
-    "releaseStatus": "RC",
+    "releaseStatus": "Stable",
     "supportType": "Long Term Support",
     "base": "ubuntu:trixie",
     "arches": [
