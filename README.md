@@ -97,6 +97,21 @@
 - ghcr.io/loong64/nginx:1.27-alpine
 - ghcr.io/loong64/nginx:1.27-trixie
 
+[php](https://github.com/loong64/docker-library/pkgs/container/php)
+- 8.1-cli-alpine3.21
+- 8.1-fpm-alpine3.21
+- 8.1-zts-alpine3.21
+- 8.2-cli-alpine3.21
+- 8.2-fpm-alpine3.21
+- 8.2-zts-alpine3.21
+- 8.3-cli-alpine3.21
+- 8.3-fpm-alpine3.21
+- 8.3-zts-alpine3.21
+
+[nextcloud](https://github.com/loong64/docker-library/pkgs/container/nextcloud)
+- 29-fpm-alpine
+- 30-fpm-alpine
+- 31-fpm-alpine
 
 ## 使用方法
 
