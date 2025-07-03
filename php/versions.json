@@ -1,38 +1,38 @@
 {
   "8.1": {
-    "ascUrl": "https://www.php.net/distributions/php-8.1.32.tar.xz.asc",
-    "sha256": "c582ac682a280bbc69bc2186c21eb7e3313cc73099be61a6bc1d2cd337cbf383",
-    "url": "https://www.php.net/distributions/php-8.1.32.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.1.33.tar.xz.asc",
+    "sha256": "9db83bf4590375562bc1a10b353cccbcf9fcfc56c58b7c8fb814e6865bb928d1",
+    "url": "https://www.php.net/distributions/php-8.1.33.tar.xz",
     "variants": [
       "alpine3.21/cli",
       "alpine3.21/fpm",
       "alpine3.21/zts"
     ],
-    "version": "8.1.32"
+    "version": "8.1.33"
   },
   "8.1-rc": null,
   "8.2": {
-    "ascUrl": "https://www.php.net/distributions/php-8.2.28.tar.xz.asc",
-    "sha256": "af8c9153153a7f489153b7a74f2f29a5ee36f5cb2c6c6929c98411a577e89c91",
-    "url": "https://www.php.net/distributions/php-8.2.28.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.2.29.tar.xz.asc",
+    "sha256": "475f991afd2d5b901fb410be407d929bc00c46285d3f439a02c59e8b6fe3589c",
+    "url": "https://www.php.net/distributions/php-8.2.29.tar.xz",
     "variants": [
       "alpine3.21/cli",
       "alpine3.21/fpm",
       "alpine3.21/zts"
     ],
-    "version": "8.2.28"
+    "version": "8.2.29"
   },
   "8.2-rc": null,
   "8.3": {
-    "ascUrl": "https://www.php.net/distributions/php-8.3.22.tar.xz.asc",
-    "sha256": "66c86889059bd27ccf460590ca48fcaf3261349cc9bdba2023ac6a265beabf36",
-    "url": "https://www.php.net/distributions/php-8.3.22.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.3.23.tar.xz.asc",
+    "sha256": "08be64700f703bca6ff1284bf1fdaffa37ae1b9734b6559f8350248e8960a6db",
+    "url": "https://www.php.net/distributions/php-8.3.23.tar.xz",
     "variants": [
       "alpine3.21/cli",
       "alpine3.21/fpm",
       "alpine3.21/zts"
     ],
-    "version": "8.3.22"
+    "version": "8.3.23"
   },
   "8.3-rc": null
 }
