@@ -1,4 +1,10 @@
-FROM ghcr.io/loong64/debian:{{ env.variant }}-slim
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+
+FROM ghcr.io/loong64/debian:trixie-slim
 
 # explicitly set user/group IDs
 RUN set -eux; \
@@ -80,10 +86,10 @@ RUN set -ex; \
 	gpgconf --kill all; \
 	rm -rf "$GNUPGHOME"
 
-ENV PG_MAJOR {{ env.version }}
+ENV PG_MAJOR 18
 ENV PATH $PATH:/usr/lib/postgresql/$PG_MAJOR/bin
 
-ENV PG_VERSION {{ .[env.variant].version }}
+ENV PG_VERSION 18~beta1-1.pgdg120+1
 
 RUN set -ex; \
 	\
@@ -91,9 +97,9 @@ RUN set -ex; \
 	export PYTHONDONTWRITEBYTECODE=1; \
 	\
 	dpkgArch="$(dpkg --print-architecture)"; \
-	aptRepo="[ signed-by=/usr/local/share/keyrings/postgres.gpg.asc ] http://apt.postgresql.org/pub/repos/apt/ {{ env.variant }}-pgdg main $PG_MAJOR"; \
+	aptRepo="[ signed-by=/usr/local/share/keyrings/postgres.gpg.asc ] http://apt.postgresql.org/pub/repos/apt/ trixie-pgdg main $PG_MAJOR"; \
 	case "$dpkgArch" in \
-		{{ .[env.variant].arches | join(" | ") }}) \
+		amd64 | arm64 | ppc64el) \
 # arches officialy built by upstream
 			echo "deb $aptRepo" > /etc/apt/sources.list.d/pgdg.list; \
 			apt-get update; \
@@ -131,10 +137,6 @@ RUN set -ex; \
 			apt-get source --compile postgresql-common-dev; \
 			find . -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} +; \
 			_update_repo; \
-{{ if .major == 13 then ( -}}
-# we need DEBIAN_FRONTEND on postgresql-13 for slapd ("Please enter the password for the admin entry in your LDAP directory."); see https://bugs.debian.org/929417
-			DEBIAN_FRONTEND=noninteractive \
-{{ ) else "" end -}}
 			apt-get build-dep -y "postgresql-$PG_MAJOR=$PG_VERSION"; \
 			apt-get source --compile "postgresql-$PG_MAJOR=$PG_VERSION"; \
 			\
@@ -181,21 +183,10 @@ RUN set -eux; \
 
 RUN install --verbose --directory --owner postgres --group postgres --mode 3777 /var/run/postgresql
 
-{{ if .major >= 18 then ( -}}
-#
-# NOTE: in 18+, PGDATA has changed to match the pg_ctlcluster standard directory structure, and the VOLUME has moved from /var/lib/postgresql/data to /var/lib/postgresql
-#
-ENV PGDATA /var/lib/postgresql/{{ .major | tostring }}/docker
-RUN ln -svT . /var/lib/postgresql/data # https://github.com/docker-library/postgres/pull/1259#issuecomment-2215477494
-VOLUME /var/lib/postgresql
-# ("/var/lib/postgresql" is already pre-created with suitably usable permissions above)
-{{ ) else ( -}}
-
 ENV PGDATA /var/lib/postgresql/data
 # this 1777 will be replaced by 0700 at runtime (allows semi-arbitrary "--user" values)
 RUN install --verbose --directory --owner postgres --group postgres --mode 1777 "$PGDATA"
 VOLUME /var/lib/postgresql/data
-{{ ) end -}}
 
 COPY docker-entrypoint.sh docker-ensure-initdb.sh /usr/local/bin/
 RUN ln -sT docker-ensure-initdb.sh /usr/local/bin/docker-enforce-initdb.sh
