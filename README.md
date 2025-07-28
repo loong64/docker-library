@@ -100,15 +100,8 @@ Docker Engine for loong64，GitHub Actions 自动化构建 Docker Engine。
 | [nginx](https://ghcr.io/loong64/nginx)                   | `1.27-trixie`        | `docker pull ghcr.io/loong64/nginx:1.27-trixie`          |
 | [nginx](https://ghcr.io/loong64/nginx)                   | `1.28-alpine`        | `docker pull ghcr.io/loong64/nginx:1.28-alpine`          |
 | [nginx](https://ghcr.io/loong64/nginx)                   | `1.28-trixie`        | `docker pull ghcr.io/loong64/nginx:1.28-trixie`          |
-| [nextcloud](https://ghcr.io/loong64/nextcloud)           | `29-fpm-alpine`      | `docker pull ghcr.io/loong64/nextcloud:29-fpm-alpine`    |
-| [nextcloud](https://ghcr.io/loong64/nextcloud)           | `30-fpm-alpine`      | `docker pull ghcr.io/loong64/nextcloud:30-fpm-alpine`    |
-| [nextcloud](https://ghcr.io/loong64/nextcloud)           | `31-fpm-alpine`      | `docker pull ghcr.io/loong64/nextcloud:31-fpm-alpine`    |
-| [n8n](https://ghcr.io/loong64/n8n)                       | `1.98.2`             | `docker pull ghcr.io/loong64/n8n:1.98.2`                 |
-| [cloudreve](https://ghcr.io/loong64/cloudreve)           | `3.8.3`              | `docker pull ghcr.io/loong64/cloudreve:3.8.3`            |
-| [cloudreve](https://ghcr.io/loong64/cloudreve)           | `4.0.0`              | `docker pull ghcr.io/loong64/cloudreve:4.0.0`            |
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg13`               | `docker pull ghcr.io/loong64/pgvector:pg13`              |
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg14`               | `docker pull ghcr.io/loong64/pgvector:pg14`              |
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg15`               | `docker pull ghcr.io/loong64/pgvector:pg15`              |
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg16`               | `docker pull ghcr.io/loong64/pgvector:pg16`              |
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg17`               | `docker pull ghcr.io/loong64/pgvector:pg17`              |
-| [openlist](https://ghcr.io/loong64/openlist)             | `v4.0.0`             | `docker pull ghcr.io/loong64/openlist:v4.0.0`            |
