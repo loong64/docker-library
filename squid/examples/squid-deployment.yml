@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: squid-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: microk8s-hostpath
+  resources:
+    requests:
+      storage: 500M
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: squid-service
+  labels:
+    app: squid
+spec:
+  ports:
+  - port: 3128
+  selector:
+    app: squid
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: squid-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: squid
+  template:
+    metadata:
+      labels:
+        app: squid
+    spec:
+      containers:
+      - name: squid
+        image: ghcr.io/loong64/squid:edge
+        ports:
+        - containerPort: 3128
+          name: squid
+          protocol: TCP
+        volumeMounts:
+        - name: squid-config-volume
+          mountPath: /etc/squid/squid.conf
+          subPath: squid.conf
+        - name: squid-data
+          mountPath: /var/spool/squid
+      volumes:
+        - name: squid-config-volume
+          configMap:
+            name: squid-config
+            items:
+            - key: squid
+              path: squid.conf
+        - name: squid-data
+          persistentVolumeClaim:
+            claimName: squid-volume-claim

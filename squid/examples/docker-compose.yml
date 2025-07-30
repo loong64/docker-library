@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  squid:
+    image: ghcr.io/loong64/squid:edge
+    ports:
+      - '3128:3128'
+    volumes:
+      - 'squid_cache:/var/spool/squid'
+      - 'squid_logs:/var/log/squid'
+volumes:
+  squid_cache:
+  squid_logs:
