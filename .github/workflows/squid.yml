@@ -5,6 +5,18 @@ concurrency:
   cancel-in-progress: true
 
 on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - 'squid/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'squid/**'
   workflow_dispatch:
   schedule:
     - cron: '0 0 2 * *'
@@ -12,6 +24,10 @@ on:
 jobs:
   squid:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        name: ['squid']
 
     steps:
       - name: Checkout
@@ -33,11 +49,12 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: squid/
+          context: ${{ matrix.name }}/
           platforms: linux/386,linux/amd64,linux/arm/v5,linux/arm/v7,linux/arm64,linux/loong64,linux/ppc64le,linux/riscv64,linux/s390x
+          push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/${{ github.repository }}:edge
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:edge
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
