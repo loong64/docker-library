@@ -55,20 +55,3 @@ EOF
 echo " OK!"
 
 echo "IMG_VER=${IMG_VER}" >> "$GITHUB_OUTPUT"
-# if [[ "x${UNATTENDED}" != 'x' ]]; then
-#   read -n 1 -r -p "[*] Build this image [Y/n]? " BUILD_CHOICE
-#   echo " "
-#   if [[ "x${BUILD_CHOICE}" == "xn" ]]; then
-#     echo "[+] Aborted."
-#     exit 0
-#   fi
-# fi
-# TMPDIR="$(mktemp -d -p .)"
-# cd -- "${TMPDIR}" || (echo "[!] WTF?" && exit 127)
-# echo "[+] Copying files..."
-# mv ../Dockerfile .
-# cp "../${TARBALL_NAME}" .
-# sudo docker build -t "${TAGNAME:-aosc-os}" .
-# cd ..
-# echo "[+] Cleaning up..."
-# rm -rf "${TMPDIR}"
