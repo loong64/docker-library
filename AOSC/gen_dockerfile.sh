@@ -44,7 +44,7 @@ fi
 echo -n "[+] Generating Dockerfile..."
 cat << EOF > Dockerfile
 FROM scratch
-LABEL maintainer="AOSC-dev"
+LABEL maintainer="loong64"
 ADD "${TARBALL_NAME}" /
 CMD ["/bin/bash"]
 ARG CONT_IMG_VER
