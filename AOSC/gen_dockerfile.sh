@@ -1,8 +1,8 @@
 #!/bin/bash
 BASE_URL="https://releases.aosc.io/os-loongarch64/buildkit/"
-HTML_CONTENT=$(curl "$BASE_URL")
+HTML_CONTENT=$(curl -fSL "$BASE_URL")
 
-# 提取所有 .tar.xz 文件并排序
+# 提取所有 .squashfs 文件并排序
 latest_file=$(echo "$HTML_CONTENT" | \
   grep -oP '(?<=<a href=")aosc-os_buildkit_\d{8}_loongarch64\.squashfs(?=")' | \
   sort -t'_' -k3nr | head -1)
