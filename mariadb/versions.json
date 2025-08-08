@@ -1,8 +1,8 @@
 {
   "11.8": {
     "milestone": "11.8",
-    "version": "11.8.2",
-    "fullVersion": "1:11.8.2+maria~debsid",
+    "version": "11.8.3",
+    "fullVersion": "1:11.8.3+maria~debsid",
     "releaseStatus": "Stable",
     "supportType": "Long Term Support",
     "base": "ubuntu:trixie",
@@ -15,8 +15,8 @@
   },
   "11.4": {
     "milestone": "11.4",
-    "version": "11.4.7",
-    "fullVersion": "1:11.4.7+maria~debsid",
+    "version": "11.4.8",
+    "fullVersion": "1:11.4.8+maria~debsid",
     "releaseStatus": "Stable",
     "supportType": "Long Term Support",
     "base": "ubuntu:trixie",
