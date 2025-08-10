@@ -1,10 +1,10 @@
 {
-  "11.8": {
-    "milestone": "11.8",
-    "version": "11.8.3",
-    "fullVersion": "1:11.8.3+maria~debsid",
-    "releaseStatus": "Stable",
-    "supportType": "Long Term Support",
+  "12.1": {
+    "milestone": "12.1",
+    "version": "12.1.1",
+    "fullVersion": "1:12.1.1+maria~deb13",
+    "releaseStatus": "RC",
+    "supportType": "Rolling",
     "base": "ubuntu:trixie",
     "arches": [
       "amd64",
@@ -13,10 +13,24 @@
       "s390x"
     ]
   },
-  "11.4": {
-    "milestone": "11.4",
-    "version": "11.4.8",
-    "fullVersion": "1:11.4.8+maria~debsid",
+  "12.0": {
+    "milestone": "12.0",
+    "version": "12.0.2",
+    "fullVersion": "1:12.0.2+maria~deb13",
+    "releaseStatus": "Stable",
+    "supportType": "Rolling",
+    "base": "ubuntu:trixie",
+    "arches": [
+      "amd64",
+      "arm64v8",
+      "ppc64le",
+      "s390x"
+    ]
+  },
+  "11.8": {
+    "milestone": "11.8",
+    "version": "11.8.3",
+    "fullVersion": "1:11.8.3+maria~deb13",
     "releaseStatus": "Stable",
     "supportType": "Long Term Support",
     "base": "ubuntu:trixie",

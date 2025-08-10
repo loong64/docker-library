@@ -7,6 +7,12 @@
 	;
 	def rcVersion:
 		env.version | rtrimstr("-rc")
+	;
+	def clean_apt:
+		# TODO once bookworm is EOL, remove this and just hard-code "apt-get dist-clean" instead
+		if env.variant | contains("bookworm") then
+			"rm -rf /var/lib/apt/lists/*"
+		else "apt-get dist-clean" end
 -}}
 {{ if is_alpine then ( -}}
 FROM ghcr.io/loong64/alpine:{{ env.variant | ltrimstr("alpine") }}
@@ -48,7 +54,7 @@ RUN set -eux; \
 		uuid-dev \
 {{ ) end -}}
 	; \
-	rm -rf /var/lib/apt/lists/*
+	{{ clean_apt }}
 {{ ) end -}}
 
 {{
@@ -188,9 +194,10 @@ RUN set -eux; \
 		--enable-shared \
 {{
 	# <3.10 does not have -fno-semantic-interposition enabled and --with-lto does nothing for performance
+	# skip LTO on riscv64: https://github.com/docker-library/python/pull/935, https://github.com/docker-library/python/pull/1038
 	if rcVersion == "3.9" then "" else (
 -}}
-		--with-lto \
+		$(test "${gnuArch%%-*}" != 'riscv64' && echo '--with-lto') \
 {{ ) end -}}
 		--with-ensurepip \
 	; \
@@ -290,13 +297,14 @@ RUN set -eux; \
 	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 		| sort -u \
-		| xargs -r dpkg-query --search \
-		| awk -F: '/^[a-z0-9][a-z0-9\.\+-]*:/ {print $1}' \
+		| xargs -rt dpkg-query --search \
+# https://manpages.debian.org/bookworm/dpkg/dpkg-query.1.en.html#S (we ignore diversions and it'll be really unusual for more than one package to provide any given .so file)
+		| awk 'sub(":$", "", $1) { print $1 }' \
 		| sort -u \
 		| xargs -r apt-mark manual \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	rm -rf /var/lib/apt/lists/*; \
+	{{ clean_apt }}; \
 {{ ) else "" end -}}
 {{ ) end -}}
 	\

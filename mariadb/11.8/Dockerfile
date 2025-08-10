@@ -69,7 +69,7 @@ RUN mkdir /docker-entrypoint-initdb.d
 ENV LANG C.UTF-8
 
 # bashbrew-architectures: amd64 arm64v8 ppc64le s390x
-ARG MARIADB_VERSION=1:11.8.3+maria~debsid
+ARG MARIADB_VERSION=1:11.8.3+maria~deb13
 ENV MARIADB_VERSION $MARIADB_VERSION
 # release-status:Stable
 # release-support-type:Long Term Support
@@ -91,7 +91,7 @@ RUN set -ex; \
 	export PYTHONDONTWRITEBYTECODE=1; \
 	\
 	dpkgArch="$(dpkg --print-architecture)"; \
-	aptRepo="[ signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg ] http://archive.mariadb.org/mariadb-11.8.3/repo/debian/ sid main main/debug"; \
+	aptRepo="[ signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg ] http://archive.mariadb.org/mariadb-11.8.3/repo/debian/ trixie main main/debug"; \
 	case "$dpkgArch" in \
 		amd64 | arm64 | ppc64el | s390x) \
 # arches officialy built by upstream

@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM ghcr.io/loong64/debian:%%SUITE%%-slim
+FROM ghcr.io/loong64/debian:trixie-slim
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN set -eux; \
@@ -68,13 +68,11 @@ RUN mkdir /docker-entrypoint-initdb.d
 # default locales in base image (https://github.com/docker-library/docs/blob/135b79cc8093ab02e55debb61fdb079ab2dbce87/ubuntu/README.md#locales)
 ENV LANG C.UTF-8
 
-# bashbrew-architectures:%%ARCHES%%
-ARG MARIADB_MAJOR=%%MARIADB_MAJOR%%
-ENV MARIADB_MAJOR $MARIADB_MAJOR
-ARG MARIADB_VERSION=%%MARIADB_VERSION%%
+# bashbrew-architectures: amd64 arm64v8 ppc64le s390x
+ARG MARIADB_VERSION=1:12.0.2+maria~deb13
 ENV MARIADB_VERSION $MARIADB_VERSION
-# release-status:%%MARIADB_RELEASE_STATUS%%
-# release-support-type:%%MARIADB_SUPPORT_TYPE%%
+# release-status:Stable
+# release-support-type:Rolling
 # (https://downloads.mariadb.org/rest-api/mariadb/)
 
 # add repository pinning to make sure dependencies from this MariaDB repo are preferred over Debian dependencies
@@ -85,15 +83,15 @@ ENV MARIADB_VERSION $MARIADB_VERSION
 # hadolint ignore=DL3015
 RUN set -ex; \
 	{ \
-		echo "mariadb-server-$MARIADB_MAJOR" mysql-server/root_password password 'unused'; \
-		echo "mariadb-server-$MARIADB_MAJOR" mysql-server/root_password_again password 'unused'; \
+		echo "mariadb-server" mysql-server/root_password password 'unused'; \
+		echo "mariadb-server" mysql-server/root_password_again password 'unused'; \
 	} | debconf-set-selections; \
 	\
 # see note below about "*.pyc" files
 	export PYTHONDONTWRITEBYTECODE=1; \
 	\
 	dpkgArch="$(dpkg --print-architecture)"; \
-	aptRepo="[ signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg ] http://archive.mariadb.org/mariadb-%%MARIADB_VERSION_BASIC%%/repo/debian/ %%SUITE%% main main/debug"; \
+	aptRepo="[ signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg ] http://archive.mariadb.org/mariadb-12.0.2/repo/debian/ trixie main main/debug"; \
 	case "$dpkgArch" in \
 		amd64 | arm64 | ppc64el | s390x) \
 # arches officialy built by upstream
@@ -166,7 +164,7 @@ RUN set -ex; \
 	find /usr -name '*.pyc' -type f -exec bash -c 'for pyc; do dpkg -S "$pyc" &> /dev/null || rm -vf "$pyc"; done' -- '{}' +; \
 	\
 # purge and re-create /var/lib/mysql with appropriate ownership
-	rm -rf /var/lib/mysql /etc/mysql/mariadb.conf.d/50-mysqld_safe.cnf; \
+	rm -rf /var/lib/mysql; \
 	mkdir -p /var/lib/mysql /run/mysqld; \
 	chown -R mysql:mysql /var/lib/mysql /run/mysqld; \
 # ensure that /run/mysqld (used for socket and lock files) is writable regardless of the UID our mysqld instance ends up having at runtime

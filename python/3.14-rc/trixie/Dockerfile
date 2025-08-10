@@ -17,7 +17,7 @@ RUN set -eux; \
 		tk-dev \
 		uuid-dev \
 	; \
-	rm -rf /var/lib/apt/lists/*
+	apt-get dist-clean
 
 ENV PYTHON_VERSION 3.14.0rc1
 ENV PYTHON_SHA256 8707780ae9f19c5bf5b9f27827181ba11cdad7bb292ea49cad5424331e40ee8b
@@ -44,7 +44,7 @@ RUN set -eux; \
 		--enable-optimizations \
 		--enable-option-checking=fatal \
 		--enable-shared \
-		--with-lto \
+		$(test "${gnuArch%%-*}" != 'riscv64' && echo '--with-lto') \
 		--with-ensurepip \
 	; \
 	nproc="$(nproc)"; \

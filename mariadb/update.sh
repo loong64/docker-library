@@ -5,7 +5,7 @@ set -Eeuo pipefail
 #
 
 development_version=main
-development_version_real=11.8
+development_version_real=12.2
 
 defaultSuite='trixie'
 declare -A suites=(
@@ -15,9 +15,9 @@ declare -A suites=(
 	[11.2]='trixie'
 )
 
-defaultSuffix='debsid'
+defaultSuffix='deb13'
 declare -A suffix=(
-	['10.5']='sid'
+	['11.4']='debsid'
 )
 
 #declare -A dpkgArchToBashbrew=(
@@ -168,7 +168,7 @@ update_version_array()
 	c1=$(( $1 - 1 ))
 	version=${release[$c0]}
 	if [ ! -d "$version" ]; then
-		# echo >&2 "warning: no rule for $version"
+		echo >&2 "warning: no rule for $version"
 		return
 	fi
 	mariaversion
@@ -188,15 +188,16 @@ update_version_array()
 
 mariaversion()
 {
-	if [ "$version" = 11.7 ]; then
-		#version=11.7
-		mariaVersion=11.7.2;
-		return
-	fi
+	# version hacks because our $DOWNLOADS_REST_API
+	# seems to never be right on release and has unfinshed suppport
+	# for rolling release versions.
+	#if [ "$version" = 11.4 ]; then
+	#	mariaVersion=11.4.7;
+	#	return
+	#fi
 	mariaVersion=$(curl -fsSL "$DOWNLOADS_REST_API/mariadb/${version%-*}" \
 		| jq -r 'first(.releases[] | .release_id | select(. | test("[0-9]+.[0-9]+.[0-9]+$")))')
 	mariaVersion=${mariaVersion//\"}
-	if [ "$mariaVersion" = 11.6.1 ]; then mariaVersion=11.6.2; fi
 }
 
 all()
@@ -253,7 +254,7 @@ for version in "${versions[@]}"; do
 		releaseStatus=${release[0]:-Stable}
 		supportType=${release[1]:-Short Term Support}
 		;;
-	11.6)
+        11.6)
 		releaseStatus=${release[0]:-Stable}
 		supportType=${release[1]:-Short Term Support}
 		;;

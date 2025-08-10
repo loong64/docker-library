@@ -9,11 +9,11 @@ potentiallySupportedArches=(
 	arm32v7
 	arm64v8
 	i386
+	loong64
 	mips64le
 	ppc64le
 	riscv64
 	s390x
-	loong64
 	windows-amd64
 
 	# special case (fallback)
@@ -89,29 +89,101 @@ goVersions="$(
 for version in "${versions[@]}"; do
 	export version
 
-	if \
-		! goJson="$(jq <<<"$goVersions" -ce '
-			[ .[] | select(.major == env.version) ] | sort_by(
-				.version
-				| split(".")
-				| map(
-					if test("^[0-9]+$") then
-						tonumber
-					else . end
-				)
-			)[-1]
-		')" \
-		|| ! fullVersion="$(jq <<<"$goJson" -r '.version')" \
-		|| [ -z "$fullVersion" ] \
-	; then
-		echo >&2 "warning: cannot find full version for $version"
-		continue
-	fi
+	case "$version" in
+		tip)
+			# clamp so we don't update too frequently (https://github.com/docker-library/golang/issues/464#issuecomment-1587758290, https://github.com/docker-library/faq#can-i-use-a-bot-to-make-my-image-update-prs)
+			# https://github.com/golang/go
+			# https://go.googlesource.com/go
+			snapshotDate="$(date --utc --date 'last sunday 23:59:59 UTC + 1 second' '+%s')"
+			snapshotDateStr="$(date --utc --date "@$snapshotDate" '+%Y-%m-%d @ %H:%M:%S')"
+			commit='HEAD' # this is also our iteration variable, so if we don't find a suitable commit each time through this loop, we'll use the last commit of the previous list to get a list of new (older) commits until we find one suitably old enough
+			fullVersion=
+			date=
+			while [ -z "$fullVersion" ]; do
+				commits="$(
+					# wget -qO- 'https://go.googlesource.com/go/+log/refs/heads/master?format=JSON' # the first line of this is ")]}'" for avoiding javscript injection vulnerabilities, which is annoying, and the dates are *super* cursed ("Mon Dec 04 10:00:41 2023 -0800") -- even date(1) doesn't want to parse them ("date: invalid date ‘Mon Dec 04 10:00:41 2023 -0800’")
+					# ... so we use GitHub's "atom feeds" endpoint instead, which if you ask for JSON, gives back JSON 😄
+					wget -qO- --header 'Accept: application/json' "https://github.com/golang/go/commits/$commit.atom" \
+						| jq -r '
+							.payload.commitGroups[].commits[]
+							| first([ .committedDate, .authoredDate ] | sort | reverse[]) as $date
+							| "\(.oid) \($date)"
+							| @sh
+						'
+				)"
+				eval "commitDates=( $commits )"
+				if [ "${#commitDates[@]}" -eq 0 ]; then
+					echo >&2 "error: got no commits when listing history from $commit"
+					exit 1
+				fi
+				for commitDate in "${commitDates[@]}"; do
+					commit="${commitDate%%[[:space:]]*}"
+					date="${commitDate#$commit[[:space:]]}"
+					[ "$commit" != "$date" ] # sanity check
+					date="$(date --utc --date "$date" '+%s')"
+					if [ "$date" -le "$snapshotDate" ]; then
+						fullVersion="$commit"
+						break 2
+					fi
+				done
+			done
+			if [ -z "$fullVersion" ]; then
+				echo >&2 "error: cannot find full version for $version (maybe too many commits since $snapshotDateStr?)"
+				exit 1
+			fi
+			[ "$commit" = "$fullVersion" ]
+			[ -n "$date" ]
+			fullVersion="$(date --utc --date "@$date" '+%Y%m%d')"
+			url="https://github.com/golang/go/archive/$commit.tar.gz"
+			sha256= # TODO "$(wget -qO- "$url" | sha256sum | cut -d' ' -f1)" # 😭 (this is not fast)
+			goJson="$(
+				export fullVersion commit dateStr date url sha256
+				jq -nc '
+					{
+						version: "tip-\(env.fullVersion)",
+						commit: {
+							version: env.commit,
+						},
+						arches: {
+							src: {
+								url: env.url,
+								#sha256: env.sha256,
+							},
+						},
+					}
+				'
+			)"
+			;;
+
+		*)
+			if \
+				! goJson="$(jq <<<"$goVersions" -ce '
+					[ .[] | select(.major == env.version) ] | sort_by(
+						.version
+						| split(".")
+						| map(
+							if test("^[0-9]+$") then
+								tonumber
+							else . end
+						)
+					)[-1]
+				')" \
+				|| ! fullVersion="$(jq <<<"$goJson" -r '.version')" \
+				|| [ -z "$fullVersion" ] \
+			; then
+				echo >&2 "warning: cannot find full version for $version"
+				continue
+			fi
+			;;
+	esac
 
 	echo "$version: $fullVersion"
 
-	doc="$(jq <<<"$goJson" -c --argjson potentiallySupportedArches "$potentiallySupportedArches" '{
+	doc="$(jq <<<"$goJson" -c --argjson potentiallySupportedArches "$potentiallySupportedArches" '
+	{
 		version: .version,
+		commit: .commit,
+		date: .date,
 		arches: (
 			.arches
 			| . += (
@@ -132,8 +204,12 @@ for version in "${versions[@]}"; do
 			| with_entries(
 				.key as $bashbrewArch
 				| .value.supported = (
-					# https://github.com/docker-library/golang/pull/500#issuecomment-1863578601 - as of Go 1.21+, we no longer build from source
-					.value.url
+					.key != "src"
+					and (
+						# https://github.com/docker-library/golang/pull/500#issuecomment-1863578601 - as of Go 1.21+, we no longer build from source (except for tip builds)
+						.value.url
+						or env.version == "tip"
+					)
 					and ($potentiallySupportedArches | index($bashbrewArch))
 				)
 				| .value.env +=
@@ -167,17 +243,28 @@ for version in "${versions[@]}"; do
 				empty
 			| "alpine" + .)
 		],
-	}')"
+	}
+	# if "date" or "commit" are null, exclude them
+	| with_entries(select(.value))
+	')"
 
 	json="$(jq <<<"$json" -c --argjson doc "$doc" '.[env.version] = $doc')"
 done
 
 jq <<<"$json" '
-	def sort_keys:
+	to_entries
+	| sort_by(
+		.key
+		| [
+			if . == "tip" then 0 else 1 end, # make sure tip is first so it ends up last when we reverse
+			(split("[.-]"; "") | map(tonumber? // .))
+		]
+	)
+	| reverse
+	| from_entries
+	| .[].arches |= (
 		to_entries
 		| sort_by(.key)
 		| from_entries
-	;
-	sort_keys
-	| .[].arches |= sort_keys
+	)
 ' > versions.json
