@@ -106,3 +106,5 @@ Docker Engine for loong64，GitHub Actions 自动化构建 Docker Engine。
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg16`               | `docker pull ghcr.io/loong64/pgvector:pg16`              |
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg17`               | `docker pull ghcr.io/loong64/pgvector:pg17`              |
 | [squid](https://ghcr.io/loong64/squid)                   | `latest`             | `docker pull ghcr.io/loong64/squid:latest`               |
+| [busybox](https://ghcr.io/loong64/busybox)               | `1.37.0-glibc`       | `docker pull ghcr.io/loong64/busybox:1.37.0-glibc`       |
+| [busybox](https://ghcr.io/loong64/busybox)               | `1.37.0-musl`        | `docker pull ghcr.io/loong64/busybox:1.37.0-musl`        |
