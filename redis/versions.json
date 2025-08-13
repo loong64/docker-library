@@ -4,7 +4,7 @@
     "url": "http://download.redis.io/releases/redis-6.2.19.tar.gz",
     "sha256": "73be4202261c2e2e3534ec2c3dcfbb338cceff40481ecf46c3578cb9e5fdea74",
     "debian": {
-      "version": "bookworm"
+      "version": "trixie"
     },
     "alpine": {
       "version": "3.22"
@@ -64,7 +64,7 @@
     "url": "http://download.redis.io/releases/redis-7.0.15.tar.gz",
     "sha256": "98066f5363504b26c34dd20fbcc3c957990d764cdf42576c836fc021073f4341",
     "debian": {
-      "version": "bookworm"
+      "version": "trixie"
     },
     "alpine": {
       "version": "3.22"
@@ -124,7 +124,7 @@
     "url": "http://download.redis.io/releases/redis-7.2.10.tar.gz",
     "sha256": "e576ad54bc53770649c556933ecd555b975e3dac422e46356102436a437b43c7",
     "debian": {
-      "version": "bookworm"
+      "version": "trixie"
     },
     "alpine": {
       "version": "3.22"
@@ -184,7 +184,7 @@
     "url": "http://download.redis.io/releases/redis-7.4-rc2.tar.gz",
     "sha256": "6f3ca6e196b5757bf51752ea9944cbc927731c771aeab661be8c2c05bd1edbce",
     "debian": {
-      "version": "bookworm"
+      "version": "trixie"
     },
     "alpine": {
       "version": "3.22"
@@ -244,7 +244,7 @@
     "url": "http://download.redis.io/releases/redis-7.4.5.tar.gz",
     "sha256": "00bb280528f5d7934bec8ab309b8125088c209131e10609cb1563b91365633bb",
     "debian": {
-      "version": "bookworm"
+      "version": "trixie"
     },
     "alpine": {
       "version": "3.22"
