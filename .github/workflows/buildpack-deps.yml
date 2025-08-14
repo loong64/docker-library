@@ -49,6 +49,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Merge curl Images
+        run: |
+          crane index append -t ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-curl -m ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-curl-loong64 -m ${{ matrix.name }}:${{ matrix.suite }}
+
       - name: Build and push ${{ matrix.name }} scm image
         uses: docker/build-push-action@v6
         with:
@@ -60,6 +64,10 @@ jobs:
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Merge scm Images
+        run: |
+          crane index append -t ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-scm -m ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-scm-loong64 -m ${{ matrix.name }}:${{ matrix.suite }}
 
       - name: Build and push ${{ matrix.name }} ${{ matrix.suite }} image
         uses: docker/build-push-action@v6
@@ -75,6 +83,4 @@ jobs:
 
       - name: Merge Images
         run: |
-          crane index append -t ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-curl -m ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-curl-loong64 -m ${{ matrix.name }}:${{ matrix.suite }}
-          crane index append -t ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-scm -m ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-scm-loong64 -m ${{ matrix.name }}:${{ matrix.suite }}
           crane index append -t ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }} -m ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-loong64 -m ${{ matrix.name }}:${{ matrix.suite }}

@@ -29,10 +29,15 @@ Docker Engine for loong64，GitHub Actions 自动化构建 Docker Engine。
 | [alpine](https://ghcr.io/loong64/alpine)                 | `3.21`               | `docker pull ghcr.io/loong64/alpine:3.21`                |
 | [alpine](https://ghcr.io/loong64/alpine)                 | `3.22`               | `docker pull ghcr.io/loong64/alpine:3.22`                |
 | [debian](https://ghcr.io/loong64/debian)                 | `trixie`             | `docker pull ghcr.io/loong64/debian:trixie`              |
+| [debian](https://ghcr.io/loong64/debian)                 | `forky`              | `docker pull ghcr.io/loong64/debian:forky`               |
 | [debian](https://ghcr.io/loong64/debian)                 | `trixie-slim`        | `docker pull ghcr.io/loong64/debian:trixie-slim`         |
+| [debian](https://ghcr.io/loong64/debian)                 | `forky-slim`         | `docker pull ghcr.io/loong64/debian:forky-slim`          |
 | [buildpack-deps](https://ghcr.io/loong64/buildpack-deps) | `trixie`             | `docker pull ghcr.io/loong64/buildpack-deps:trixie`      |
+| [buildpack-deps](https://ghcr.io/loong64/buildpack-deps) | `forky`              | `docker pull ghcr.io/loong64/buildpack-deps:forky`       |
 | [buildpack-deps](https://ghcr.io/loong64/buildpack-deps) | `trixie-scm`         | `docker pull ghcr.io/loong64/buildpack-deps:trixie-scm`  |
+| [buildpack-deps](https://ghcr.io/loong64/buildpack-deps) | `forky-scm`          | `docker pull ghcr.io/loong64/buildpack-deps:forky-scm`   |
 | [buildpack-deps](https://ghcr.io/loong64/buildpack-deps) | `trixie-curl`        | `docker pull ghcr.io/loong64/buildpack-deps:trixie-curl` |
+| [buildpack-deps](https://ghcr.io/loong64/buildpack-deps) | `forky-curl`         | `docker pull ghcr.io/loong64/buildpack-deps:forky-curl`  |
 | [golang](https://ghcr.io/loong64/golang)                 | `1.23-alpine`        | `docker pull ghcr.io/loong64/golang:1.23-alpine`         |
 | [golang](https://ghcr.io/loong64/golang)                 | `1.23-trixie`        | `docker pull ghcr.io/loong64/golang:1.23-trixie`         |
 | [golang](https://ghcr.io/loong64/golang)                 | `1.24-alpine`        | `docker pull ghcr.io/loong64/golang:1.24-alpine`         |
