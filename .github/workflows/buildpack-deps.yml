@@ -12,9 +12,15 @@ jobs:
       matrix:
         name: [buildpack-deps]
         os: [debian]
-        suite: [trixie]
+        suite: [forky]
 
     steps:
+      - name: Prepare configuration
+        run: |
+          wget -qO- https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz | sudo tar -xzf - -C /usr/local/bin/ crane
+          sudo chmod +x /usr/local/bin/crane
+          sudo chown root:root /usr/local/bin/crane
+
       - name: Checkout ${{ matrix.name }}
         uses: actions/checkout@v4
 
@@ -38,7 +44,7 @@ jobs:
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-curl
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-curl-loong64
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -50,7 +56,7 @@ jobs:
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-scm
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-scm-loong64
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -62,7 +68,13 @@ jobs:
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-loong64
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Merge Images
+        run: |
+          crane index append -t ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-curl -m ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-curl-loong64 -m ${{ matrix.name }}:${{ matrix.suite }}
+          crane index append -t ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-scm -m ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-scm-loong64 -m ${{ matrix.name }}:${{ matrix.suite }}
+          crane index append -t ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }} -m ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.suite }}-loong64 -m ${{ matrix.name }}:${{ matrix.suite }}

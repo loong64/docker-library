@@ -196,6 +196,7 @@ for version in "${versions[@]}"; do
 			variants: [
 				(
 					"trixie",
+					"forky",
 					empty
 				| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 				(

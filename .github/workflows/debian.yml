@@ -10,6 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Prepare configuration
+        run: |
+          wget -qO- https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz | sudo tar -xzf - -C /usr/local/bin/ crane
+          sudo chmod +x /usr/local/bin/crane
+          sudo chown root:root /usr/local/bin/crane
+
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
 
@@ -83,8 +89,6 @@ jobs:
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/debian:trixie-loong64
-            ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }}
             ghcr.io/${{ github.repository_owner }}/debian:forky-loong64
             ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }}
             ghcr.io/${{ github.repository_owner }}/debian:sid-loong64
@@ -93,16 +97,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Prepare configuration
-        run: |
-          wget -qO- https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz | sudo tar -xzf - -C /usr/local/bin/ crane
-          sudo chmod +x /usr/local/bin/crane
-          sudo chown root:root /usr/local/bin/crane
-
       - name: Merge sid Images
         run: |
-          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:latest -m ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }} -m debian:trixie
-          crane cp ghcr.io/${{ github.repository_owner }}/debian:latest ghcr.io/${{ github.repository_owner }}/debian:trixie
+          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:latest -m ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }} -m debian:forky
           crane cp ghcr.io/${{ github.repository_owner }}/debian:latest ghcr.io/${{ github.repository_owner }}/debian:forky
           crane cp ghcr.io/${{ github.repository_owner }}/debian:latest ghcr.io/${{ github.repository_owner }}/debian:sid
 
@@ -113,8 +110,6 @@ jobs:
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/debian:trixie-slim-loong64
-            ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }}-slim
             ghcr.io/${{ github.repository_owner }}/debian:forky-slim-loong64
             ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }}-slim
             ghcr.io/${{ github.repository_owner }}/debian:sid-slim-loong64
@@ -125,9 +120,8 @@ jobs:
 
       - name: Merge sid slim Images
         run: |
-          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:trixie-slim -m ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }}-slim -m debian:trixie-slim
-          crane cp ghcr.io/${{ github.repository_owner }}/debian:trixie-slim ghcr.io/${{ github.repository_owner }}/debian:sid-slim
-          crane cp ghcr.io/${{ github.repository_owner }}/debian:trixie-slim ghcr.io/${{ github.repository_owner }}/debian:forky-slim
+          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:forky-slim -m ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }}-slim -m debian:forky-slim
+          crane cp ghcr.io/${{ github.repository_owner }}/debian:forky-slim ghcr.io/${{ github.repository_owner }}/debian:sid-slim
 
       - name: Build and Push unstable Images
         uses: docker/build-push-action@v6

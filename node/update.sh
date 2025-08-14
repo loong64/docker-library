@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-variants=("trixie" "trixie-slim" "alpine3.21")
+variants=("trixie" "trixie-slim" "forky" "forky-slim" "alpine3.21")
 
 versions=( */ )
 

@@ -11,6 +11,8 @@
     "variants": [
       "trixie",
       "slim-trixie",
+      "forky",
+      "slim-forky",
       "alpine3.22",
       "alpine3.21"
     ],
@@ -28,6 +30,8 @@
     "variants": [
       "trixie",
       "slim-trixie",
+      "forky",
+      "slim-forky",
       "alpine3.22",
       "alpine3.21"
     ],
@@ -42,6 +46,8 @@
     "variants": [
       "trixie",
       "slim-trixie",
+      "forky",
+      "slim-forky",
       "alpine3.22",
       "alpine3.21"
     ],
@@ -59,6 +65,8 @@
     "variants": [
       "trixie",
       "slim-trixie",
+      "forky",
+      "slim-forky",
       "alpine3.22",
       "alpine3.21"
     ],
@@ -76,6 +84,8 @@
     "variants": [
       "trixie",
       "slim-trixie",
+      "forky",
+      "slim-forky",
       "alpine3.22",
       "alpine3.21"
     ],
@@ -93,6 +103,8 @@
     "variants": [
       "trixie",
       "slim-trixie",
+      "forky",
+      "slim-forky",
       "alpine3.22",
       "alpine3.21"
     ],
