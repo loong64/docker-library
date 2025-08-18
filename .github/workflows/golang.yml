@@ -103,6 +103,11 @@ jobs:
           version="${{ matrix.version }}"
           latest_version="${{ matrix.latest_version }}"
 
+          crane cp "$repo:$full_version-$suite" "$repo:$full_version-$suite-loong64"
+          crane index append -t "$repo:$full_version-$suite" \
+            -m "$repo:$full_version-$suite-loong64" \
+            -m "golang:$full_version-$suite"
+
           case "$suite" in
             trixie)
               if [ "$version" = "$latest_version" ]; then
@@ -111,10 +116,6 @@ jobs:
               fi
               ;;
             alpine3.21|alpine3.22)
-              crane cp "$repo:$full_version-$suite" "$repo:$full_version-$suite-loong64"
-              crane index append -t "$repo:$full_version-$suite" \
-                -m "$repo:$full_version-$suite-loong64" \
-                -m "golang:$full_version-$suite"
               crane cp "$repo:$full_version-$suite" "$repo:$minor_version-$suite"
               if [ "$suite" = "alpine3.22" ]; then
                 crane cp "$repo:$full_version-$suite" "$repo:$full_version-alpine"
