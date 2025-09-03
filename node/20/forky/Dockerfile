@@ -3,7 +3,7 @@ FROM ghcr.io/loong64/buildpack-deps:forky
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
-ENV NODE_VERSION 20.19.4
+ENV NODE_VERSION 20.19.5
 
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
