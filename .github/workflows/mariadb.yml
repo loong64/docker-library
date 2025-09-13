@@ -30,7 +30,7 @@ jobs:
         name: ['mariadb']
         suite: ['trixie']
         version: ['11.8', '12.0', '12.1']
-        latest_version: ['11.8']
+        latest_version: ['12.0']
 
     steps:
       - name: Free Disk Space (Ubuntu)
@@ -111,7 +111,7 @@ jobs:
           if [ "${{ matrix.version }}" = "${{ matrix.latest_version }}" ]; then
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
           fi
-          if [ "${{ matrix.version }}" = "12.0" ] || [ "${{ matrix.version }}" = "12.1" ]; then
+          if [ "${{ matrix.version }}" = "12.1" ]; then
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}-rc
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}-rc
             crane cp ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }} ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-rc
