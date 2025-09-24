@@ -30,6 +30,7 @@ jobs:
         name: ['node']
         suite: ['trixie', 'trixie-slim', 'alpine3.21', 'alpine3.22']
         version: ['20', '22', '24']
+        lts_version: ['22']
         latest_version: ['24']
 
     steps:
@@ -82,10 +83,7 @@ jobs:
           platforms: linux/loong64
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}-loong64
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -105,14 +103,18 @@ jobs:
           repo="ghcr.io/${{ github.repository_owner }}/node"
           suite="${{ matrix.suite }}"
           version="${{ matrix.version }}"
+          lts_version="${{ matrix.lts_version }}"
           latest_version="${{ matrix.latest_version }}"
 
-          crane cp "$repo:$full_version-$suite" "$repo:$full_version-$suite-loong64"
           crane index append -t "$repo:$full_version-$suite" \
             -m "$repo:$full_version-$suite-loong64" \
             -m "node:$full_version-$suite"
           crane cp "$repo:$full_version-$suite" "$repo:$minor_version-$suite"
           crane cp "$repo:$full_version-$suite" "$repo:$major_version-$suite"
+
+          if [ "$version" = "$lts_version" ]; then
+            crane cp "$repo:$version-$suite" "$repo:lts-$suite"
+          fi
 
           case "$suite" in
             trixie)
@@ -125,6 +127,9 @@ jobs:
               crane cp "$repo:$full_version-$suite" "$repo:$full_version-alpine"
               crane cp "$repo:$full_version-$suite" "$repo:$minor_version-alpine"
               crane cp "$repo:$full_version-$suite" "$repo:$major_version-alpine"
+              if [ "$version" = "$lts_version" ]; then
+                crane cp "$repo:$version-$suite" "$repo:lts-alpine"
+              fi
               if [ "$version" = "$latest_version" ]; then
                 crane cp "$repo:$full_version-$suite" "$repo:alpine"
               fi
