@@ -55,6 +55,7 @@ jobs:
           shopt -s globstar
           for rootfs in validate/debian/archive/**/rootfs.tar.xz; do
             dir="$(dirname "$rootfs")"
+            export DEBUERREOTYPE_DIRECTORY=$(pwd)
             ./examples/oci-image.sh "$dir/oci.tar" "$dir"
           done
           cd validate/debian
