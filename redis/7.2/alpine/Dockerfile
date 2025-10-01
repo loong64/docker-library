@@ -21,20 +21,20 @@ RUN set -eux; \
 
 # grab gosu for easy step-down from root
 # https://github.com/tianon/gosu/releases
-ENV GOSU_VERSION 1.17
+ENV GOSU_VERSION 1.19
 RUN set -eux; \
 	apk add --no-cache --virtual .gosu-fetch gnupg; \
 	arch="$(apk --print-arch)"; \
 	case "$arch" in \
-		'x86_64') url='https://github.com/loong64/gosu/releases/download/1.17/gosu-amd64'; sha256='4a2a8fcbc77d41f14fc2037ac96545e3a24dcf8ec9c7b0010f5612111838a170' ;; \
-		'aarch64') url='https://github.com/loong64/gosu/releases/download/1.17/gosu-arm64'; sha256='c05db37571617568478d9f71baf1b5c7623cb006db3096307e6cdd7c1dffcee7' ;; \
-		'armhf') url='https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf'; sha256='91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643' ;; \
-		'x86') url='https://github.com/loong64/gosu/releases/download/1.17/gosu-i386'; sha256='32e01bb5910fe3ead279c29d413c6889dd6083ba6738d9a231353cbb8526a78c' ;; \
-		'loongarch64') url='https://github.com/loong64/gosu/releases/download/1.17/gosu-loong64'; sha256='4aba41555306a44336c52b6f46557910ee806e7682429d6593c906a260154109' ;; \
-		'ppc64le') url='https://github.com/loong64/gosu/releases/download/1.17/gosu-ppc64el'; sha256='d68337e36705f6d1796b0b6fac0458e9e504ba53a13f5b82678ed36273207dd5' ;; \
-		'riscv64') url='https://github.com/loong64/gosu/releases/download/1.17/gosu-riscv64'; sha256='4adfb89846f4e50a0a3eb5a91f32d98305d5e6e4b206e02d733377a8b15e1d38' ;; \
-		's390x') url='https://github.com/loong64/gosu/releases/download/1.17/gosu-s390x'; sha256='bc8cb9738e3d1e54d9949498718022a4238e9733c2385b0b65c87b38e113be47' ;; \
-		'armv7') url='https://github.com/loong64/gosu/releases/download/1.17/gosu-armhf'; sha256='91435d8e984592d8ff0382f1ff5ca8ff753320dd549b4253568f696b8b540643' ;; \
+		'x86_64') url='https://github.com/loong64/gosu/releases/download/1.19/gosu-amd64'; sha256='a6b1a92b07f95f850c79e701ff11d0e11868ac1063ef62cd0da23cc84b756fee' ;; \
+		'aarch64') url='https://github.com/loong64/gosu/releases/download/1.19/gosu-arm64'; sha256='3fdfeec388e2a297c42d0694f122aaf90d92469bfa44bb7b429de6aafca518cb' ;; \
+		'armhf') url='https://github.com/loong64/gosu/releases/download/1.19/gosu-armhf'; sha256='f186ca630c28cbaaa1ed304767278126761a109164aa8576ddad6b2ce2a5184b' ;; \
+		'x86') url='https://github.com/loong64/gosu/releases/download/1.19/gosu-i386'; sha256='c02a039911b9d0a0766eac73d738b43d062fe5217ab0c0acb661f4f9d3ce0258' ;; \
+		'loongarch64') url='https://github.com/loong64/gosu/releases/download/1.19/gosu-loong64'; sha256='1832189ef2dc568eff990450c13478092a1fa9cf75815bd17c80b4b48ccf217f' ;; \
+		'ppc64le') url='https://github.com/loong64/gosu/releases/download/1.19/gosu-ppc64el'; sha256='30abaa78270d6ccb5f83940105cbcafdd378f4b5f7ebc49cf8f774f5d7159088' ;; \
+		'riscv64') url='https://github.com/loong64/gosu/releases/download/1.19/gosu-riscv64'; sha256='5d2a74d3da0e12f4e07c45318f27e3c6be9dd8fddf871226642ba9e38a00f362' ;; \
+		's390x') url='https://github.com/loong64/gosu/releases/download/1.19/gosu-s390x'; sha256='0b9d65e50364511708d7df873a0b32a896996346844603d3e2cd68cbe892c0d3' ;; \
+		'armv7') url='https://github.com/loong64/gosu/releases/download/1.19/gosu-armhf'; sha256='f186ca630c28cbaaa1ed304767278126761a109164aa8576ddad6b2ce2a5184b' ;; \
 		*) echo >&2 "error: unsupported gosu architecture: '$arch'"; exit 1 ;; \
 	esac; \
 	wget -O /usr/local/bin/gosu.asc "$url.asc"; \
