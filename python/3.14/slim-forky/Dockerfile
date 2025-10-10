@@ -4,52 +4,51 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM ghcr.io/loong64/alpine:3.22
+FROM ghcr.io/loong64/debian:forky-slim
 
 # ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
 
 # runtime dependencies
 RUN set -eux; \
-	apk add --no-cache \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
 		ca-certificates \
+		netbase \
 		tzdata \
-	;
+	; \
+	apt-get dist-clean
 
-ENV PYTHON_VERSION 3.14.0rc3
-ENV PYTHON_SHA256 646dc945e49c73a141896deda12d43f3f293fd69426774c16fc43496180e8fcd
+ENV PYTHON_VERSION 3.14.0
+ENV PYTHON_SHA256 2299dae542d395ce3883aca00d3c910307cd68e0b2f7336098c8e7b7eee9f3e9
 
 RUN set -eux; \
 	\
-	apk add --no-cache --virtual .build-deps \
-		gnupg \
-		tar \
-		xz \
-		\
-		bluez-dev \
-		bzip2-dev \
-		dpkg-dev dpkg \
-		findutils \
-		gcc \
-		gdbm-dev \
-		libc-dev \
-		libffi-dev \
-		libnsl-dev \
-		libtirpc-dev \
-		linux-headers \
-		make \
-		ncurses-dev \
-		openssl-dev \
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
 		patch \
-		pax-utils \
-		readline-dev \
-		sqlite-dev \
-		tcl-dev \
-		tk \
+		dpkg-dev \
+		gcc \
+		gnupg \
+		libbluetooth-dev \
+		libbz2-dev \
+		libc6-dev \
+		libdb-dev \
+		libffi-dev \
+		libgdbm-dev \
+		liblzma-dev \
+		libncursesw5-dev \
+		libreadline-dev \
+		libsqlite3-dev \
+		libssl-dev \
+		libzstd-dev \
+		make \
 		tk-dev \
-		util-linux-dev \
-		xz-dev \
-		zlib-dev \
+		uuid-dev \
+		wget \
+		xz-utils \
+		zlib1g-dev \
 	; \
 	\
 	wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz"; \
@@ -69,27 +68,27 @@ RUN set -eux; \
 	./configure \
 		--build="$gnuArch" \
 		--enable-loadable-sqlite-extensions \
+		--enable-optimizations \
 		--enable-option-checking=fatal \
 		--enable-shared \
 		$(test "${gnuArch%%-*}" != 'riscv64' && echo '--with-lto') \
 		--with-ensurepip \
 	; \
 	nproc="$(nproc)"; \
-# set thread stack size to 1MB so we don't segfault before we hit sys.getrecursionlimit()
-# https://github.com/alpinelinux/aports/commit/2026e1259422d4e0cf92391ca2d3844356c649d0
-	EXTRA_CFLAGS="-DTHREAD_STACK_SIZE=0x100000"; \
+	EXTRA_CFLAGS="$(dpkg-buildflags --get CFLAGS)"; \
+	LDFLAGS="$(dpkg-buildflags --get LDFLAGS)"; \
 	LDFLAGS="${LDFLAGS:--Wl},--strip-all"; \
-		arch="$(apk --print-arch)"; \
+		arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
 # https://docs.python.org/3.12/howto/perf_profiling.html
 # https://github.com/docker-library/python/pull/1000#issuecomment-2597021615
 		case "$arch" in \
-			x86_64|aarch64) \
+			amd64|arm64) \
 				# only add "-mno-omit-leaf" on arches that support it
 				# https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/x86-Options.html#index-momit-leaf-frame-pointer-2
 				# https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/AArch64-Options.html#index-momit-leaf-frame-pointer
 				EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"; \
 				;; \
-			x86) \
+			i386) \
 				# don't enable frame-pointers on 32bit x86 due to performance drop.
 				;; \
 			*) \
@@ -121,13 +120,21 @@ RUN set -eux; \
 		\) -exec rm -rf '{}' + \
 	; \
 	\
-	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
-		| tr ',' '\n' \
+	ldconfig; \
+	\
+	apt-mark auto '.*' > /dev/null; \
+	apt-mark manual $savedAptMark; \
+	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 		| sort -u \
-		| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-		| xargs -rt apk add --no-network --virtual .python-rundeps \
+		| xargs -rt dpkg-query --search \
+# https://manpages.debian.org/bookworm/dpkg/dpkg-query.1.en.html#S (we ignore diversions and it'll be really unusual for more than one package to provide any given .so file)
+		| awk 'sub(":$", "", $1) { print $1 }' \
+		| sort -u \
+		| xargs -r apt-mark manual \
 	; \
-	apk del --no-network .build-deps; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	apt-get dist-clean; \
 	\
 	export PYTHONDONTWRITEBYTECODE=1; \
 	python3 --version; \

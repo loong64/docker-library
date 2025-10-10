@@ -29,8 +29,8 @@ jobs:
       matrix:
         name: ['python']
         suite: ['trixie', 'slim-trixie', 'alpine3.21', 'alpine3.22']
-        version: ['3.9', '3.10', '3.11', '3.12', '3.13', '3.14-rc']
-        latest_version: ['3.13']
+        version: ['3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
+        latest_version: ['3.14']
 
     steps:
       - name: Checkout ${{ matrix.name }}
@@ -82,10 +82,7 @@ jobs:
           platforms: linux/loong64
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.image_tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}-${{ matrix.suite }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}-loong64
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -107,7 +104,6 @@ jobs:
           version="${{ matrix.version }}"
           latest_version="${{ matrix.latest_version }}"
 
-          crane cp "$repo:$full_version-$suite" "$repo:$full_version-$suite-loong64"
           crane index append -t "$repo:$full_version-$suite" \
             -m "$repo:$full_version-$suite-loong64" \
             -m "python:$full_version-$suite"

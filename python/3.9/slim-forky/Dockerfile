@@ -33,6 +33,7 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
+		patch \
 		dpkg-dev \
 		gcc \
 		gnupg \
@@ -48,7 +49,6 @@ RUN set -eux; \
 		libsqlite3-dev \
 		libssl-dev \
 		make \
-		patch \
 		tk-dev \
 		uuid-dev \
 		wget \

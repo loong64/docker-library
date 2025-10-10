@@ -28,16 +28,14 @@ ENV PYTHON_SHA256 8d3ed8ec5c88c1c95f5e558612a725450d2452813ddad5e58fdb1a53b1209b
 RUN set -eux; \
 	\
 	apk add --no-cache --virtual .build-deps \
-		gnupg \
-		tar \
-		xz \
-		\
+		patch \
 		bluez-dev \
 		bzip2-dev \
 		dpkg-dev dpkg \
 		findutils \
 		gcc \
 		gdbm-dev \
+		gnupg \
 		libc-dev \
 		libffi-dev \
 		libnsl-dev \
@@ -46,14 +44,15 @@ RUN set -eux; \
 		make \
 		ncurses-dev \
 		openssl-dev \
-		patch \
 		pax-utils \
 		readline-dev \
 		sqlite-dev \
+		tar \
 		tcl-dev \
 		tk \
 		tk-dev \
 		util-linux-dev \
+		xz \
 		xz-dev \
 		zlib-dev \
 	; \
