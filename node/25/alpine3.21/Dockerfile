@@ -1,6 +1,6 @@
-FROM ghcr.io/loong64/alpine:3.22
+FROM ghcr.io/loong64/alpine:3.21
 
-ENV NODE_VERSION=20.19.2
+ENV NODE_VERSION=25.0.0
 
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
@@ -37,7 +37,7 @@ RUN addgroup -g 1000 node \
     && export GNUPGHOME="$(mktemp -d)" \
     # gpg keys listed at https://github.com/nodejs/node#release-keys
     && for key in \
-      C0D6248439F1D5604AAFFB4021D900FFDB233756 \
+      5BE8A3F6C8A5C01D106C0AD820B1A390B168D356 \
       DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7 \
       CC68F5A3106FF448322E48ED27F5E38D5B0A215F \
       8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \

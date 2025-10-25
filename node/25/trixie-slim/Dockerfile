@@ -1,9 +1,9 @@
-FROM ghcr.io/loong64/debian:forky-slim
+FROM ghcr.io/loong64/debian:trixie-slim
 
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
-ENV NODE_VERSION=22.21.0
+ENV NODE_VERSION=25.0.0
 
 RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && case "${dpkgArch##*-}" in \

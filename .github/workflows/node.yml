@@ -29,13 +29,13 @@ jobs:
       matrix:
         name: ['node']
         suite: ['trixie', 'trixie-slim', 'alpine3.21', 'alpine3.22']
-        version: ['20', '22', '24']
+        version: ['20', '22', '24', '25']
         lts_version: ['22']
-        latest_version: ['24']
+        latest_version: ['25']
 
     steps:
       - name: Checkout ${{ matrix.name }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
@@ -57,7 +57,7 @@ jobs:
             echo "build=false" >> $GITHUB_ENV
             exit 0
           fi
-          full_version=$(grep -m1 -oP "ENV NODE_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
+          full_version=$(grep -m1 -oP "ENV NODE_VERSION=\K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/Dockerfile)
           echo "full_version=${full_version}" >> $GITHUB_ENV
 
           version=${{ matrix.version }}

@@ -18,7 +18,7 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Checkout code for alpine
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: alpinelinux/docker-alpine
           ref: ${{ matrix.version }}

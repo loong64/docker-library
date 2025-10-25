@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-variants=("trixie" "trixie-slim" "forky" "forky-slim" "alpine3.21")
+variants=("trixie" "trixie-slim" "forky" "forky-slim" "alpine3.21" "alpine3.22")
 
 versions=( */ )
 
@@ -27,7 +27,7 @@ for version in "${versions[@]}"; do
             continue
         fi
         echo "processing $version/$variant ..."
-        sed -i "s/ENV NODE_VERSION .*/ENV NODE_VERSION ${fullVersion#v}/g" "$version/$variant/Dockerfile"
-        sed -i "s/ENV YARN_VERSION .*/ENV YARN_VERSION ${yarnVersion}/g" "$version/$variant/Dockerfile"
+        sed -i "s/ENV NODE_VERSION=.*/ENV NODE_VERSION=${fullVersion#v}/g" "$version/$variant/Dockerfile"
+        sed -i "s/ENV YARN_VERSION=.*/ENV YARN_VERSION=${yarnVersion}/g" "$version/$variant/Dockerfile"
     done
 done
