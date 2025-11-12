@@ -13,6 +13,7 @@ ENV PATH /usr/local/bin:$PATH
 RUN set -eux; \
 	apk add --no-cache \
 		ca-certificates \
+		libgcc \
 		tzdata \
 	;
 

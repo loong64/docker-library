@@ -1,6 +1,6 @@
 FROM ghcr.io/loong64/alpine:3.22
 
-ENV NODE_VERSION=24.11.0
+ENV NODE_VERSION=24.11.1
 
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
