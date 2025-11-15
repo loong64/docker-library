@@ -29,8 +29,8 @@
   },
   "11.8": {
     "milestone": "11.8",
-    "version": "11.8.4",
-    "fullVersion": "1:11.8.4+maria~deb13",
+    "version": "11.8.5",
+    "fullVersion": "1:11.8.5+maria~deb13",
     "releaseStatus": "Stable",
     "supportType": "Long Term Support",
     "base": "ubuntu:trixie",
