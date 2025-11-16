@@ -86,6 +86,7 @@ jobs:
       - name: Build and push image
         if: env.build == 'true'
         uses: docker/build-push-action@v6
+        timeout-minutes: 330
         with:
           context: ${{ matrix.name }}/${{ matrix.version }}/
           platforms: linux/loong64
