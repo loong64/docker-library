@@ -1,22 +1,8 @@
 {
   "12.1": {
     "milestone": "12.1",
-    "version": "12.1.1",
-    "fullVersion": "1:12.1.1+maria~deb13",
-    "releaseStatus": "RC",
-    "supportType": "Rolling",
-    "base": "ubuntu:trixie",
-    "arches": [
-      "amd64",
-      "arm64v8",
-      "ppc64le",
-      "s390x"
-    ]
-  },
-  "12.0": {
-    "milestone": "12.0",
-    "version": "12.0.2",
-    "fullVersion": "1:12.0.2+maria~deb13",
+    "version": "12.1.2",
+    "fullVersion": "1:12.1.2+maria~deb13",
     "releaseStatus": "Stable",
     "supportType": "Rolling",
     "base": "ubuntu:trixie",
