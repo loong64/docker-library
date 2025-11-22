@@ -29,8 +29,8 @@ jobs:
       matrix:
         name: ['postgres']
         suite: ['trixie', 'alpine3.21', 'alpine3.22']
-        version: ['13', '14', '15', '16', '17', '18']
-        latest_version: ['17']
+        version: ['14', '15', '16', '17', '18']
+        latest_version: ['18']
 
     steps:
       - name: Checkout ${{ matrix.name }}
