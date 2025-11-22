@@ -1,24 +1,4 @@
 {
-  "13": {
-    "alpine": "3.22",
-    "debian": "trixie",
-    "major": 13,
-    "sha256": "6ec3c82726af92b7dec873fa1cdf881eca92a4219787dfad05acb6b10e041fd6",
-    "trixie": {
-      "arches": [
-        "amd64",
-        "arm64",
-        "ppc64el"
-      ],
-      "version": "13.23-1.pgdg13+1"
-    },
-    "variants": [
-      "trixie",
-      "alpine3.22",
-      "alpine3.21"
-    ],
-    "version": "13.23"
-  },
   "14": {
     "alpine": "3.22",
     "debian": "trixie",
