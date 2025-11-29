@@ -1,0 +1,65 @@
+name: Sync to cnb.cool
+
+on:
+  schedule:
+    - cron: '0 0 4 * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to CNB Cloud Registry
+        uses: docker/login-action@v3
+        with:
+          registry: docker.cnb.cool
+          username: ${{ secrets.CNB_USER }}
+          password: ${{ secrets.CNB_TOKEN }}
+
+      - name: Prepare configuration
+        run: |
+          wget -qO- https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz | sudo tar -xzf - -C /usr/local/bin/ crane
+          sudo chmod +x /usr/local/bin/crane
+          sudo chown root:root /usr/local/bin/crane
+
+      - name: Sync
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MAX_RETRIES=5
+          WAIT_SECONDS=60
+          for package_dir in */; do
+            package=${package_dir%/}
+
+            tags=$(gh api -H "Accept: application/vnd.github+json" \
+              "/orgs/loong64/packages/container/${package}/versions?&per_page=100&state=active" | \
+              jq -r '.[].metadata.container.tags.[] | select((. | endswith("-loong64") | not))')
+
+            for tag in ${tags}; do
+              SOURCE_IMAGE="ghcr.io/loong64/${package}:${tag}"
+              DEST_IMAGE="docker.cnb.cool/loong64/library/${package}:${tag}"
+
+              echo "➡️ Attempting to copy: ${SOURCE_IMAGE} to ${DEST_IMAGE}"
+              RETRY_COUNT=0
+              until crane cp "${SOURCE_IMAGE}" "${DEST_IMAGE}"; do
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                if [ ${RETRY_COUNT} -ge ${MAX_RETRIES} ]; then
+                  echo "❌ ERROR: Failed to copy ${SOURCE_IMAGE} after ${MAX_RETRIES} attempts. Skipping."
+                  break 
+                fi
+                echo "⚠️ Copy failed (Attempt ${RETRY_COUNT}/${MAX_RETRIES}). Retrying in ${WAIT_SECONDS} seconds..."
+                sleep ${WAIT_SECONDS}
+              done
+            done
+          done
