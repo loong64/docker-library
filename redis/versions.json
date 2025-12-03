@@ -7,7 +7,7 @@
       "version": "trixie"
     },
     "alpine": {
-      "version": "3.22"
+      "version": "3.23"
     },
     "gosu": {
       "version": "1.19",
@@ -67,7 +67,7 @@
       "version": "trixie"
     },
     "alpine": {
-      "version": "3.22"
+      "version": "3.23"
     },
     "gosu": {
       "version": "1.19",
@@ -127,7 +127,7 @@
       "version": "trixie"
     },
     "alpine": {
-      "version": "3.22"
+      "version": "3.23"
     },
     "gosu": {
       "version": "1.19",
@@ -187,7 +187,7 @@
       "version": "trixie"
     },
     "alpine": {
-      "version": "3.22"
+      "version": "3.23"
     },
     "gosu": {
       "version": "1.19",
@@ -247,7 +247,7 @@
       "version": "trixie"
     },
     "alpine": {
-      "version": "3.22"
+      "version": "3.23"
     },
     "gosu": {
       "version": "1.19",
