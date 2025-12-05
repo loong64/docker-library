@@ -56,10 +56,10 @@
   "3.13": {
     "checksums": {
       "source": {
-        "sha256": "bc673c04375a1a3f0808c27ba8f0411ab811ad390a8740318ccb9c60fad8fd77"
+        "sha256": "16ede7bb7cdbfa895d11b0642fa0e523f291e6487194d53cf6d3b338c3a17ea2"
       },
       "windows": {
-        "sha256": "ab30cd76655c6c91243b4f4d5a8499020f6503aa58e92b3e2e94ae4af7353257"
+        "sha256": "30d4654b3eac7ddfdf2682db4c8dcb490f3055f4f33c6906d6b828f680152101"
       }
     },
     "variants": [
@@ -70,15 +70,15 @@
       "alpine3.22",
       "alpine3.21"
     ],
-    "version": "3.13.10"
+    "version": "3.13.11"
   },
   "3.14": {
     "checksums": {
       "source": {
-        "sha256": "8dfa08b1959d9d15838a1c2dab77dc8d8ff4a553a1ed046dfacbc8095c6d42fc"
+        "sha256": "ce543ab854bc256b61b71e9b27f831ffd1bfd60a479d639f8be7f9757cf573e9"
       },
       "windows": {
-        "sha256": "74e1516408744190fcc12307c150de30902898444f77f85f4c2ac18f36788a80"
+        "sha256": "9db919cefe30a0051658c600a9912acb0cd2b872aaf35842c9ec2bf401efa848"
       }
     },
     "variants": [
@@ -89,6 +89,6 @@
       "alpine3.22",
       "alpine3.21"
     ],
-    "version": "3.14.1"
+    "version": "3.14.2"
   }
 }
