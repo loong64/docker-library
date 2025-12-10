@@ -2,14 +2,12 @@
 FROM ghcr.io/loong64/debian:trixie-slim
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-RUN set -eux; \
-	groupadd -r mysql; \
-	useradd -r -g mysql mysql --home-dir /var/lib/mysql
+RUN groupadd -r mysql && useradd -r -g mysql mysql --home-dir /var/lib/mysql
 
 # add gosu for easy step-down from root
 # https://github.com/tianon/gosu/releases
 # gosu key is B42F6819007F00F88E364FD4036A9C25BF357DD4
-ENV GOSU_VERSION 1.17
+ENV GOSU_VERSION 1.19
 
 ARG GPG_KEYS=177F4010FE56CA3336300305F1656F24C74CD1D8
 # pub   rsa4096 2016-03-30 [SC]
@@ -17,6 +15,7 @@ ARG GPG_KEYS=177F4010FE56CA3336300305F1656F24C74CD1D8
 # uid           [ unknown] MariaDB Signing Key <signing-key@mariadb.org>
 # sub   rsa4096 2016-03-30 [E]
 # install "libjemalloc2" as it offers better performance in some cases. Use with LD_PRELOAD
+# install "libtcmalloc-minimal4t64" as it may improve performance and fix memory fragmentation issues. Use with LD_PRELOAD
 # install "pwgen" for randomizing passwords
 # install "tzdata" for /usr/share/zoneinfo/
 # install "xz-utils" for .sql.xz docker-entrypoint-initdb.d files
@@ -29,6 +28,7 @@ RUN set -eux; \
 		gpg \
 		gpgv \
 		libjemalloc2 \
+		libtcmalloc-minimal4t64 \
 		pwgen \
 		tzdata \
 		xz-utils \
@@ -69,18 +69,12 @@ RUN mkdir /docker-entrypoint-initdb.d
 ENV LANG C.UTF-8
 
 # bashbrew-architectures: amd64 arm64v8 ppc64le s390x
-ARG MARIADB_VERSION=1:12.0.2+maria~deb13
+ARG MARIADB_VERSION=1:12.2.1+maria~deb13
 ENV MARIADB_VERSION $MARIADB_VERSION
-# release-status:Stable
+# release-status:RC
 # release-support-type:Rolling
 # (https://downloads.mariadb.org/rest-api/mariadb/)
 
-# add repository pinning to make sure dependencies from this MariaDB repo are preferred over Debian dependencies
-#  libmariadbclient18 : Depends: libmysqlclient18 (= 5.5.42+maria-1~wheezy) but 5.5.43-0+deb7u1 is to be installed
-
-# the "/var/lib/mysql" stuff here is because the mysql-server postinst doesn't have an explicit way to disable the mysql_install_db codepath besides having a database already "configured" (ie, stuff in /var/lib/mysql/mysql)
-# also, we set debconf keys to make APT a little quieter
-# hadolint ignore=DL3015
 RUN set -ex; \
 	{ \
 		echo "mariadb-server" mysql-server/root_password password 'unused'; \
@@ -91,7 +85,7 @@ RUN set -ex; \
 	export PYTHONDONTWRITEBYTECODE=1; \
 	\
 	dpkgArch="$(dpkg --print-architecture)"; \
-	aptRepo="[ signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg ] http://archive.mariadb.org/mariadb-12.0.2/repo/debian/ trixie main main/debug"; \
+	aptRepo="[ signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg ] http://archive.mariadb.org/mariadb-12.2.1/repo/debian/ trixie main main/debug"; \
 	case "$dpkgArch" in \
 		amd64 | arm64 | ppc64el | s390x) \
 # arches officialy built by upstream

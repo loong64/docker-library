@@ -5,7 +5,7 @@ set -Eeuo pipefail
 #
 
 development_version=main
-development_version_real=12.2
+development_version_real=12.3
 
 defaultSuite='trixie'
 declare -A suites=(
@@ -37,18 +37,14 @@ update_version()
 {
 	local dir=$version$ubi
 	if [ ! -d "$dir" ]; then
-		# echo "Directory $dir missing"
+		echo "Directory $dir missing"
 		return
 	fi
 	echo "$version: $mariaVersion($ubi) ($releaseStatus)"
 
 	if [ -z "$ubi" ]; then
-        suite="${suites[$version]:-$defaultSuite}"
-        if [[ $version = 10.* ]]; then
-		    fullVersion=${mariaVersion}+maria~${suffix[$version]:-$defaultSuffix}
-        else
-            fullVersion=1:${mariaVersion}+maria~${suffix[$version]:-$defaultSuffix}
-        fi
+		suite="${suites[$version]:-$defaultSuite}"
+		fullVersion=1:${mariaVersion}+maria~${suffix[${suite}]:-$defaultSuffix}
 	else
 		suite=
 		fullVersion=$mariaVersion
@@ -70,6 +66,12 @@ update_version()
 		arches="amd64 arm64v8 ppc64le s390x"
 	fi
 
+	if [[ $suite = 'jammy' ]]; then
+		tcmallocUbuntuPkgName="libtcmalloc-minimal4"
+	else
+		tcmallocUbuntuPkgName="libtcmalloc-minimal4t64"
+	fi
+
 	cp "Dockerfile${ubi}.template" "${dir}/Dockerfile"
 
 	cp docker-entrypoint.sh healthcheck.sh "$dir/"
@@ -80,6 +82,7 @@ update_version()
 		-e 's!%%MARIADB_MAJOR%%!'"${version%-ubi}"'!g' \
 		-e 's!%%MARIADB_RELEASE_STATUS%%!'"$releaseStatus"'!g' \
 		-e 's!%%MARIADB_SUPPORT_TYPE%%!'"$supportType"'!g' \
+		-e 's!%%TCMALLOC_UBUNTU_PKG_NAME%%!'"$tcmallocUbuntuPkgName"'!g' \
 		-e 's!%%SUITE%%!'"$suite"'!g' \
 		-e 's!%%ARCHES%%! '"$arches"'!g' \
 		"$dir/Dockerfile"
@@ -88,6 +91,14 @@ update_version()
 		-e 's!%%MARIADB_VERSION_BASIC%%!'"$mariaVersion"'!g' \
 		"$dir/docker-entrypoint.sh"
 
+	if [ "$suite" = ubi9-minimal ]; then
+		sed -i \
+			-e 's!7D8D15CBFC4E62688591FB2633D98517E37ED158!FF8AD1344597106ECE813B918A3872BF3228467C!g' \
+			-e 's!EPEL-10!EPEL-9!g' \
+			-e 's!epel-release-latest-10!epel-release-latest-9!g' \
+			-e 's!--enablerepo=epel --disablerepo=mariadb --releasever=10.1 !!' \
+			"$dir/Dockerfile"
+	fi
 	vmin=${version%-ubi}
 	# Start using the new executable names
 	case "$vmin" in
@@ -111,7 +122,7 @@ update_version()
 			sed -i -e 's/mariadb_upgrade_info/mysql_upgrade_info/' \
 				"$dir/docker-entrypoint.sh" "$dir/healthcheck.sh"
 			;;
-		10.6)
+		10.6*)
 			sed -i -e '/memory\.pressure/,+7d' \
 				-e 's/--mariadbd/--mysqld/' \
 				"$dir/docker-entrypoint.sh"
@@ -150,14 +161,14 @@ update_version()
 			;&
 	esac
 
-	if [ -z "$suite" ]; then
-		base=ubi9
+	if [ -n "$ubi" ]; then
+		base=redhat/$suite
 	else
-		base=ubuntu:$suite
+		base=debian:$suite
 	fi
 	# Add version to versions.json
 	versionJson="$(jq -e \
-		--arg milestone "${version}" --arg milestoneversion "${version}${ubi}" --arg version "$mariaVersion" --arg fullVersion "$fullVersion" --arg releaseStatus "$releaseStatus" --arg supportType "$supportType" --arg base "$base" --arg arches "${arches# }" \
+		--arg milestone "${version%%-*}" --arg milestoneversion "${version}${ubi}" --arg version "$mariaVersion" --arg fullVersion "$fullVersion" --arg releaseStatus "$releaseStatus" --arg supportType "$supportType" --arg base "$base" --arg arches "${arches# }" \
 		'.[$milestoneversion] = {"milestone": $milestone, "version": $version, "fullVersion": $fullVersion, "releaseStatus": $releaseStatus, "supportType": $supportType, "base": $base, "arches": $arches|split(" ")}' versions.json)"
 	printf '%s\n' "$versionJson" > versions.json
 }
