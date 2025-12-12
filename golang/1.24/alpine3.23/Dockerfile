@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM ghcr.io/loong64/alpine:3.21 AS build
+FROM ghcr.io/loong64/alpine:3.23 AS build
 
 ENV PATH /usr/local/go/bin:$PATH
 
@@ -114,7 +114,7 @@ RUN set -eux; \
 	[ "$SOURCE_DATE_EPOCH" = "$epoch" ]; \
 	find /target -newer /target/usr/local/go -exec sh -c 'ls -ld "$@" && exit "$#"' -- '{}' +
 
-FROM ghcr.io/loong64/alpine:3.21
+FROM ghcr.io/loong64/alpine:3.23
 
 RUN apk add --no-cache ca-certificates
 
