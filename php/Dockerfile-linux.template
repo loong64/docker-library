@@ -12,6 +12,29 @@
 	;
 	def is_alpine:
 		env.from | startswith("ghcr.io/loong64/alpine")
+	;
+	def rcVersion:
+		env.version | rtrimstr("-rc")
+	;
+	def clean_apt:
+		# TODO once bookworm is EOL, remove this and just hard-code "apt-get dist-clean" instead
+		if env.from | contains("bookworm") then
+			"rm -rf /var/lib/apt/lists/*"
+		else "apt-get dist-clean" end
+	;
+	def need_patch_11678:
+		# https://github.com/docker-library/php/pull/1552
+		# https://github.com/php/php-src/issues/11678 "Build fails on musl 1.2.4 - lfs64" stream_cookie_seeker
+		# https://github.com/php/php-src/issues/14834 "Error installing PHP when --with-pear is used" xml errors
+		is_alpine and rcVersion == "8.1"
+	;
+	def need_patch_18743:
+		# https://github.com/docker-library/php/pull/1580
+		# https://github.com/php/php-src/issues/18743 "Incompatibility in Inline TLS Assembly on Alpine 3.22 with zend_jit_ir.c"
+		env.variant == "zts" # only needed for ZTS builds
+		and is_alpine
+		and env.from != "alpine:3.21" # only needed for Alpine 3.22+
+		and IN(rcVersion; "8.1", "8.2")
 -}}
 FROM {{ env.from }}
 
@@ -68,7 +91,7 @@ RUN set -eux; \
 		curl \
 		xz-utils \
 	; \
-	rm -rf /var/lib/apt/lists/*
+	{{ clean_apt }}
 {{ ) end -}}
 
 ENV PHP_INI_DIR /usr/local/etc/php
@@ -87,7 +110,7 @@ ENV APACHE_ENVVARS $APACHE_CONFDIR/envvars
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends apache2; \
-	rm -rf /var/lib/apt/lists/*; \
+	{{ clean_apt }}; \
 	\
 # generically convert lines like
 #   export APACHE_RUN_USER=www-data
@@ -103,10 +126,8 @@ RUN set -eux; \
 		"$APACHE_LOCK_DIR" \
 		"$APACHE_RUN_DIR" \
 		"$APACHE_LOG_DIR" \
-{{ if env.suite == "bullseye" then "" else ( -}}
 # https://salsa.debian.org/apache-team/apache2/-/commit/b97ca8714890ead1ba6c095699dde752e8433205
 		"$APACHE_RUN_DIR/socks" \
-{{ ) end -}}
 	; do \
 		rm -rvf "$dir"; \
 		mkdir -p "$dir"; \
@@ -159,6 +180,14 @@ ENV GPG_KEYS {{
 		# https://www.php.net/gpg-keys.php
 		# https://www.php.net/downloads.php
 
+		"8.5": [
+			# https://wiki.php.net/todo/php85#release_managers
+			# https://www.php.net/gpg-keys.php#gpg-8.5
+			"1198 C011 7593 497A 5EC5  C199 286A F1F9 8974 69DC", # pierrick
+			"49D9 AF6B C72A 80D6 6917  19C8 AA23 F5BE 9C70 97D4", # edorian
+			"D95C 03BC 702B E951 5344  AE33 74E4 4BC9 0677 01A5"  # daniels
+		],
+
 		"8.4": [
 			# https://wiki.php.net/todo/php84#release_managers
 			# https://www.php.net/gpg-keys.php#gpg-8.4
@@ -190,7 +219,7 @@ ENV GPG_KEYS {{
 			"39B6 4134 3D8C 104B 2B14  6DC3 F9C3 9DC0 B969 8544", # ramsey
 			"F1F6 9223 8FBC 1666 E5A5  CCD4 199F 9DFE F6FF BAFD"  # patrickallaert
 		],
-	}[env.version | rtrimstr("-rc")] // error("missing GPG keys for " + env.version)
+	}[rcVersion] // error("missing GPG keys for " + rcVersion)
 	| map(gsub(" "; ""))
 	| join(" ")
 }}
@@ -207,7 +236,7 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends gnupg; \
-	rm -rf /var/lib/apt/lists/*; \
+	{{ clean_apt }}; \
 {{ ) end -}}
 	\
 	mkdir -p /usr/src; \
@@ -219,16 +248,14 @@ RUN set -eux; \
 		echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -; \
 	fi; \
 	\
-	if [ -n "$PHP_ASC_URL" ]; then \
-		curl -fsSL -o php.tar.xz.asc "$PHP_ASC_URL"; \
-		export GNUPGHOME="$(mktemp -d)"; \
-		for key in $GPG_KEYS; do \
-			gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
-		done; \
-		gpg --batch --verify php.tar.xz.asc php.tar.xz; \
-		gpgconf --kill all; \
-		rm -rf "$GNUPGHOME"; \
-	fi; \
+	curl -fsSL -o php.tar.xz.asc "$PHP_ASC_URL"; \
+	export GNUPGHOME="$(mktemp -d)"; \
+	for key in $GPG_KEYS; do \
+		gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
+	done; \
+	gpg --batch --verify php.tar.xz.asc php.tar.xz; \
+	gpgconf --kill all; \
+	rm -rf "$GNUPGHOME"; \
 	\
 {{ if is_alpine then ( -}}
 	apk del --no-network .fetch-deps
@@ -261,11 +288,10 @@ RUN set -eux; \
 			"libsodium-dev",
 			"libxml2-dev",
 			"openssl-dev",
-			# https://github.com/docker-library/php/pull/1552
-			if env.version | rtrimstr("-rc") == "8.1" then "patch", "patchutils" else empty end,
+			# https://github.com/docker-library/php/pull/1552 (11678) & https://github.com/docker-library/php/pull/1580 (14834)
+			if need_patch_11678 or need_patch_18743 then "patch", "patchutils" else empty end,
 			"readline-dev",
 			"sqlite-dev",
-			"libucontext-dev",
 			# https://github.com/docker-library/php/issues/888
 			"linux-headers",
 			# oniguruma is part of mbstring in php 7.4+
@@ -300,14 +326,14 @@ RUN set -eux; \
 	export \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
-		LDFLAGS="$PHP_LDFLAGS -lucontext" \
+		LDFLAGS="$PHP_LDFLAGS" \
 # https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
 		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
 		PHP_UNAME='Linux - Docker' \
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
-{{ if is_alpine and (env.version | rtrimstr("-rc") == "8.1") then ( -}}
+{{ if need_patch_11678 then ( -}}
 # Apply patches; see https://github.com/docker-library/php/pull/1552
 	# https://github.com/php/php-src/issues/11678
 	curl -fL 'https://github.com/php/php-src/commit/577b8ae4226368e66fee7a9b5c58f9e2428372fc.patch?full_index=1' -o 11678.patch; \
@@ -319,6 +345,22 @@ RUN set -eux; \
 	echo 'ed10a1b254091ad676ed204e55628ecbd6c8962004d6185a1821cedecd526c0f *14834.patch' | sha256sum -c -; \
 	filterdiff -x '*/NEWS' 14834.patch | patch -p1; \
 	rm 14834.patch; \
+{{ ) else "" end -}}
+{{
+	if need_patch_18743 then
+		# https://github.com/docker-library/php/pull/1580#issuecomment-2957191901
+		{
+			"8.1": { url: "https://github.com/php/php-src/commit/6b105d4bc57e20a2472c9a6ff11fba32768556d4.patch?full_index=1", sha256: "037e1610ae5d444e9a8c3ecd9d5f0cd215fd0aac90bdd7b9f0b259bffdf3566b" },
+		}[rcVersion]
+		// { url: "https://github.com/php/php-src/commit/b3c8afe272a6919248986c703c2e1defc73ff707.patch?full_index=1", sha256: "b334f73434c9732a4b27a42eb5d417e10df842e854c02a3e753b2479f8978bf5" }
+		| (
+-}}
+	# https://github.com/php/php-src/issues/18743 "Incompatibility in Inline TLS Assembly on Alpine 3.22 with zend_jit_ir.c"
+	# https://github.com/docker-library/php/pull/1580
+	curl -fL {{ .url | @sh }} -o 18743.patch; \
+	echo {{ "\(.sha256) *18743.patch" | @sh }} | sha256sum -c -; \
+	filterdiff -x '*/NEWS' 18743.patch | patch -p1; \
+	rm 18743.patch; \
 {{ ) else "" end -}}
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 {{ if is_alpine then "" else ( -}}
@@ -342,7 +384,7 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
-{{ if env.version | rtrimstr("-rc") == "8.1" then ( -}}
+{{ if rcVersion == "8.1" then ( -}}
 # --enable-ftp is included here for compatibility with existing versions. ftp_ssl_connect() needed ftp to be compiled statically before PHP 7.0 (see https://github.com/docker-library/php/issues/236).
 		--enable-ftp \
 {{ ) else "" end -}}
@@ -376,7 +418,7 @@ RUN set -eux; \
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
-{{ if env.version | rtrimstr("-rc") | IN("8.1", "8.2") then ( -}}
+{{ if rcVersion | IN("8.1", "8.2") then ( -}}
 # bundled pcre does not support JIT on riscv64 until 10.41 (php 8.3+)
 # https://github.com/PCRE2Project/pcre2/commits/pcre2-10.41/src/sljit/sljitNativeRISCV_64.c
 # https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
@@ -386,7 +428,6 @@ RUN set -eux; \
 		$(test "$gnuArch" = 'riscv64-linux-gnu' && echo '--without-pcre-jit') \
 {{ ) end -}}
 {{ ) else "" end -}}
-		--without-pcre-jit \
 {{ if is_alpine then "" else ( -}}
 		--with-libdir="lib/$debMultiarch" \
 {{ ) end -}}
@@ -414,7 +455,7 @@ RUN set -eux; \
 		--enable-zts \
 # https://externals.io/message/118859
 		--disable-zend-signals \
-{{ if env.version | rtrimstr("-rc") | IN("8.1", "8.2") then ( -}}
+{{ if rcVersion | IN("8.1", "8.2") then ( -}}
 		--enable-zend-max-execution-timers \
 {{ ) else "" end -}}
 {{ ) else "" end -}}
@@ -463,13 +504,14 @@ RUN set -eux; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 		| sort -u \
-		| xargs -r dpkg-query --search \
-		| cut -d: -f1 \
+		| xargs -rt dpkg-query --search \
+# https://manpages.debian.org/trixie/dpkg/dpkg-query.1.en.html#S (we ignore diversions and it'll be really unusual for more than one package to provide any given .so file)
+		| awk 'sub(":$", "", $1) { print $1 }' \
 		| sort -u \
 		| xargs -r apt-mark manual \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	rm -rf /var/lib/apt/lists/*; \
+	{{ clean_apt }}; \
 {{ ) end -}}
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
@@ -481,6 +523,11 @@ RUN set -eux; \
 
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
+{{ if IN(rcVersion; "8.1", "8.2", "8.3", "8.4") then ( -}}
+# enable OPcache by default (https://wiki.php.net/rfc/make_opcache_required)
+RUN docker-php-ext-enable opcache
+
+{{ ) else "" end -}}
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium
 

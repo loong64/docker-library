@@ -3,6 +3,8 @@ set -Eeuo pipefail
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
+# TODO consume https://www.php.net/releases/branches.php and https://www.php.net/release-candidates.php?format=json here like in Go, Julia, etc (so we can have a canonical "here's all the versions possible" mode, and more automated metadata like EOL 👀)
+
 versions=( "$@" )
 if [ ${#versions[@]} -eq 0 ]; then
 	versions=( */ )
@@ -31,7 +33,7 @@ for version in "${versions[@]}"; do
 			) ]
 		'
 	else
-		apiUrl='https://qa.php.net/api.php?type=qa-releases&format=json'
+		apiUrl='https://www.php.net/release-candidates.php?format=json'
 		apiJqExpr='
 			(.releases // [])[]
 			| select(.version | startswith(env.rcVersion))
@@ -52,16 +54,9 @@ for version in "${versions[@]}"; do
 	unset IFS
 
 	if [ "${#possibles[@]}" -eq 0 ]; then
-		if [ "$rcVersion" = "$version" ]; then
-			echo >&2
-			echo >&2 "error: unable to determine available releases of $version"
-			echo >&2
-			exit 1
-		else
-			echo >&2 "warning: skipping/removing '$version' (does not appear to exist upstream)"
-			json="$(jq <<<"$json" -c '.[env.version] = null')"
-			continue
-		fi
+		echo >&2 "warning: skipping/removing '$version' (does not appear to exist upstream)"
+		json="$(jq <<<"$json" -c '.[env.version] = null')"
+		continue
 	fi
 
 	# format of "possibles" array entries is "VERSION URL.TAR.XZ URL.TAR.XZ.ASC SHA256" (each value shell quoted)
@@ -72,24 +67,35 @@ for version in "${versions[@]}"; do
 	ascUrl="${possi[2]}"
 	sha256="${possi[3]}"
 
-	if ! wget -q --spider "$url"; then
+	if ! curl --head -fsSL "$url" -o /dev/null; then
 		echo >&2 "error: '$url' appears to be missing"
 		exit 1
 	fi
 
-	# if we don't have a .asc URL, let's see if we can figure one out :)
-	if [ -z "$ascUrl" ] && wget -q --spider "$url.asc"; then
+	# if we don't have a .asc URL, let's just assume one :)
+	if [ -z "$ascUrl" ]; then
 		ascUrl="$url.asc"
 	fi
 
 	variants='[]'
 	# order here controls the order of the library/ file
 	for suite in \
+		trixie \
+		alpine3.23 \
+		alpine3.22 \
 		alpine3.21 \
 	; do
 		for variant in cli apache fpm zts; do
 			if [[ "$suite" = alpine* ]]; then
 				if [ "$variant" = 'apache' ]; then
+					continue
+				fi
+				if [[ "$rcVersion" = '8.1' ]] && [[ "$suite" = 'alpine3.23' ]]; then
+					# Keep PHP 8.1 with Alpine 3.21 default until end of year; see also https://github.com/docker-library/php/blob/9ab2e4b37addffaa10f06d9e5f54f7bd1f5ef18f/generate-stackbrew-library.sh#L120
+					continue
+				fi
+				if [[ "$rcVersion" != '8.1' ]] && [[ "$suite" = 'alpine3.21' ]]; then
+					# Keep Alpine 3.21 just for 8.1
 					continue
 				fi
 			fi
@@ -113,11 +119,15 @@ for version in "${versions[@]}"; do
 		'
 	)"
 
-	if [ "$version" = "$rcVersion" ]; then
-		json="$(jq <<<"$json" -c '
-			.[env.version + "-rc"] //= null
-		')"
-	fi
+	# make sure RCs and releases have corresponding pairs
+	json="$(jq <<<"$json" -c '
+		.[
+			env.version
+			+ if env.version == env.rcVersion then
+				"-rc"
+			else "" end
+		] //= null
+	')"
 done
 
-jq <<<"$json" -S . > versions.json
+jq <<<"$json" 'to_entries | sort_by(.key) | from_entries' > versions.json

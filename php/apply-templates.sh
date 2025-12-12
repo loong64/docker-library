@@ -49,7 +49,7 @@ for version; do
 		if [ "$suite" != "$alpineVer" ]; then
 			from="ghcr.io/loong64/alpine:$alpineVer"
 		else
-			from="debian:$suite-slim"
+			from="ghcr.io/loong64/debian:$suite-slim"
 		fi
 		export from alpineVer
 
