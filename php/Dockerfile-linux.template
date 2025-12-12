@@ -417,6 +417,7 @@ RUN set -eux; \
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
+		--without-pcre-jit \
 		\
 {{ if rcVersion | IN("8.1", "8.2") then ( -}}
 # bundled pcre does not support JIT on riscv64 until 10.41 (php 8.3+)
