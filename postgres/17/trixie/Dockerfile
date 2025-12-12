@@ -27,8 +27,8 @@ RUN set -ex; \
 	rm -rf /var/lib/apt/lists/*
 
 # grab gosu for easy step-down from root
-# https://github.com/loong64/gosu/releases
-ENV GOSU_VERSION 1.17
+# https://github.com/tianon/gosu/releases
+ENV GOSU_VERSION 1.19
 RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
@@ -97,7 +97,7 @@ RUN set -ex; \
 	export PYTHONDONTWRITEBYTECODE=1; \
 	\
 	dpkgArch="$(dpkg --print-architecture)"; \
-	aptRepo="[ signed-by=/usr/local/share/keyrings/postgres.gpg.asc ] http://apt.postgresql.org/pub/repos/apt/ trixie-pgdg main $PG_MAJOR"; \
+	aptRepo="[ signed-by=/usr/local/share/keyrings/postgres.gpg.asc ] http://apt.postgresql.org/pub/repos/apt trixie-pgdg main $PG_MAJOR"; \
 	case "$dpkgArch" in \
 		amd64 | arm64 | ppc64el) \
 # arches officialy built by upstream
@@ -112,7 +112,6 @@ RUN set -ex; \
 			savedAptMark="$(apt-mark showmanual)"; \
 			\
 			tempDir="$(mktemp -d)"; \
-			chmod 755 "$tempDir"; \
 			cd "$tempDir"; \
 			\
 # create a temporary local APT repo to install from (so that dependency resolution can be handled by APT, as it should be)
@@ -132,10 +131,9 @@ RUN set -ex; \
 # build .deb files from upstream's source packages (which are verified by apt-get)
 			nproc="$(nproc)"; \
 			export DEB_BUILD_OPTIONS="nocheck parallel=$nproc"; \
-# we have to build postgresql-common-dev first because postgresql-$PG_MAJOR shares "debian/rules" logic with it: https://salsa.debian.org/postgresql/postgresql/-/commit/f4338a0d28cf4541956bddb0f4e444ba9dba81b9More actions
+# we have to build postgresql-common-dev first because postgresql-$PG_MAJOR shares "debian/rules" logic with it: https://salsa.debian.org/postgresql/postgresql/-/commit/f4338a0d28cf4541956bddb0f4e444ba9dba81b9
 			apt-get build-dep -y postgresql-common-dev; \
 			apt-get source --compile postgresql-common-dev; \
-			find . -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} +; \
 			_update_repo; \
 			apt-get build-dep -y "postgresql-$PG_MAJOR=$PG_VERSION"; \
 			apt-get source --compile "postgresql-$PG_MAJOR=$PG_VERSION"; \
@@ -165,7 +163,7 @@ RUN set -ex; \
 	if [ -n "$tempDir" ]; then \
 # if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
 		apt-get purge -y --auto-remove; \
-		# rm -rf "$tempDir" /etc/apt/sources.list.d/temp.list; \
+		rm -rf "$tempDir" /etc/apt/sources.list.d/temp.list; \
 	fi; \
 	\
 # some of the steps above generate a lot of "*.pyc" files (and setting "PYTHONDONTWRITEBYTECODE" beforehand doesn't propagate properly for some reason), so we clean them up manually (as long as they aren't owned by a package)
@@ -182,7 +180,6 @@ RUN set -eux; \
 	grep -F "listen_addresses = '*'" /usr/share/postgresql/postgresql.conf.sample
 
 RUN install --verbose --directory --owner postgres --group postgres --mode 3777 /var/run/postgresql
-
 
 ENV PGDATA /var/lib/postgresql/data
 # this 1777 will be replaced by 0700 at runtime (allows semi-arbitrary "--user" values)
