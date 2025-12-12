@@ -28,6 +28,7 @@ Docker Engine for loong64，GitHub Actions 自动化构建 Docker Engine。
 | -------------------------------------------------------- | -------------------- | -------------------------------------------------------- |
 | [alpine](https://ghcr.io/loong64/alpine)                 | `3.21`               | `docker pull ghcr.io/loong64/alpine:3.21`                |
 | [alpine](https://ghcr.io/loong64/alpine)                 | `3.22`               | `docker pull ghcr.io/loong64/alpine:3.22`                |
+| [alpine](https://ghcr.io/loong64/alpine)                 | `3.23`               | `docker pull ghcr.io/loong64/alpine:3.23`                |
 | [debian](https://ghcr.io/loong64/debian)                 | `trixie`             | `docker pull ghcr.io/loong64/debian:trixie`              |
 | [debian](https://ghcr.io/loong64/debian)                 | `forky`              | `docker pull ghcr.io/loong64/debian:forky`               |
 | [debian](https://ghcr.io/loong64/debian)                 | `trixie-slim`        | `docker pull ghcr.io/loong64/debian:trixie-slim`         |
@@ -57,9 +58,6 @@ Docker Engine for loong64，GitHub Actions 自动化构建 Docker Engine。
 | [node](https://ghcr.io/loong64/node)                     | `24-alpine`          | `docker pull ghcr.io/loong64/node:24-alpine`             |
 | [node](https://ghcr.io/loong64/node)                     | `24-trixie`          | `docker pull ghcr.io/loong64/node:24-trixie`             |
 | [node](https://ghcr.io/loong64/node)                     | `24-trixie-slim`     | `docker pull ghcr.io/loong64/node:24-trixie-slim`        |
-| [python](https://ghcr.io/loong64/python)                 | `3.9-alpine`         | `docker pull ghcr.io/loong64/python:3.9-alpine`          |
-| [python](https://ghcr.io/loong64/python)                 | `3.9-trixie`         | `docker pull ghcr.io/loong64/python:3.9-trixie`          |
-| [python](https://ghcr.io/loong64/python)                 | `3.9-slim-trixie`    | `docker pull ghcr.io/loong64/python:3.9-slim-trixie`     |
 | [python](https://ghcr.io/loong64/python)                 | `3.10-alpine`        | `docker pull ghcr.io/loong64/python:3.10-alpine`         |
 | [python](https://ghcr.io/loong64/python)                 | `3.10-trixie`        | `docker pull ghcr.io/loong64/python:3.10-trixie`         |
 | [python](https://ghcr.io/loong64/python)                 | `3.10-slim-trixie`   | `docker pull ghcr.io/loong64/python:3.10-slim-trixie`    |
@@ -72,6 +70,9 @@ Docker Engine for loong64，GitHub Actions 自动化构建 Docker Engine。
 | [python](https://ghcr.io/loong64/python)                 | `3.13-alpine`        | `docker pull ghcr.io/loong64/python:3.13-alpine`         |
 | [python](https://ghcr.io/loong64/python)                 | `3.13-trixie`        | `docker pull ghcr.io/loong64/python:3.13-trixie`         |
 | [python](https://ghcr.io/loong64/python)                 | `3.13-slim-trixie`   | `docker pull ghcr.io/loong64/python:3.13-slim-trixie`    |
+| [python](https://ghcr.io/loong64/python)                 | `3.14-alpine`        | `docker pull ghcr.io/loong64/python:3.14-alpine`         |
+| [python](https://ghcr.io/loong64/python)                 | `3.14-trixie`        | `docker pull ghcr.io/loong64/python:3.14-trixie`         |
+| [python](https://ghcr.io/loong64/python)                 | `3.14-slim-trixie`   | `docker pull ghcr.io/loong64/python:3.14-slim-trixie`    |
 | [redis](https://ghcr.io/loong64/redis)                   | `7.2-alpine`         | `docker pull ghcr.io/loong64/redis:7.2-alpine`           |
 | [redis](https://ghcr.io/loong64/redis)                   | `7.2-trixie`         | `docker pull ghcr.io/loong64/redis:7.2-trixie`           |
 | [redis](https://ghcr.io/loong64/redis)                   | `7.4-alpine`         | `docker pull ghcr.io/loong64/redis:7.4-alpine`           |
@@ -85,8 +86,6 @@ Docker Engine for loong64，GitHub Actions 自动化构建 Docker Engine。
 | [php](https://ghcr.io/loong64/php)                       | `8.3-cli-alpine3.21` | `docker pull ghcr.io/loong64/php:8.3-cli-alpine3.21`     |
 | [php](https://ghcr.io/loong64/php)                       | `8.3-fpm-alpine3.21` | `docker pull ghcr.io/loong64/php:8.3-fpm-alpine3.21`     |
 | [php](https://ghcr.io/loong64/php)                       | `8.3-zts-alpine3.21` | `docker pull ghcr.io/loong64/php:8.3-zts-alpine3.21`     |
-| [postgres](https://ghcr.io/loong64/postgres)             | `13-alpine`          | `docker pull ghcr.io/loong64/postgres:13-alpine`         |
-| [postgres](https://ghcr.io/loong64/postgres)             | `13-trixie`          | `docker pull ghcr.io/loong64/postgres:13-trixie`         |
 | [postgres](https://ghcr.io/loong64/postgres)             | `14-alpine`          | `docker pull ghcr.io/loong64/postgres:14-alpine`         |
 | [postgres](https://ghcr.io/loong64/postgres)             | `14-trixie`          | `docker pull ghcr.io/loong64/postgres:14-trixie`         |
 | [postgres](https://ghcr.io/loong64/postgres)             | `15-alpine`          | `docker pull ghcr.io/loong64/postgres:15-alpine`         |
@@ -95,19 +94,21 @@ Docker Engine for loong64，GitHub Actions 自动化构建 Docker Engine。
 | [postgres](https://ghcr.io/loong64/postgres)             | `16-trixie`          | `docker pull ghcr.io/loong64/postgres:16-trixie`         |
 | [postgres](https://ghcr.io/loong64/postgres)             | `17-alpine`          | `docker pull ghcr.io/loong64/postgres:17-alpine`         |
 | [postgres](https://ghcr.io/loong64/postgres)             | `17-trixie`          | `docker pull ghcr.io/loong64/postgres:17-trixie`         |
+| [postgres](https://ghcr.io/loong64/postgres)             | `18-alpine`          | `docker pull ghcr.io/loong64/postgres:18-alpine`         |
+| [postgres](https://ghcr.io/loong64/postgres)             | `18-trixie`          | `docker pull ghcr.io/loong64/postgres:18-trixie`         |
 | [mariadb](https://ghcr.io/loong64/mariadb)               | `11.8`               | `docker pull ghcr.io/loong64/mariadb:11.8`               |
 | [mariadb](https://ghcr.io/loong64/mariadb)               | `11.8-trixie`        | `docker pull ghcr.io/loong64/mariadb:11.8-trixie`        |
-| [mariadb](https://ghcr.io/loong64/mariadb)               | `12.0`               | `docker pull ghcr.io/loong64/mariadb:12.0`               |
-| [mariadb](https://ghcr.io/loong64/mariadb)               | `12.0-trixie`        | `docker pull ghcr.io/loong64/mariadb:12.0-trixie`        |
+| [mariadb](https://ghcr.io/loong64/mariadb)               | `12.1`               | `docker pull ghcr.io/loong64/mariadb:12.1`               |
+| [mariadb](https://ghcr.io/loong64/mariadb)               | `12.1-trixie`        | `docker pull ghcr.io/loong64/mariadb:12.1-trixie`        |
 | [nginx](https://ghcr.io/loong64/nginx)                   | `1.28-alpine`        | `docker pull ghcr.io/loong64/nginx:1.28-alpine`          |
 | [nginx](https://ghcr.io/loong64/nginx)                   | `1.28-trixie`        | `docker pull ghcr.io/loong64/nginx:1.28-trixie`          |
 | [nginx](https://ghcr.io/loong64/nginx)                   | `1.29-alpine`        | `docker pull ghcr.io/loong64/nginx:1.29-alpine`          |
 | [nginx](https://ghcr.io/loong64/nginx)                   | `1.29-trixie`        | `docker pull ghcr.io/loong64/nginx:1.29-trixie`          |
-| [pgvector](https://ghcr.io/loong64/pgvector)             | `pg13`               | `docker pull ghcr.io/loong64/pgvector:pg13`              |
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg14`               | `docker pull ghcr.io/loong64/pgvector:pg14`              |
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg15`               | `docker pull ghcr.io/loong64/pgvector:pg15`              |
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg16`               | `docker pull ghcr.io/loong64/pgvector:pg16`              |
 | [pgvector](https://ghcr.io/loong64/pgvector)             | `pg17`               | `docker pull ghcr.io/loong64/pgvector:pg17`              |
+| [pgvector](https://ghcr.io/loong64/pgvector)             | `pg18`               | `docker pull ghcr.io/loong64/pgvector:pg18`              |
 | [squid](https://ghcr.io/loong64/squid)                   | `latest`             | `docker pull ghcr.io/loong64/squid:latest`               |
 | [busybox](https://ghcr.io/loong64/busybox)               | `1.37.0-glibc`       | `docker pull ghcr.io/loong64/busybox:1.37.0-glibc`       |
 | [busybox](https://ghcr.io/loong64/busybox)               | `1.37.0-musl`        | `docker pull ghcr.io/loong64/busybox:1.37.0-musl`        |

@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['v3.21', 'v3.22', 'edge']
-        latest_version: ['v3.22']
+        version: ['v3.21', 'v3.22', 'v3.23', 'edge']
+        latest_version: ['v3.23']
 
     steps:
       - uses: docker/setup-qemu-action@v3
