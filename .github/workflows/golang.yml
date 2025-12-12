@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         name: ['golang']
-        suite: ['trixie', 'alpine3.21', 'alpine3.22']
+        suite: ['trixie', 'alpine3.22', 'alpine3.23']
         version: ['1.24', '1.25']
         latest_version: ['1.25']
 
@@ -113,7 +113,7 @@ jobs:
                 crane cp "$repo:$version-$suite" "$repo:$major_version"
               fi
               ;;
-            alpine3.22)
+            alpine3.23)
               crane cp "$repo:$full_version-$suite" "$repo:$full_version-alpine"
               crane cp "$repo:$full_version-$suite" "$repo:$minor_version-alpine"
               if [ "$version" = "$latest_version" ]; then
