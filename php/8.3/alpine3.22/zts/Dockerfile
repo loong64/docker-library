@@ -94,13 +94,13 @@ RUN set -eux; \
 		curl-dev \
 		gnu-libiconv-dev \
 		libsodium-dev \
-		libucontext-dev \
 		libxml2-dev \
 		linux-headers \
 		oniguruma-dev \
 		openssl-dev \
 		readline-dev \
 		sqlite-dev \
+		libucontext-dev \
 	; \
 	\
 # make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)

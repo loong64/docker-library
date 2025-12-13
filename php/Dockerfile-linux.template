@@ -50,7 +50,7 @@ RUN set -eux; \
 
 {{ ) end -}}
 # dependencies required for running "phpize"
-{{ if is_alpine then ( -}}
+{{ if is_alpine and IN(rcVersion; "8.2", "8.3") then ( -}}
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
 {{ ) else ( -}}
 # (see persistent deps below)
@@ -292,7 +292,6 @@ RUN set -eux; \
 			if need_patch_11678 or need_patch_18743 then "patch", "patchutils" else empty end,
 			"readline-dev",
 			"sqlite-dev",
-			"libucontext-dev",
 			# https://github.com/docker-library/php/issues/888
 			"linux-headers",
 			# oniguruma is part of mbstring in php 7.4+
@@ -317,6 +316,9 @@ RUN set -eux; \
 		)
 	] | add
 -}}
+{{ if is_alpine and IN(rcVersion; "8.2", "8.3") then ( -}}
+		libucontext-dev \
+{{ ) else "" end -}}
 	; \
 	\
 {{ if is_alpine then ( -}}
@@ -327,7 +329,7 @@ RUN set -eux; \
 	export \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
-{{ if is_alpine then ( -}}
+{{ if is_alpine and IN(rcVersion; "8.2", "8.3") then ( -}}
 		LDFLAGS="$PHP_LDFLAGS -lucontext" \
 {{ ) else ( -}}
 		LDFLAGS="$PHP_LDFLAGS" \

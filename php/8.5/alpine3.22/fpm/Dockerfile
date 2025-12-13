@@ -7,7 +7,7 @@
 FROM ghcr.io/loong64/alpine:3.22
 
 # dependencies required for running "phpize"
-# these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
+# (see persistent deps below)
 ENV PHPIZE_DEPS \
 		autoconf \
 		dpkg-dev dpkg \
@@ -94,7 +94,6 @@ RUN set -eux; \
 		curl-dev \
 		gnu-libiconv-dev \
 		libsodium-dev \
-		libucontext-dev \
 		libxml2-dev \
 		linux-headers \
 		oniguruma-dev \
@@ -109,7 +108,7 @@ RUN set -eux; \
 	export \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
-		LDFLAGS="$PHP_LDFLAGS -lucontext" \
+		LDFLAGS="$PHP_LDFLAGS" \
 # https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
 		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
 		PHP_UNAME='Linux - Docker' \
