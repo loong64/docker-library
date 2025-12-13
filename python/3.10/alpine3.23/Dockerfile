@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM ghcr.io/loong64/alpine:3.21
+FROM ghcr.io/loong64/alpine:3.23
 
 # ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
