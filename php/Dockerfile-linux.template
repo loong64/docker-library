@@ -292,6 +292,7 @@ RUN set -eux; \
 			if need_patch_11678 or need_patch_18743 then "patch", "patchutils" else empty end,
 			"readline-dev",
 			"sqlite-dev",
+			"libucontext-dev",
 			# https://github.com/docker-library/php/issues/888
 			"linux-headers",
 			# oniguruma is part of mbstring in php 7.4+
@@ -326,7 +327,7 @@ RUN set -eux; \
 	export \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
-		LDFLAGS="$PHP_LDFLAGS" \
+		LDFLAGS="$PHP_LDFLAGS -lucontext" \
 # https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
 		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
 		PHP_UNAME='Linux - Docker' \
