@@ -108,7 +108,7 @@ jobs:
           crane index append -t "$repo:$full_version-$mode-$suite" \
             -m "$repo:$full_version-$mode-$suite-loong64" \
             -m "${{ matrix.name }}:$full_version-$mode-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
+          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-$suite"
 
           case "$suite" in
             trixie)
@@ -221,7 +221,7 @@ jobs:
           crane index append -t "$repo:$full_version-$mode-$suite" \
             -m "$repo:$full_version-$mode-$suite-loong64" \
             -m "${{ matrix.name }}:$full_version-$mode-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
+          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-$suite"
 
           case "$suite" in
             trixie)
@@ -327,7 +327,7 @@ jobs:
           crane index append -t "$repo:$full_version-$mode-$suite" \
             -m "$repo:$full_version-$mode-$suite-loong64" \
             -m "${{ matrix.name }}:$full_version-$mode-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
+          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-$suite"
 
           case "$suite" in
             trixie)

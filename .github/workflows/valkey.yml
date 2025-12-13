@@ -116,7 +116,7 @@ jobs:
 
           crane index append -t "$repo:$full_version-$suite" \
             -m "$repo:$full_version-$suite-loong64" \
-            -m "valkey:$full_version-$suite"
+            -m "valkey/valkey:$full_version-$suite"
           crane cp "$repo:$full_version-$suite" "$repo:$minor_version-$suite"
 
           case "$suite" in
