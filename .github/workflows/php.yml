@@ -105,29 +105,29 @@ jobs:
           version="${{ matrix.version }}"
           latest_version="${{ matrix.latest_version }}"
 
-          crane index append -t "$repo:$full_version-$suite" \
+          crane index append -t "$repo:$full_version-$mode-$suite" \
             -m "$repo:$full_version-$mode-$suite-loong64" \
             -m "${{ matrix.name }}:$full_version-$mode-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-$suite"
+          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
 
           case "$suite" in
             trixie)
-              crane cp "$repo:$version-$mode-$suite" "$repo:$full_version-$mode"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$version-$mode-$suite" "$repo:latest"
-                crane cp "$repo:$version-$mode-$suite" "$repo:$minor_version"
-                crane cp "$repo:$version-$mode-$suite" "$repo:$minor_version-$mode"
-                crane cp "$repo:$version-$mode-$suite" "$repo:$mode"
-                crane cp "$repo:$version-$mode-$suite" "$repo:$suite"
-                crane cp "$repo:$version-$mode-$suite" "$repo:$mode-$suite"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:latest"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$suite"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-$suite"
               fi
               ;;
             alpine3.23)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-alpine"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
               if [ "$version" = "$latest_version" ]; then
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-alpine"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
               fi
               ;;
             *)
@@ -218,18 +218,16 @@ jobs:
           version="${{ matrix.version }}"
           latest_version="${{ matrix.latest_version }}"
 
-          crane index append -t "$repo:$full_version-$suite" \
+          crane index append -t "$repo:$full_version-$mode-$suite" \
             -m "$repo:$full_version-$mode-$suite-loong64" \
             -m "${{ matrix.name }}:$full_version-$mode-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-$suite"
+          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
 
           case "$suite" in
             trixie)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$full_version-$mode-$suite" "$repo:minor_version-$mode"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
               fi
               ;;
             alpine3.23)
@@ -326,24 +324,22 @@ jobs:
           version="${{ matrix.version }}"
           latest_version="${{ matrix.latest_version }}"
 
-          crane index append -t "$repo:$full_version-$suite" \
+          crane index append -t "$repo:$full_version-$mode-$suite" \
             -m "$repo:$full_version-$mode-$suite-loong64" \
             -m "${{ matrix.name }}:$full_version-$mode-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$suite"
-          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-$suite"
+          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
 
           case "$suite" in
             trixie)
-              crane cp "$repo:$version-$mode-$suite" "$repo:$full_version-$mode"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$version-$mode-$suite" "$minor_version-$mode"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
               fi
               ;;
             alpine3.23)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$version-$mode-$suite" "$minor_version-$mode-alpine"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
               fi
               ;;
             *)

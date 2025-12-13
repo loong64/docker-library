@@ -85,7 +85,7 @@ jobs:
           platforms: linux/loong64
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}-loong64
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}-loong64
           outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -103,9 +103,16 @@ jobs:
           minor_version=$(echo "$full_version" | cut -d'.' -f1-2)
           major_version=$(echo "$full_version" | cut -d'.' -f1)
           repo="ghcr.io/${{ github.repository_owner }}/redis"
-          suite="${{ matrix.suite }}"
           version="${{ matrix.version }}"
           latest_version="${{ matrix.latest_version }}"
+          case ${{ matrix.suite }} in
+            debian)
+              suite=trixie
+              ;;
+            alpine)
+              suite=alpine
+              ;;
+          esac
 
           crane index append -t "$repo:$full_version-$suite" \
             -m "$repo:$full_version-$suite-loong64" \
@@ -115,9 +122,9 @@ jobs:
           case "$suite" in
             trixie)
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$version-$suite" "$repo:latest"
-                crane cp "$repo:$version-$suite" "$repo:$major_version"
-                crane cp "$repo:$version-$suite" "$repo:$major_version-$suite"
+                crane cp "$repo:$full_version-$suite" "$repo:latest"
+                crane cp "$repo:$full_version-$suite" "$repo:$major_version"
+                crane cp "$repo:$full_version-$suite" "$repo:$major_version-$suite"
               fi
               ;;
             alpine)
