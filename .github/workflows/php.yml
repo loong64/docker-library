@@ -227,15 +227,15 @@ jobs:
 
           case "$suite" in
             trixie)
-              crane cp "$repo:$version-$mode-$suite" "$repo:$full_version-$mode"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$version-$mode-$suite" "$minor_version-$mode"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:minor_version-$mode"
               fi
               ;;
             alpine3.23)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$version-$mode-$suite" "$minor_version-$mode-alpine"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
               fi
               ;;
             *)
