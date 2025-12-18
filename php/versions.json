@@ -1,9 +1,9 @@
 {
   "8.2": {
-    "version": "8.2.29",
-    "url": "https://www.php.net/distributions/php-8.2.29.tar.xz",
-    "ascUrl": "https://www.php.net/distributions/php-8.2.29.tar.xz.asc",
-    "sha256": "475f991afd2d5b901fb410be407d929bc00c46285d3f439a02c59e8b6fe3589c",
+    "version": "8.2.30",
+    "url": "https://www.php.net/distributions/php-8.2.30.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.2.30.tar.xz.asc",
+    "sha256": "bc90523e17af4db46157e75d0c9ef0b9d0030b0514e62c26ba7b513b8c4eb015",
     "variants": [
       "trixie/cli",
       "trixie/apache",
@@ -19,10 +19,10 @@
   },
   "8.2-rc": null,
   "8.3": {
-    "version": "8.3.28",
-    "url": "https://www.php.net/distributions/php-8.3.28.tar.xz",
-    "ascUrl": "https://www.php.net/distributions/php-8.3.28.tar.xz.asc",
-    "sha256": "25e3860f30198a386242891c0bf9e2955931f7b666b96c3e3103d36a2a322326",
+    "version": "8.3.29",
+    "url": "https://www.php.net/distributions/php-8.3.29.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.3.29.tar.xz.asc",
+    "sha256": "f7950ca034b15a78f5de9f1b22f4d9bad1dd497114d175cb1672a4ca78077af5",
     "variants": [
       "trixie/cli",
       "trixie/apache",
@@ -57,10 +57,10 @@
   },
   "8.4-rc": null,
   "8.5": {
-    "version": "8.5.0",
-    "url": "https://www.php.net/distributions/php-8.5.0.tar.xz",
-    "ascUrl": "https://www.php.net/distributions/php-8.5.0.tar.xz.asc",
-    "sha256": "39cb6e4acd679b574d3d3276f148213e935fc25f90403eb84fb1b836a806ef1e",
+    "version": "8.5.1",
+    "url": "https://www.php.net/distributions/php-8.5.1.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.5.1.tar.xz.asc",
+    "sha256": "3f5bf99ce81201f526d25e288eddb2cfa111d068950d1e9a869530054ff98815",
     "variants": [
       "trixie/cli",
       "trixie/apache",
