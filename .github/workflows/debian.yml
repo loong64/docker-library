@@ -71,11 +71,20 @@ jobs:
           git checkout -b dist-loong64
           echo "loong64" > arch
           mv ../debuerreotype/validate/debian/artifacts.zip .
+          cp artifacts.zip ../debian-sid-loong64-artifacts.zip
+          cp artifacts.zip ../debian-forky-loong64-artifacts.zip
           sed -i "s@^wget -O artifacts.zip@# wget -O artifacts.zip@g" download.sh
           bash -ex download.sh
           git add .
-          git commit -m "feat: update ${{ env.serial }}"
+          git commit -m "feat: update ${serial}"
           git push origin dist-loong64 -f
+
+      - name: Push docker-debian-artifacts
+        run: |
+          gh release create ${serial} -R loong64/docker-debian-artifacts --title "debian artifacts ${serial}" --generate-notes || true
+          gh release upload ${serial} -R loong64/docker-debian-artifacts debian-*.zip --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
