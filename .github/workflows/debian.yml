@@ -42,6 +42,7 @@ jobs:
         run: |
           cd debuerreotype
           serial=$(date "+%Y%m%d")
+          sed -i 's@i386@loong64@g' .validate-debian.sh
           sed -i 's@\[ -z "$SHA256" \]@# \[ -z "$SHA256" \]@g' .validate-debian.sh
           ARCH=loong64 SUITE=unstable CODENAME="sid" TIMESTAMP="today 00:00:00" ./.validate-debian.sh
           sed -i 's@riscv64@loong64 | riscv64@g' examples/oci-image.sh
