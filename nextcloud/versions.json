@@ -1,9 +1,9 @@
 {
   "32": {
     "branch": "32",
-    "version": "32.0.4",
-    "url": "https://download.nextcloud.com/server/releases/nextcloud-32.0.4.tar.bz2",
-    "ascUrl": "https://download.nextcloud.com/server/releases/nextcloud-32.0.4.tar.bz2.asc",
+    "version": "32.0.5",
+    "url": "https://download.nextcloud.com/server/releases/nextcloud-32.0.5.tar.bz2",
+    "ascUrl": "https://download.nextcloud.com/server/releases/nextcloud-32.0.5.tar.bz2.asc",
     "variants": {
       "fpm-alpine": {
         "variant": "fpm-alpine",
