@@ -12,7 +12,7 @@ jobs:
       matrix:
         name: [buildpack-deps]
         os: [debian]
-        suite: [forky]
+        suite: [trixie, forky]
 
     steps:
       - name: Prepare configuration
