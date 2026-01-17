@@ -17,7 +17,7 @@ jobs:
       matrix:
         suite: ['trixie', 'slim-trixie', 'alpine']
         app: ['python']
-        version: ['3.9', '3.10', '3.11', '3.12', '3.13', '3.14-rc']
+        version: ['3.10', '3.11', '3.12', '3.13', '3.14']
 
     steps:
     - uses: docker/setup-qemu-action@v3
@@ -51,7 +51,7 @@ jobs:
       matrix:
         suite: ['trixie', 'trixie-slim', 'alpine']
         app: ['node']
-        version: ['20', '22', '24']
+        version: ['20', '22', '24', '25']
 
     steps:
     - uses: docker/setup-qemu-action@v3
@@ -85,7 +85,7 @@ jobs:
       matrix:
         suite: ['trixie', 'alpine']
         app: ['postgres']
-        version: ['13', '14', '15', '16', '17']
+        version: ['14', '15', '16', '17', '18']
 
     steps:
     - uses: docker/setup-qemu-action@v3
@@ -102,7 +102,7 @@ jobs:
       matrix:
         suite: ['trixie']
         app: ['mariadb']
-        version: ['11.8', '12.0', '12.1']
+        version: ['11.8', '12.1', '12.2']
 
     steps:
     - uses: docker/setup-qemu-action@v3
@@ -119,7 +119,7 @@ jobs:
       matrix:
         suite: ['trixie', 'alpine']
         app: ['nginx']
-        version: ['1.27', '1.28']
+        version: ['1.28', '1.29']
 
     steps:
     - uses: docker/setup-qemu-action@v3
@@ -134,9 +134,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: ['alpine3.21']
+        suite: ['alpine']
         app: ['php']
-        version: ['8.1-cli', '8.1-fpm', '8.1-zts', '8.2-cli', '8.2-fpm', '8.2-zts', '8.3-cli', '8.3-fpm', '8.3-zts']
+        version: ['8.2-cli', '8.2-fpm', '8.2-zts', '8.3-cli', '8.3-fpm', '8.3-zts', '8.4-cli', '8.4-fpm', '8.4-zts', '8.5-cli', '8.5-fpm', '8.5-zts']
 
     steps:
     - uses: docker/setup-qemu-action@v3

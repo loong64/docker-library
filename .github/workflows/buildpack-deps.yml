@@ -9,6 +9,7 @@ jobs:
   buildpack-deps:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         name: [buildpack-deps]
         os: [debian]
