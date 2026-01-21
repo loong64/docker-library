@@ -113,8 +113,8 @@ jobs:
           case "$suite" in
             trixie)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:latest"
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version"
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode"
@@ -125,9 +125,10 @@ jobs:
             alpine3.23)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-alpine"
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
               if [ "$version" = "$latest_version" ]; then
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-alpine"
-                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-alpine"
               fi
               ;;
             *)
@@ -226,14 +227,16 @@ jobs:
           case "$suite" in
             trixie)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-$suite"
               fi
               ;;
             alpine3.23)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-alpine"
               fi
               ;;
             *)
@@ -332,14 +335,16 @@ jobs:
           case "$suite" in
             trixie)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-$suite"
               fi
               ;;
             alpine3.23)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-alpine"
               fi
               ;;
             *)
