@@ -134,7 +134,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: ['alpine']
+        suite: ['trixie', 'alpine']
         app: ['php']
         version: ['8.2-cli', '8.2-fpm', '8.2-zts', '8.3-cli', '8.3-fpm', '8.3-zts', '8.4-cli', '8.4-fpm', '8.4-zts', '8.5-cli', '8.5-fpm', '8.5-zts']
 
