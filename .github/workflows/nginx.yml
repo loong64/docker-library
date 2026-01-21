@@ -87,9 +87,6 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_version }}-${{ matrix.suite }}
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
 
   nginx:
@@ -173,9 +170,6 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_version }}-${{ matrix.suite }}
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Prepare configuration
         run: |
@@ -275,9 +269,6 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.branch }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.suite }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.minor_version }}-${{ matrix.suite }}
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Prepare configuration
         run: |

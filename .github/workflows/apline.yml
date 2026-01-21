@@ -77,9 +77,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.full_version }}-loong64
             ghcr.io/${{ github.repository_owner }}/alpine:${{ steps.get_version.outputs.minor_version }}-loong64
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Prepare configuration
         run: |

@@ -96,9 +96,6 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_image_tag }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ matrix.version }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
       - name: Prepare configuration
         run: |

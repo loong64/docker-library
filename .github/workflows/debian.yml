@@ -104,9 +104,6 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }}
             ghcr.io/${{ github.repository_owner }}/debian:sid-loong64
             ghcr.io/${{ github.repository_owner }}/debian:sid-${{ env.serial }}
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Merge sid Images
         run: |
@@ -125,9 +122,6 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }}-slim
             ghcr.io/${{ github.repository_owner }}/debian:sid-slim-loong64
             ghcr.io/${{ github.repository_owner }}/debian:sid-${{ env.serial }}-slim
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Merge sid slim Images
         run: |
@@ -143,9 +137,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/debian:unstable-loong64
             ghcr.io/${{ github.repository_owner }}/debian:unstable-${{ env.serial }}
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Build and Push unstable slim Images
         uses: docker/build-push-action@v6
@@ -156,9 +147,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/debian:unstable-slim-loong64
             ghcr.io/${{ github.repository_owner }}/debian:unstable-${{ env.serial }}-slim
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Pull and unstable Images
         run: |
