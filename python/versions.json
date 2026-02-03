@@ -75,10 +75,10 @@
   "3.14": {
     "checksums": {
       "source": {
-        "sha256": "ce543ab854bc256b61b71e9b27f831ffd1bfd60a479d639f8be7f9757cf573e9"
+        "sha256": "a97d5549e9ad81fe17159ed02c68774ad5d266c72f8d9a0b5a9c371fe85d902b"
       },
       "windows": {
-        "sha256": "9db919cefe30a0051658c600a9912acb0cd2b872aaf35842c9ec2bf401efa848"
+        "sha256": "b68ad91421afbbd1a628105199c8c5f6179b21ba799067a8d8c0bbac3b7defb0"
       }
     },
     "variants": [
@@ -89,6 +89,6 @@
       "alpine3.23",
       "alpine3.22"
     ],
-    "version": "3.14.2"
+    "version": "3.14.3"
   }
 }
