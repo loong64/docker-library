@@ -43,6 +43,8 @@ Docker Engine for loong64，GitHub Actions 自动化构建 Docker Engine。
 | [golang](https://ghcr.io/loong64/golang)                 | `1.24-trixie`        | `docker pull ghcr.io/loong64/golang:1.24-trixie`         |
 | [golang](https://ghcr.io/loong64/golang)                 | `1.25-alpine`        | `docker pull ghcr.io/loong64/golang:1.25-alpine`         |
 | [golang](https://ghcr.io/loong64/golang)                 | `1.25-trixie`        | `docker pull ghcr.io/loong64/golang:1.25-trixie`         |
+| [golang](https://ghcr.io/loong64/golang)                 | `1.26-alpine`        | `docker pull ghcr.io/loong64/golang:1.26-alpine`         |
+| [golang](https://ghcr.io/loong64/golang)                 | `1.26-trixie`        | `docker pull ghcr.io/loong64/golang:1.26-trixie`         |
 | [node](https://ghcr.io/loong64/node)                     | `18-alpine`          | `docker pull ghcr.io/loong64/node:18-alpine`             |
 | [node](https://ghcr.io/loong64/node)                     | `18-trixie`          | `docker pull ghcr.io/loong64/node:18-trixie`             |
 | [node](https://ghcr.io/loong64/node)                     | `18-trixie-slim`     | `docker pull ghcr.io/loong64/node:18-trixie-slim`        |
