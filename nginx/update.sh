@@ -12,14 +12,14 @@ declare branches=(
 # Current nginx versions
 # Remember to update pkgosschecksum when changing this.
 declare -A nginx=(
-    [mainline]='1.29.4'
-    [stable]='1.28.0'
+    [mainline]='1.29.5'
+    [stable]='1.28.2'
 )
 
 # Current njs versions
 declare -A njs=(
-    [mainline]='0.9.4'
-    [stable]='0.8.10'
+    [mainline]='0.9.5'
+    [stable]='0.9.5'
 )
 
 # Current njs patchlevel version
@@ -33,6 +33,12 @@ declare -A njspkg=(
 declare -A otel=(
     [mainline]='0.1.2'
     [stable]='0.1.2'
+)
+
+# Current acme versions
+declare -A acme=(
+    [mainline]='0.3.1'
+    [stable]='0.3.1'
 )
 
 # Current nginx package patchlevel version
@@ -56,7 +62,7 @@ declare -A debian=(
 
 declare -A alpine=(
     [mainline]='3.23'
-    [stable]='3.21'
+    [stable]='3.23'
 )
 
 # When we bump njs version in a stable release we don't move the tag in the
@@ -72,8 +78,8 @@ declare -A rev=(
 # revision/tag in the previous block
 # Used in builds for architectures not packaged by nginx.org
 declare -A pkgosschecksum=(
-    [mainline]='e8b08060e10b8d8819e03533cb4922992ea138bcbf16a89a90593db719f17d78afa1cc4785592260c9c897753ec28c8b0d02c01df4b7d0e0ed286d0a42cef68c'
-    [stable]='517bc18954ccf4efddd51986584ca1f37966833ad342a297e1fe58fd0faf14c5a4dabcb23519dca433878a2927a95d6bea05a6749ee2fa67a33bf24cdc41b1e4'
+    [mainline]='b8584eaa97130ba7743dfbb2a10f665d64cb54b864e2038d0fd298d24682fc05eb4472738430b15862dabc6f374917f1b9889117051a852d36d0a6c8bc898921'
+    [stable]='ef4545c05b1632a056482e3dbb47bb5d7393238318db3491e8bb308218cdb5f32dbb2ac73509097ac2426fd73270bc97836843a8b1846a396fd94e60826f7e3f'
 )
 
 get_packages() {
@@ -121,9 +127,12 @@ get_packages() {
         for p in nginx-module-xslt nginx-module-geoip nginx-module-image-filter $perl; do
             echo -n '        '"$p"'=${NGINX_VERSION}-'"$r"'${DYNPKG_RELEASE} \\\n'
         done
-        # for p in nginx-module-njs; do
-            # echo -n '        '"$p"'=${NGINX_VERSION}'"$sep"'${NJS_VERSION}-'"$r"'${NJS_RELEASE} \\'"$bn"
-        # done
+        for p in nginx-module-njs; do
+            echo -n '        '"$p"'=${NGINX_VERSION}'"$sep"'${NJS_VERSION}-'"$r"'${NJS_RELEASE} \\\n'
+        done
+        for p in nginx-module-acme; do
+            echo -n '        '"$p"'=${NGINX_VERSION}'"$sep"'${ACME_VERSION}-'"$r"'${PKG_RELEASE} \\'"$bn"
+        done
         for p in $otel; do
             echo -n '        '"$p"'=${NGINX_VERSION}'"$sep"'${OTEL_VERSION}-'"$r"'${PKG_RELEASE} \\'
         done
@@ -160,9 +169,9 @@ get_packagever() {
     [ "${distro}" = "debian" ] && suffix="~${debianver}"
 
     case "${package}" in
-        # "njs")
-        #     echo ${njspkg[$branch]}${suffix}
-        #     ;;
+        "njs")
+            echo ${njspkg[$branch]}${suffix}
+            ;;
         "dyn")
             echo ${dynpkg[$branch]}${suffix}
             ;;
@@ -180,12 +189,10 @@ get_buildtarget() {
             echo base
             ;;
         alpine)
-            # echo module-geoip module-image-filter module-njs module-xslt
-            echo module-geoip module-image-filter module-xslt
+            echo module-geoip module-image-filter module-njs module-xslt module-acme
             ;;
         debian)
-            # echo base module-geoip module-image-filter module-njs module-xslt
-            echo base module-geoip module-image-filter module-xslt
+            echo base module-geoip module-image-filter module-njs module-xslt module-acme
             ;;
         *-perl)
             echo module-perl
@@ -208,10 +215,8 @@ __EOF__
 
 for branch in "${branches[@]}"; do
     for variant in \
-        alpine{,-perl,-slim} \
-        debian{,-perl}; do
-        # alpine{,-perl,-otel,-slim} \
-        # debian{,-perl,-otel}; do
+        alpine{,-perl,-otel,-slim} \
+        debian{,-perl,-otel}; do
         echo "$branch: $variant dockerfiles"
         dir="$branch/$variant"
         variant="$(basename "$variant")"
@@ -227,15 +232,16 @@ for branch in "${branches[@]}"; do
         debianver="${debian[$branch]}"
         alpinever="${alpine[$branch]}"
         nginxver="${nginx[$branch]}"
-        # njsver="${njs[${branch}]}"
+        njsver="${njs[${branch}]}"
         otelver="${otel[${branch}]}"
+        acmever="${acme[${branch}]}"
         revver="${rev[${branch}]}"
         pkgosschecksumver="${pkgosschecksum[${branch}]}"
 
         packagerepo=$(get_packagerepo "$variant" "$branch")
         packages=$(get_packages "$variant" "$branch")
         packagever=$(get_packagever "$variant" "$branch" "any")
-        # njspkgver=$(get_packagever "$variant" "$branch" "njs")
+        njspkgver=$(get_packagever "$variant" "$branch" "njs")
         dynpkgver=$(get_packagever "$variant" "$branch" "dyn")
         buildtarget=$(get_buildtarget "$variant")
 
@@ -244,7 +250,10 @@ for branch in "${branches[@]}"; do
             -e 's,%%DEBIAN_VERSION%%,'"$debianver"',' \
             -e 's,%%DYNPKG_RELEASE%%,'"$dynpkgver"',' \
             -e 's,%%NGINX_VERSION%%,'"$nginxver"',' \
+            -e 's,%%NJS_VERSION%%,'"$njsver"',' \
+            -e 's,%%NJS_RELEASE%%,'"$njspkgver"',' \
             -e 's,%%OTEL_VERSION%%,'"$otelver"',' \
+            -e 's,%%ACME_VERSION%%,'"$acmever"',' \
             -e 's,%%PKG_RELEASE%%,'"$packagever"',' \
             -e 's,%%PACKAGES%%,'"$packages"',' \
             -e 's,%%PACKAGEREPO%%,'"$packagerepo"',' \

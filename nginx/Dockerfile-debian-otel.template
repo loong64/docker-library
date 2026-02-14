@@ -1,39 +1,10 @@
-FROM ghcr.io/loong64/debian:%%DEBIAN_VERSION%%-slim
+FROM ghcr.io/loong64/nginx:%%NGINX_VERSION%%
 
-LABEL maintainer="NGINX Docker Maintainers <docker-maint@nginx.com>"
+ENV OTEL_VERSION     %%OTEL_VERSION%%
 
-ENV NGINX_VERSION   %%NGINX_VERSION%%
-ENV NJS_VERSION     %%NJS_VERSION%%
-ENV NJS_RELEASE     %%NJS_RELEASE%%
-ENV ACME_VERSION    %%ACME_VERSION%%
-ENV PKG_RELEASE     %%PKG_RELEASE%%
-ENV DYNPKG_RELEASE  %%DYNPKG_RELEASE%%
-
-RUN set -x \
-# create nginx user/group first, to be consistent throughout docker variants
-    && groupadd --system --gid 101 nginx \
-    && useradd --system --gid nginx --no-create-home --home /nonexistent --comment "nginx user" --shell /bin/false --uid 101 nginx \
-    && apt-get update \
-    && apt-get install --no-install-recommends --no-install-suggests -y gnupg1 ca-certificates \
-    && \
-    NGINX_GPGKEYS="573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62 8540A6F18833A80E9C1653A42FD21310B49F6B46 9E9BE90EACBCDE69FE9B204CBCDCD8A38D88A2B3"; \
+RUN set -x; \
     NGINX_GPGKEY_PATH=/etc/apt/keyrings/nginx-archive-keyring.gpg; \
-    export GNUPGHOME="$(mktemp -d)"; \
-    found=''; \
-    for NGINX_GPGKEY in $NGINX_GPGKEYS; do \
-    for server in \
-        hkp://keyserver.ubuntu.com:80 \
-        pgp.mit.edu \
-    ; do \
-        echo "Fetching GPG key $NGINX_GPGKEY from $server"; \
-        gpg1 --batch --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$NGINX_GPGKEY" && found=yes && break; \
-    done; \
-    test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
-    done; \
-    gpg1 --batch --export $NGINX_GPGKEYS > "$NGINX_GPGKEY_PATH" ; \
-    rm -rf "$GNUPGHOME"; \
-    apt-get remove --purge --auto-remove -y gnupg1 && rm -rf /var/lib/apt/lists/* \
-    && dpkgArch="$(dpkg --print-architecture)" \
+    dpkgArch="$(dpkg --print-architecture)" \
     && nginxPackages="%%PACKAGES%%
     " \
     && case "$dpkgArch" in \
@@ -56,7 +27,6 @@ RUN set -x \
 # build .deb files from upstream's packaging sources
             && apt-get update \
             && apt-get install --no-install-recommends --no-install-suggests -y \
-                cargo \
                 curl \
                 devscripts \
                 equivs \
@@ -66,7 +36,6 @@ RUN set -x \
                 xsltproc \
             && ( \
                 cd "$tempDir" \
-                && export CARGO_HOME="$tempDir/.cargo" \
                 && REVISION="%%REVISION%%" \
                 && REVISION=${REVISION%~*} \
                 && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${REVISION}.tar.gz \
@@ -117,22 +86,4 @@ RUN set -x \
     && if [ -n "$tempDir" ]; then \
         apt-get purge -y --auto-remove \
         && rm -rf "$tempDir" /etc/apt/sources.list.d/temp.list; \
-    fi \
-# forward request and error logs to docker log collector
-    && ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log \
-# create a docker-entrypoint.d directory
-    && mkdir /docker-entrypoint.d
-
-COPY docker-entrypoint.sh /
-COPY 10-listen-on-ipv6-by-default.sh /docker-entrypoint.d
-COPY 15-local-resolvers.envsh /docker-entrypoint.d
-COPY 20-envsubst-on-templates.sh /docker-entrypoint.d
-COPY 30-tune-worker-processes.sh /docker-entrypoint.d
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-EXPOSE 80
-
-STOPSIGNAL SIGQUIT
-
-CMD ["nginx", "-g", "daemon off;"]
+    fi
