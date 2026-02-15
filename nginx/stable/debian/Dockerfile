@@ -14,6 +14,15 @@ ENV ACME_VERSION    0.3.1
 ENV PKG_RELEASE     1~trixie
 ENV DYNPKG_RELEASE  1~trixie
 
+RUN echo "deb http://snapshot.debian.org/archive/debian-ports/20250801T194242Z/ sid main" > /etc/apt/sources.list && \
+    ( echo 'quiet "true";'; \
+      echo 'APT::Get::Assume-Yes "true";'; \
+      echo 'APT::Install-Recommends "false";'; \
+      echo 'Acquire::Check-Valid-Until "false";'; \
+      echo 'Acquire::Retries "5";'; \
+    ) > /etc/apt/apt.conf.d/99cpython-portable && \
+    rm -f /etc/apt/sources.list.d/*
+
 RUN set -x \
 # create nginx user/group first, to be consistent throughout docker variants
     && groupadd --system --gid 101 nginx \
