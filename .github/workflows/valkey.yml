@@ -69,8 +69,8 @@ jobs:
               full_image_tag=${full_version}-trixie
               ;;
             alpine)
-              image_tag=${version}-alpine3.23
-              full_image_tag=${full_version}-alpine3.23
+              image_tag=${version}-alpine
+              full_image_tag=${full_version}-alpine
               ;;
           esac
 
