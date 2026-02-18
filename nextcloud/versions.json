@@ -1,4 +1,18 @@
 {
+  "33": {
+    "branch": "33",
+    "version": "33.0.0",
+    "url": "https://download.nextcloud.com/server/releases/nextcloud-33.0.0.tar.bz2",
+    "ascUrl": "https://download.nextcloud.com/server/releases/nextcloud-33.0.0.tar.bz2.asc",
+    "variants": {
+      "fpm-alpine": {
+        "variant": "fpm-alpine",
+        "base": "alpine",
+        "baseVersion": "3.21",
+        "phpVersion": "8.3"
+      }
+    }
+  },
   "32": {
     "branch": "32",
     "version": "32.0.6",
