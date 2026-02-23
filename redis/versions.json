@@ -120,9 +120,9 @@
     }
   },
   "7.2": {
-    "version": "7.2.12",
-    "url": "http://download.redis.io/releases/redis-7.2.12.tar.gz",
-    "sha256": "97c60478a7c777ac914ca9d87a7e88ba265926456107e758c62d8f971d0196bc",
+    "version": "7.2.13",
+    "url": "http://download.redis.io/releases/redis-7.2.13.tar.gz",
+    "sha256": "b3eeef15ea90a41c568f1f97a78d3370400baad55566869bbbf1af9f9106d85c",
     "debian": {
       "version": "trixie"
     },
@@ -240,9 +240,9 @@
     }
   },
   "7.4": {
-    "version": "7.4.7",
-    "url": "http://download.redis.io/releases/redis-7.4.7.tar.gz",
-    "sha256": "c97e57b0df330a9e091cacff012bebe763c275398cf36ff44cdba876814b595b",
+    "version": "7.4.8",
+    "url": "http://download.redis.io/releases/redis-7.4.8.tar.gz",
+    "sha256": "f6773cb7d63be236c59c2917a82f1f08e47b77d89b2f0c9f53becb22b8ea4172",
     "debian": {
       "version": "trixie"
     },
