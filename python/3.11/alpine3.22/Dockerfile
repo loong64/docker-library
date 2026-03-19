@@ -18,7 +18,6 @@ ENV LANG C.UTF-8
 RUN set -eux; \
 	apk add --no-cache \
 		ca-certificates \
-		libgcc \
 		tzdata \
 	;
 
