@@ -8,6 +8,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - { SUITE: trixie,    CODENAME: "",      TIMESTAMP: "today 00:00:00", SHA256: "" }
+          # - { SUITE: sid,       CODENAME: "",      TIMESTAMP: "today 00:00:00", SHA256: "" }
 
     steps:
       - name: Prepare configuration
@@ -16,8 +21,8 @@ jobs:
           sudo chmod +x /usr/local/bin/crane
           sudo chown root:root /usr/local/bin/crane
 
-      - uses: docker/setup-qemu-action@v3
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-qemu-action@v4
+      - uses: docker/setup-buildx-action@v4
 
       - name: Setup Git
         run: |
@@ -25,14 +30,14 @@ jobs:
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
       - name: Checkout code for debuerreotype
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: debuerreotype/debuerreotype
           ref: master
           path: debuerreotype
 
       - name: Checkout code for docker-debian-artifacts
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: loong64/docker-debian-artifacts
           path: docker-debian-artifacts
@@ -41,17 +46,17 @@ jobs:
       - name: Build debuerreotype
         run: |
           cd debuerreotype
+          wget -qO - https://github.com/loong64/debuerreotype/commit/49a210072ebb26ff0743cfe8121040844f1cc5fc.patch | patch -p1
           serial=$(date "+%Y%m%d")
           sed -i 's@i386@loong64@g' .validate-debian.sh
-          sed -i 's@\[ -z "$SHA256" \]@# \[ -z "$SHA256" \]@g' .validate-debian.sh
-          ARCH=loong64 SUITE=unstable CODENAME="sid" TIMESTAMP="today 00:00:00" ./.validate-debian.sh
+          ARCH=loong64 SUITE=${{ matrix.SUITE }} CODENAME="${{ matrix.CODENAME }}" TIMESTAMP="${{ matrix.TIMESTAMP }}" ./.validate-debian.sh
           sed -i 's@riscv64@loong64 | riscv64@g' examples/oci-image.sh
           mv validate/* validate/debian
           mv validate/debian/loong64 validate/debian/archive
           echo "${serial}" > validate/debian/archive/serial
-          cp -f validate/debian/archive/unstable/rootfs.dpkg-arch validate/debian/archive/dpkg-arch
-          cp -f validate/debian/archive/unstable/rootfs.debuerreotype-version validate/debian/archive/debuerreotype-version
-          cp -f validate/debian/archive/unstable/rootfs.debuerreotype-epoch validate/debian/archive/debuerreotype-epoch
+          cp -f validate/debian/archive/trixie/rootfs.dpkg-arch validate/debian/archive/dpkg-arch
+          cp -f validate/debian/archive/trixie/rootfs.debuerreotype-version validate/debian/archive/debuerreotype-version
+          cp -f validate/debian/archive/trixie/rootfs.debuerreotype-epoch validate/debian/archive/debuerreotype-epoch
           # OCI: https://github.com/docker-library/oi-janky-groovy/blob/master/tianon/debuerreotype/arch-pipeline.groovy
           shopt -s globstar
           for rootfs in validate/debian/archive/**/rootfs.tar.xz; do
@@ -71,8 +76,8 @@ jobs:
           git checkout -b dist-loong64
           echo "loong64" > arch
           mv ../debuerreotype/validate/debian/artifacts.zip .
-          cp artifacts.zip ../debian-sid-loong64-artifacts.zip
-          cp artifacts.zip ../debian-forky-loong64-artifacts.zip
+          cp artifacts.zip ../debian-trixie-loong64-artifacts.zip
+          # cp artifacts.zip ../debian-forky-loong64-artifacts.zip
           sed -i "s@^wget -O artifacts.zip@# wget -O artifacts.zip@g" download.sh
           bash -ex download.sh
           git add .
@@ -93,62 +98,32 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push sid Images
+      - name: Build and Push trixie Images
         uses: docker/build-push-action@v6
         with:
-          context: ./docker-debian-artifacts/sid
+          context: ./docker-debian-artifacts/trixie
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/debian:forky-loong64
-            ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }}
-            ghcr.io/${{ github.repository_owner }}/debian:sid-loong64
-            ghcr.io/${{ github.repository_owner }}/debian:sid-${{ env.serial }}
+            ghcr.io/${{ github.repository_owner }}/debian:trixie-loong64
+            ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }}
 
-      - name: Merge sid Images
+      - name: Merge trixie Images
         run: |
-          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:latest -m ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }} -m debian:forky
-          crane cp ghcr.io/${{ github.repository_owner }}/debian:latest ghcr.io/${{ github.repository_owner }}/debian:forky
-          crane cp ghcr.io/${{ github.repository_owner }}/debian:latest ghcr.io/${{ github.repository_owner }}/debian:sid
+          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:latest -m ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }} -m debian:trixie
+          crane cp ghcr.io/${{ github.repository_owner }}/debian:latest ghcr.io/${{ github.repository_owner }}/debian:trixie
 
-      - name: Build and Push sid slim Images
+      - name: Build and Push trixie slim Images
         uses: docker/build-push-action@v6
         with:
-          context: ./docker-debian-artifacts/sid/slim
+          context: ./docker-debian-artifacts/trixie/slim
           platforms: linux/loong64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/debian:forky-slim-loong64
-            ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }}-slim
-            ghcr.io/${{ github.repository_owner }}/debian:sid-slim-loong64
-            ghcr.io/${{ github.repository_owner }}/debian:sid-${{ env.serial }}-slim
+            ghcr.io/${{ github.repository_owner }}/debian:trixie-slim-loong64
+            ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }}-slim
 
-      - name: Merge sid slim Images
+      - name: Merge trixie slim Images
         run: |
-          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:forky-slim -m ghcr.io/${{ github.repository_owner }}/debian:forky-${{ env.serial }}-slim -m debian:forky-slim
-          crane cp ghcr.io/${{ github.repository_owner }}/debian:forky-slim ghcr.io/${{ github.repository_owner }}/debian:sid-slim
-
-      - name: Build and Push unstable Images
-        uses: docker/build-push-action@v6
-        with:
-          context: ./docker-debian-artifacts/unstable
-          platforms: linux/loong64
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/debian:unstable-loong64
-            ghcr.io/${{ github.repository_owner }}/debian:unstable-${{ env.serial }}
-
-      - name: Build and Push unstable slim Images
-        uses: docker/build-push-action@v6
-        with:
-          context: ./docker-debian-artifacts/unstable/slim
-          platforms: linux/loong64
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/debian:unstable-slim-loong64
-            ghcr.io/${{ github.repository_owner }}/debian:unstable-${{ env.serial }}-slim
-
-      - name: Pull and unstable Images
-        run: |
-          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:unstable -m ghcr.io/${{ github.repository_owner }}/debian:unstable-${{ env.serial }} -m debian:unstable
-          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:unstable-slim -m ghcr.io/${{ github.repository_owner }}/debian:unstable-${{ env.serial }}-slim -m debian:unstable-slim
+          crane index append -t ghcr.io/${{ github.repository_owner }}/debian:trixie-slim -m ghcr.io/${{ github.repository_owner }}/debian:trixie-${{ env.serial }}-slim -m debian:trixie-slim
+          crane cp ghcr.io/${{ github.repository_owner }}/debian:trixie-slim ghcr.io/${{ github.repository_owner }}/debian:trixie-slim
