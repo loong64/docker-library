@@ -22,6 +22,112 @@ on:
     - cron: '0 0 3 * *'
 
 jobs:
+  apache:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        name: ['php']
+        mode: ['apache']
+        suite: ['trixie']
+        version: ['8.2', '8.3', '8.4', '8.5']
+        latest_version: ['8.5']
+
+    steps:
+      - name: Checkout ${{ matrix.name }}
+        uses: actions/checkout@v6
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Version
+        run: |
+          echo "build=true" >> $GITHUB_ENV
+          if [ ! -f "${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/${{ matrix.mode }}/Dockerfile" ]; then
+            echo "build=false" >> $GITHUB_ENV
+            exit 0
+          fi
+          full_version=$(grep -m1 -oP "ENV PHP_VERSION \K.*" ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/${{ matrix.mode }}/Dockerfile)
+          echo "full_version=${full_version}" >> $GITHUB_ENV
+          
+          version=${{ matrix.version }}
+          image_tag=${version}
+          full_image_tag=${full_version}
+
+          if echo ${{ matrix.suite }} | grep -q 'alpine'; then
+            image_tag=${version}-${{ matrix.suite }}
+            full_image_tag=${full_version}-${{ matrix.suite }}
+          fi
+          if echo ${{ matrix.suite }} | grep -q 'slim'; then
+            image_tag=${version}-slim
+            full_image_tag=${full_version}-slim
+          fi
+          echo "image_tag=${image_tag}" >> $GITHUB_ENV
+          echo "full_image_tag=${full_image_tag}" >> $GITHUB_ENV
+
+      - name: Build and push ${{ matrix.name }} ${{ matrix.version }} image
+        if: env.build == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}/${{ matrix.mode }}/
+          platforms: linux/loong64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:${{ env.full_version }}-${{ matrix.mode }}-${{ matrix.suite }}-loong64
+
+      - name: Prepare configuration
+        run: |
+          wget -qO- https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz | sudo tar -xzf - -C /usr/local/bin/ crane
+          sudo chmod +x /usr/local/bin/crane
+          sudo chown root:root /usr/local/bin/crane
+
+      - name: Pull and Push Images
+        if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        run: |
+          full_version="${{ env.full_version }}"
+          minor_version=$(echo "$full_version" | cut -d'.' -f1-2)
+          repo="ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}"
+          suite="${{ matrix.suite }}"
+          mode="${{ matrix.mode }}"
+          version="${{ matrix.version }}"
+          latest_version="${{ matrix.latest_version }}"
+
+          crane index append -t "$repo:$full_version-$mode-$suite" \
+            -m "$repo:$full_version-$mode-$suite-loong64" \
+            -m "${{ matrix.name }}:$full_version-$mode-$suite"
+          crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-$suite"
+
+          case "$suite" in
+            trixie)
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
+              if [ "$version" = "$latest_version" ]; then
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-$suite"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode"
+              fi
+              ;;
+            alpine3.23)
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
+              if [ "$version" = "$latest_version" ]; then
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-alpine"
+              fi
+              ;;
+            *)
+              echo "No push actions for suite: $suite"
+              ;;
+          esac
+
   cli:
     runs-on: ubuntu-latest
     strategy:
@@ -224,6 +330,7 @@ jobs:
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
               if [ "$version" = "$latest_version" ]; then
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-$suite"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode"
               fi
               ;;
             alpine3.23)
@@ -329,6 +436,7 @@ jobs:
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
               if [ "$version" = "$latest_version" ]; then
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-$suite"
+                crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode"
               fi
               ;;
             alpine3.23)

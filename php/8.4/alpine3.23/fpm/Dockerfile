@@ -7,7 +7,7 @@
 FROM ghcr.io/loong64/alpine:3.23
 
 # dependencies required for running "phpize"
-# (see persistent deps below)
+# these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
 ENV PHPIZE_DEPS \
 		autoconf \
 		dpkg-dev dpkg \
@@ -116,8 +116,10 @@ RUN set -eux; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
+	test "$PHP_INI_DIR" != "${PHP_INI_DIR%/php}"; \
 	./configure \
 		--build="$gnuArch" \
+		--sysconfdir="${PHP_INI_DIR%/php}" \
 		--with-config-file-path="$PHP_INI_DIR" \
 		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
 		\
@@ -210,20 +212,16 @@ ENTRYPOINT ["docker-php-entrypoint"]
 WORKDIR /var/www/html
 
 RUN set -eux; \
-	cd /usr/local/etc; \
-	if [ -d php-fpm.d ]; then \
-		# for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
-		sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
-		cp php-fpm.d/www.conf.default php-fpm.d/www.conf; \
-	else \
-		# PHP 5.x doesn't use "include=" by default, so we'll create our own simple config that mimics PHP 7+ for consistency
-		mkdir php-fpm.d; \
-		cp php-fpm.conf.default php-fpm.d/www.conf; \
-		{ \
-			echo '[global]'; \
-			echo 'include=etc/php-fpm.d/*.conf'; \
-		} | tee php-fpm.conf; \
-	fi; \
+	cd "${PHP_INI_DIR%/php}"; \
+	\
+	cp -v php-fpm.conf.default php-fpm.conf; \
+	cp -v php-fpm.d/www.conf.default php-fpm.d/www.conf; \
+	\
+	# comment out localhost-only listen address
+	grep -E '^listen = 127.0.0.1:9000' php-fpm.d/www.conf; \
+	sed -ri 's/^(listen = 127.0.0.1:9000)/;\1/' php-fpm.d/www.conf; \
+	grep -E '^;listen = 127.0.0.1:9000' php-fpm.d/www.conf; \
+	\
 	{ \
 		echo '[global]'; \
 		echo 'error_log = /proc/self/fd/2'; \
@@ -239,13 +237,16 @@ RUN set -eux; \
 		echo '; Ensure worker stdout and stderr are sent to the main error log.'; \
 		echo 'catch_workers_output = yes'; \
 		echo 'decorate_workers_output = no'; \
+		echo; \
+		echo '; default listen address for easy override in later php-fpm.d/*.conf files'; \
+		echo 'listen = 9000'; \
 	} | tee php-fpm.d/docker.conf; \
 	{ \
 		echo '[global]'; \
 		echo 'daemonize = no'; \
 		echo; \
+		echo '; the [www] ini section below is for backwards compatibility and will be removed in 8.6+'; \
 		echo '[www]'; \
-		echo 'listen = 9000'; \
 	} | tee php-fpm.d/zz-docker.conf; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
 	{ \
