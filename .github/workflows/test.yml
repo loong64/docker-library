@@ -20,8 +20,8 @@ jobs:
         version: ['3.10', '3.11', '3.12', '3.13', '3.14']
 
     steps:
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
@@ -37,8 +37,8 @@ jobs:
         version: ['1.25', '1.26']
 
     steps:
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
@@ -54,8 +54,8 @@ jobs:
         version: ['20', '22', '24', '25']
 
     steps:
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
@@ -71,8 +71,8 @@ jobs:
         version: ['6.2', '7.0', '7.2', '7.4', '7.4-rc']
 
     steps:
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
@@ -88,8 +88,8 @@ jobs:
         version: ['14', '15', '16', '17', '18']
 
     steps:
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
@@ -105,8 +105,8 @@ jobs:
         version: ['11.8', '12.1', '12.2']
 
     steps:
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
@@ -122,8 +122,8 @@ jobs:
         version: ['1.28', '1.29']
 
     steps:
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
@@ -139,8 +139,8 @@ jobs:
         version: ['8.2-cli', '8.2-fpm', '8.2-zts', '8.3-cli', '8.3-fpm', '8.3-zts', '8.4-cli', '8.4-fpm', '8.4-zts', '8.5-cli', '8.5-fpm', '8.5-zts']
 
     steps:
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
@@ -156,8 +156,8 @@ jobs:
         version: ['7.2', '8.0', '8.1', '9.0']
 
     steps:
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}-${{ matrix.suite }}
       run: |
@@ -172,8 +172,8 @@ jobs:
         version: ['14', '15']
 
     steps:
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
 
     - name: Check ${{ matrix.app }}:${{ matrix.version }}
       run: |

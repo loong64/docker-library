@@ -7,11 +7,11 @@ on:
 
 jobs:
   generate-jobs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: |
@@ -54,7 +54,7 @@ jobs:
   trigger-workflows:
     needs: generate-jobs
     if: ${{ fromJson(needs.generate-jobs.outputs.matrix).include[0] }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.generate-jobs.outputs.matrix) }}
