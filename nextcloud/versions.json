@@ -2,27 +2,39 @@
   "33": {
     "branch": "33",
     "version": "33.0.0",
-    "url": "https://download.nextcloud.com/server/releases/nextcloud-33.0.0.tar.bz2",
-    "ascUrl": "https://download.nextcloud.com/server/releases/nextcloud-33.0.0.tar.bz2.asc",
+    "url": "https://github.com/nextcloud-releases/server/releases/download/v33.0.0/nextcloud-33.0.0.tar.bz2",
+    "ascUrl": "https://github.com/nextcloud-releases/server/releases/download/v33.0.0/nextcloud-33.0.0.tar.bz2.asc",
     "variants": {
+      "fpm": {
+        "variant": "fpm",
+        "base": "debian",
+        "baseVersion": "trixie",
+        "phpVersion": "8.4"
+      },
       "fpm-alpine": {
         "variant": "fpm-alpine",
         "base": "alpine",
-        "baseVersion": "3.21",
-        "phpVersion": "8.3"
+        "baseVersion": "3.23",
+        "phpVersion": "8.4"
       }
     }
   },
   "32": {
     "branch": "32",
     "version": "32.0.6",
-    "url": "https://download.nextcloud.com/server/releases/nextcloud-32.0.6.tar.bz2",
-    "ascUrl": "https://download.nextcloud.com/server/releases/nextcloud-32.0.6.tar.bz2.asc",
+    "url": "https://github.com/nextcloud-releases/server/releases/download/v32.0.6/nextcloud-32.0.6.tar.bz2",
+    "ascUrl": "https://github.com/nextcloud-releases/server/releases/download/v32.0.6/nextcloud-32.0.6.tar.bz2.asc",
     "variants": {
+      "fpm": {
+        "variant": "fpm",
+        "base": "debian",
+        "baseVersion": "trixie",
+        "phpVersion": "8.3"
+      },
       "fpm-alpine": {
         "variant": "fpm-alpine",
         "base": "alpine",
-        "baseVersion": "3.21",
+        "baseVersion": "3.23",
         "phpVersion": "8.3"
       }
     }
@@ -30,42 +42,20 @@
   "31": {
     "branch": "31",
     "version": "31.0.14",
-    "url": "https://download.nextcloud.com/server/releases/nextcloud-31.0.14.tar.bz2",
-    "ascUrl": "https://download.nextcloud.com/server/releases/nextcloud-31.0.14.tar.bz2.asc",
+    "url": "https://github.com/nextcloud-releases/server/releases/download/v31.0.14/nextcloud-31.0.14.tar.bz2",
+    "ascUrl": "https://github.com/nextcloud-releases/server/releases/download/v31.0.14/nextcloud-31.0.14.tar.bz2.asc",
     "variants": {
-      "fpm-alpine": {
-        "variant": "fpm-alpine",
-        "base": "alpine",
-        "baseVersion": "3.21",
+      "fpm": {
+        "variant": "fpm",
+        "base": "debian",
+        "baseVersion": "trixie",
         "phpVersion": "8.3"
-      }
-    }
-  },
-  "30": {
-    "branch": "30",
-    "version": "30.0.17",
-    "url": "https://download.nextcloud.com/server/releases/nextcloud-30.0.17.tar.bz2",
-    "ascUrl": "https://download.nextcloud.com/server/releases/nextcloud-30.0.17.tar.bz2.asc",
-    "variants": {
+      },
       "fpm-alpine": {
         "variant": "fpm-alpine",
         "base": "alpine",
-        "baseVersion": "3.21",
+        "baseVersion": "3.23",
         "phpVersion": "8.3"
-      }
-    }
-  },
-  "29": {
-    "branch": "29",
-    "version": "29.0.16",
-    "url": "https://download.nextcloud.com/server/releases/nextcloud-29.0.16.tar.bz2",
-    "ascUrl": "https://download.nextcloud.com/server/releases/nextcloud-29.0.16.tar.bz2.asc",
-    "variants": {
-      "fpm-alpine": {
-        "variant": "fpm-alpine",
-        "base": "alpine",
-        "baseVersion": "3.21",
-        "phpVersion": "8.2"
       }
     }
   }
