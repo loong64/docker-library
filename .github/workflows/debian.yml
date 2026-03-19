@@ -46,7 +46,7 @@ jobs:
       - name: Build debuerreotype
         run: |
           cd debuerreotype
-          wget -qO - https://github.com/loong64/debuerreotype/commit/49a210072ebb26ff0743cfe8121040844f1cc5fc.patch | patch -p1
+          wget -qO - https://github.com/loong64/debuerreotype/commit/139041b1e609e661cfd90ff7a3f2508c07813a25.patch | patch -p1
           serial=$(date "+%Y%m%d")
           sed -i 's@i386@loong64@g' .validate-debian.sh
           ARCH=loong64 SUITE=${{ matrix.SUITE }} CODENAME="${{ matrix.CODENAME }}" TIMESTAMP="${{ matrix.TIMESTAMP }}" ./.validate-debian.sh
