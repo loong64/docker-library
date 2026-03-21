@@ -105,13 +105,14 @@ jobs:
             -m "$repo:$full_version-$suite-loong64" \
             -m "python:$full_version-$suite"
           crane cp "$repo:$full_version-$suite" "$repo:$minor_version-$suite"
-          crane cp "$repo:$full_version-$suite" "$repo:$major_version-$suite"
 
           case "$suite" in
             trixie)
               if [ "$version" = "$latest_version" ]; then
                 crane cp "$repo:$version-$suite" "$repo:latest"
+                crane cp "$repo:$version-$suite" "$repo:$suite"
                 crane cp "$repo:$version-$suite" "$repo:$major_version"
+                crane cp "$repo:$version-$suite" "$repo:$major_version-$suite"
               fi
               ;;
             alpine3.23)
