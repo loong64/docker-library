@@ -69,8 +69,6 @@ RUN mkdir /docker-entrypoint-initdb.d
 ENV LANG C.UTF-8
 
 # bashbrew-architectures:%%ARCHES%%
-ARG MARIADB_MAJOR=%%MARIADB_MAJOR%%
-ENV MARIADB_MAJOR $MARIADB_MAJOR
 ARG MARIADB_VERSION=%%MARIADB_VERSION%%
 ENV MARIADB_VERSION $MARIADB_VERSION
 # release-status:%%MARIADB_RELEASE_STATUS%%
@@ -79,8 +77,8 @@ ENV MARIADB_VERSION $MARIADB_VERSION
 
 RUN set -ex; \
 	{ \
-		echo "mariadb-server-$MARIADB_MAJOR" mysql-server/root_password password 'unused'; \
-		echo "mariadb-server-$MARIADB_MAJOR" mysql-server/root_password_again password 'unused'; \
+		echo "mariadb-server" mysql-server/root_password password 'unused'; \
+		echo "mariadb-server" mysql-server/root_password_again password 'unused'; \
 	} | debconf-set-selections; \
 	\
 # see note below about "*.pyc" files
@@ -142,7 +140,7 @@ RUN set -ex; \
 			} > /etc/apt/preferences.d/mariadb; \
 			;; \
 	esac; \
-# postinst script creates a datadir, so avoid creating it by faking its existance.
+# postinst script creates a datadir, so avoid creating it by faking its existence.
 	mkdir -p /var/lib/mysql/mysql ; touch /var/lib/mysql/mysql/user.frm ; \
 # mariadb-backup is installed at the same time so that `mysql-common` is only installed once from just mariadb repos
 	apt-get install -y --no-install-recommends mariadb-server="$MARIADB_VERSION" mariadb-backup socat \
@@ -160,7 +158,7 @@ RUN set -ex; \
 	find /usr -name '*.pyc' -type f -exec bash -c 'for pyc; do dpkg -S "$pyc" &> /dev/null || rm -vf "$pyc"; done' -- '{}' +; \
 	\
 # purge and re-create /var/lib/mysql with appropriate ownership
-	rm -rf /var/lib/mysql /etc/mysql/mariadb.conf.d/50-mysqld_safe.cnf; \
+	rm -rf /var/lib/mysql; \
 	mkdir -p /var/lib/mysql /run/mysqld; \
 	chown -R mysql:mysql /var/lib/mysql /run/mysqld; \
 # ensure that /run/mysqld (used for socket and lock files) is writable regardless of the UID our mysqld instance ends up having at runtime

@@ -5,19 +5,17 @@ set -Eeuo pipefail
 #
 
 development_version=main
-development_version_real=12.3
+development_version_real=12.4
 
 defaultSuite='trixie'
 declare -A suites=(
 	[10.5]='trixie'
 	[10.6]='trixie'
 	[10.11]='trixie'
-	[11.2]='trixie'
 )
 
-defaultSuffix='deb13'
 declare -A suffix=(
-	['11.4']='debsid'
+	['trixie']='deb13'
 )
 
 #declare -A dpkgArchToBashbrew=(
@@ -44,9 +42,9 @@ update_version()
 
 	if [ -z "$ubi" ]; then
 		suite="${suites[$version]:-$defaultSuite}"
-		fullVersion=1:${mariaVersion}+maria~${suffix[${suite}]:-$defaultSuffix}
+		fullVersion=1:${mariaVersion}+maria~${suffix[${suite}]}
 	else
-		suite=
+		suite="${suites[$dir]:-$defaultSuiteUBI}"
 		fullVersion=$mariaVersion
 		if [[ $version = 10.* ]]; then
 			sed -e '/character-set-collations/d' docker.cnf > "$dir/docker.cnf"
@@ -98,31 +96,24 @@ update_version()
 			-e 's!epel-release-latest-10!epel-release-latest-9!g' \
 			-e 's!--enablerepo=epel --disablerepo=mariadb --releasever=10.1 !!' \
 			"$dir/Dockerfile"
+	elif [ "$suite" = ubi10-minimal ]; then
+		sed -i \
+			-e 's!reinstall!install!' \
+			"$dir/Dockerfile"
 	fi
-	vmin=${version%-ubi}
 	# Start using the new executable names
-	case "$vmin" in
-		10.5)
-			sed -i -e '/--old-mode/d' \
-				-e '/--skip-ssl/d' \
-				-e 's/mariadb-upgrade\([^_"]\)/mysql_upgrade\1/' \
-				-e 's/mariadb-dump/mysqldump/' \
-				-e 's/mariadb-admin/mysqladmin/' \
-				-e 's/\bmariadb --protocol\b/mysql --protocol/' \
-				-e 's/mariadb-install-db/mysql_install_db/g' \
-				-e 's/--mariadbd/--mysqld/' \
-				-e 's/mariadb-tzinfo-to-sql/mysql_tzinfo_to_sql/' \
-				-e '0,/#ENDOFSUBSTITUTIONS/s/mariadbd/mysqld/g' \
-				-e '/memory\.pressure/,+7d' "$dir/docker-entrypoint.sh"
-			sed -i -e '/--skip-ssl/d' \
-				-e '0,/#ENDOFSUBSTITUTIONS/s/\tmariadb/\tmysql/' "$dir/healthcheck.sh"
-			sed -i -e '/^CMD/s/mariadbd/mysqld/' \
-				-e 's/ && userdel.*//' \
+	case "$version$ubi" in
+		10.6)
+			# quoted $ intentional
+			# shellcheck disable=SC2016
+			sed -i -e '/bashbrew-architectures/a\
+ARG MARIADB_MAJOR=10.6\
+ENV MARIADB_MAJOR $MARIADB_MAJOR
+' \
+				-e 's/" mysql-server/-$MARIADB_MAJOR" mysql-server/' \
 				"$dir/Dockerfile"
-			sed -i -e 's/mariadb_upgrade_info/mysql_upgrade_info/' \
-				"$dir/docker-entrypoint.sh" "$dir/healthcheck.sh"
-			;;
-		10.6*)
+			;&
+		10.6-ubi)
 			sed -i -e '/memory\.pressure/,+7d' \
 				-e 's/--mariadbd/--mysqld/' \
 				"$dir/docker-entrypoint.sh"
@@ -131,33 +122,28 @@ update_version()
 				"$dir/docker-entrypoint.sh" "$dir/healthcheck.sh"
 			sed -i -e 's/ && userdel.*//' \
 				"$dir/Dockerfile"
+			sed -i -e '/microdnf.*openssl/d' \
+				-e '/purge and re-create/{
+					n
+					s/;/ \/etc\/mysql\/mariadb.conf.d\/50-mysqld_safe.cnf;/}' \
+				"$dir/Dockerfile"
 			;;
-		10.11)
+		10.11*)
 			sed -i -e 's/mariadb_upgrade_info/mysql_upgrade_info/' \
 				-e '/--skip-ssl/d' \
 				"$dir/docker-entrypoint.sh" "$dir/healthcheck.sh"
-			# quoted $ intentional
-			# shellcheck disable=SC2016
-			sed -i -e '/^ARG MARIADB_MAJOR/d' \
-				-e '/^ENV MARIADB_MAJOR/d' \
-				-e 's/-\$MARIADB_MAJOR//' \
-				-e 's/ && userdel.*//' \
+			sed -i -e 's/ && userdel.*//' \
+				-e '/microdnf.*openssl/d' \
+				-e '/purge and re-create/{
+					n
+					s/;/ \/etc\/mysql\/mariadb.conf.d\/50-mysqld_safe.cnf;/}' \
+				"$dir/Dockerfile"
+			;;
+		11*-ubi|12.2-ubi)
+			sed -i -e '/microdnf.*openssl/d' \
 				"$dir/Dockerfile"
 			;;
 		*)
-			# quoted $ intentional
-			# shellcheck disable=SC2016
-			sed -i -e '/^ARG MARIADB_MAJOR/d' \
-				-e '/^ENV MARIADB_MAJOR/d' \
-				-e 's/-\$MARIADB_MAJOR//' \
-				"$dir/Dockerfile"
-			if [ "$vmin" = 11.2 ]; then
-				sed -i -e '/--skip-ssl/d' \
-				       	"$dir/docker-entrypoint.sh" "$dir/healthcheck.sh"
-				sed -i -e 's/ && userdel.*//' \
-					"$dir/Dockerfile"
-			fi
-			sed -i -e 's/ \/[^ ]*50-mysqld_safe.cnf//' "$dir/Dockerfile"
 			;&
 	esac
 
@@ -187,7 +173,7 @@ update_version_array()
 	releaseStatus=${release[$c1]}
 
 	case "$releaseStatus" in
-		Alpha | Beta | Gamma | RC | Stable ) ;; # sanity check
+		Preview | Alpha | Beta | Gamma | RC | Stable ) ;; # sanity check
 		*) echo >&2 "error: unexpected 'release status' value for $mariaVersion: $releaseStatus"; ;;
 	esac
 
@@ -200,7 +186,7 @@ update_version_array()
 mariaversion()
 {
 	# version hacks because our $DOWNLOADS_REST_API
-	# seems to never be right on release and has unfinshed suppport
+	# seems to never be right on release and has unfinshed support
 	# for rolling release versions.
 	#if [ "$version" = 11.4 ]; then
 	#	mariaVersion=11.4.7;

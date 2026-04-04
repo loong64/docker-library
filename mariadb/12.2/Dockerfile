@@ -140,7 +140,7 @@ RUN set -ex; \
 			} > /etc/apt/preferences.d/mariadb; \
 			;; \
 	esac; \
-# postinst script creates a datadir, so avoid creating it by faking its existance.
+# postinst script creates a datadir, so avoid creating it by faking its existence.
 	mkdir -p /var/lib/mysql/mysql ; touch /var/lib/mysql/mysql/user.frm ; \
 # mariadb-backup is installed at the same time so that `mysql-common` is only installed once from just mariadb repos
 	apt-get install -y --no-install-recommends mariadb-server="$MARIADB_VERSION" mariadb-backup socat \
