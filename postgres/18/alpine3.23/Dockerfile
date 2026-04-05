@@ -102,6 +102,9 @@ RUN set -eux; \
 		lz4-dev \
 # https://www.postgresql.org/docs/15/release-15.html "--with-zstd to enable Zstandard builds"
 		zstd-dev \
+# https://salsa.debian.org/postgresql/postgresql-common/-/commit/a31ce5b893c11e0f17a016e38c1882fbe1820081
+# https://www.postgresql.org/docs/18/install-make.html#CONFIGURE-OPTION-WITH-LIBCURL
+		curl-dev \
 # https://salsa.debian.org/postgresql/postgresql-common/-/commit/89c384273f4c4092483598c292b1b1b188816cce
 # https://www.postgresql.org/docs/18/install-make.html#CONFIGURE-OPTION-WITH-LIBURING
 		liburing-dev \
@@ -114,9 +117,6 @@ RUN set -eux; \
 	grep '/var/run/postgresql' src/include/pg_config_manual.h.new; \
 	mv src/include/pg_config_manual.h.new src/include/pg_config_manual.h; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
-# explicitly update autoconf config.guess and config.sub so they support more arches/libcs
-	wget -O config/config.guess 'https://github.com/cgitmirror/config/raw/refs/heads/master/config.guess'; \
-	wget -O config/config.sub 'https://github.com/cgitmirror/config/raw/refs/heads/master/config.sub'; \
 	\
 # https://git.alpinelinux.org/aports/tree/community/postgresql15/APKBUILD?h=3.22-stable#n176 ("export LLVM_CONFIG")
 	export LLVM_CONFIG="/usr/lib/llvm19/bin/llvm-config"; \
@@ -144,6 +144,7 @@ RUN set -eux; \
 		--with-gssapi \
 		--with-icu \
 		--with-ldap \
+		--with-libcurl \
 		--with-liburing \
 		--with-libxml \
 		--with-libxslt \
@@ -201,7 +202,6 @@ RUN install --verbose --directory --owner postgres --group postgres --mode 3777 
 # NOTE: in 18+, PGDATA has changed to match the pg_ctlcluster standard directory structure, and the VOLUME has moved from /var/lib/postgresql/data to /var/lib/postgresql
 #
 ENV PGDATA /var/lib/postgresql/18/docker
-RUN ln -svT . /var/lib/postgresql/data # https://github.com/docker-library/postgres/pull/1259#issuecomment-2215477494
 VOLUME /var/lib/postgresql
 # ("/var/lib/postgresql" is already pre-created with suitably usable permissions above)
 
