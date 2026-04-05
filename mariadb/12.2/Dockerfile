@@ -9,7 +9,7 @@ RUN groupadd -r mysql && useradd -r -g mysql mysql --home-dir /var/lib/mysql
 # gosu key is B42F6819007F00F88E364FD4036A9C25BF357DD4
 ENV GOSU_VERSION 1.19
 
-ARG GPG_KEYS=177F4010FE56CA3336300305F1656F24C74CD1D8
+ARG GPG_KEYS=F806E8C4741675050854E1E33617A873C05597AD
 # pub   rsa4096 2016-03-30 [SC]
 #         177F 4010 FE56 CA33 3630  0305 F165 6F24 C74C D1D8
 # uid           [ unknown] MariaDB Signing Key <signing-key@mariadb.org>
@@ -68,6 +68,18 @@ RUN mkdir /docker-entrypoint-initdb.d
 # default locales in base image (https://github.com/docker-library/docs/blob/135b79cc8093ab02e55debb61fdb079ab2dbce87/ubuntu/README.md#locales)
 ENV LANG C.UTF-8
 
+# OCI annotations to image
+LABEL org.opencontainers.image.authors="MariaDB Community" \
+      org.opencontainers.image.title="MariaDB Database" \
+      org.opencontainers.image.description="MariaDB Database for relational SQL" \
+      org.opencontainers.image.documentation="https://ghcr.io/loong64/mariadb" \
+      org.opencontainers.image.base.name="ghcr.io/loong64/debian:trixie-slim" \
+      org.opencontainers.image.licenses="GPL-2.0" \
+      org.opencontainers.image.source="https://github.com/loong64/docker-library" \
+      org.opencontainers.image.vendor="MariaDB Community" \
+      org.opencontainers.image.version="12.2.2" \
+      org.opencontainers.image.url="https://github.com/loong64/docker-library"
+
 # bashbrew-architectures: amd64 arm64v8 ppc64le s390x
 ARG MARIADB_VERSION=1:12.2.2+maria~deb13
 ENV MARIADB_VERSION $MARIADB_VERSION
@@ -75,88 +87,34 @@ ENV MARIADB_VERSION $MARIADB_VERSION
 # release-support-type:Rolling
 # (https://downloads.mariadb.org/rest-api/mariadb/)
 
+# Allowing overriding of REPOSITORY, a URL that includes suite and component for testing and Enterprise Versions
+ARG REPOSITORY="http://mirrors.loong64.com/mariadb/mariadb-12.2.2/repo/debian/ trixie main"
+
+RUN set -e;\
+	echo "deb ${REPOSITORY}" > /etc/apt/sources.list.d/mariadb.list; \
+	{ \
+		echo 'Package: *'; \
+		echo 'Pin: release o=MariaDB'; \
+		echo 'Pin-Priority: 999'; \
+	} > /etc/apt/preferences.d/mariadb
+# add repository pinning to make sure dependencies from this MariaDB repo are preferred over Debian dependencies
+#  libmariadbclient18 : Depends: libmysqlclient18 (= 5.5.42+maria-1~wheezy) but 5.5.43-0+deb7u1 is to be installed
+
+# the "/var/lib/mysql" stuff here is because the mysql-server postinst doesn't have an explicit way to disable the mysql_install_db codepath besides having a database already "configured" (ie, stuff in /var/lib/mysql/mysql)
+# also, we set debconf keys to make APT a little quieter
+# hadolint ignore=DL3015
 RUN set -ex; \
 	{ \
 		echo "mariadb-server" mysql-server/root_password password 'unused'; \
 		echo "mariadb-server" mysql-server/root_password_again password 'unused'; \
 	} | debconf-set-selections; \
-	\
-# see note below about "*.pyc" files
-	export PYTHONDONTWRITEBYTECODE=1; \
-	\
-	dpkgArch="$(dpkg --print-architecture)"; \
-	aptRepo="[ signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg ] http://archive.mariadb.org/mariadb-12.2.2/repo/debian/ trixie main"; \
-	case "$dpkgArch" in \
-		amd64 | arm64 | ppc64el | s390x) \
-# arches officialy built by upstream
-			echo "deb $aptRepo" > /etc/apt/sources.list.d/pgdg.list; \
-			apt-get update; \
-			;; \
-		*) \
-# we're on an architecture upstream doesn't officially build for
-# let's build binaries from their published source packages
-			echo "deb-src $aptRepo" > /etc/apt/sources.list.d/pgdg.list; \
-			\
-			savedAptMark="$(apt-mark showmanual)"; \
-			\
-			tempDir="$(mktemp -d)"; \
-			cd "$tempDir"; \
-			\
-# create a temporary local APT repo to install from (so that dependency resolution can be handled by APT, as it should be)
-			apt-get update; \
-			apt-get install -y --no-install-recommends dpkg-dev; \
-			echo "deb [ trusted=yes ] file://$tempDir ./" > /etc/apt/sources.list.d/temp.list; \
-			_update_repo() { \
-				dpkg-scanpackages . > Packages; \
-# work around the following APT issue by using "Acquire::GzipIndexes=false" (overriding "/etc/apt/apt.conf.d/docker-gzip-indexes")
-#   Could not open file /var/lib/apt/lists/partial/_tmp_tmp.ODWljpQfkE_._Packages - open (13: Permission denied)
-#   ...
-#   E: Failed to fetch store:/var/lib/apt/lists/partial/_tmp_tmp.ODWljpQfkE_._Packages  Could not open file /var/lib/apt/lists/partial/_tmp_tmp.ODWljpQfkE_._Packages - open (13: Permission denied)
-				apt-get -o Acquire::GzipIndexes=false update; \
-			}; \
-			_update_repo; \
-			\
-# build .deb files from upstream's source packages (which are verified by apt-get)
-			nproc="$(nproc)"; \
-			export DEB_BUILD_OPTIONS="nocheck parallel=$nproc"; \
-			apt-get build-dep -y "mariadb-server=$MARIADB_VERSION"; \
-			apt-get source --compile "mariadb-server=$MARIADB_VERSION"; \
-			\
-# we don't remove APT lists here because they get re-downloaded and removed later
-			\
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-# (which is done after we install the built packages so we don't have to redownload any overlapping dependencies)
-			apt-mark showmanual | xargs apt-mark auto > /dev/null; \
-			apt-mark manual $savedAptMark; \
-			\
-			ls -lAFh; \
-			_update_repo; \
-			grep '^Package: ' Packages; \
-			cd /; \
-			{ \
-				echo 'Package: *'; \
-				echo 'Pin: origin ""'; \
-				echo 'Pin-Priority: 1001'; \
-			} > /etc/apt/preferences.d/mariadb; \
-			;; \
-	esac; \
+	apt-get update; \
 # postinst script creates a datadir, so avoid creating it by faking its existence.
 	mkdir -p /var/lib/mysql/mysql ; touch /var/lib/mysql/mysql/user.frm ; \
 # mariadb-backup is installed at the same time so that `mysql-common` is only installed once from just mariadb repos
 	apt-get install -y --no-install-recommends mariadb-server="$MARIADB_VERSION" mariadb-backup socat \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
-	\
-	if [ -n "$tempDir" ]; then \
-# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
-		apt-get purge -y --auto-remove; \
-		rm -rf "$tempDir" /etc/apt/sources.list.d/temp.list; \
-		rm -rf /etc/apt/preferences.d/mariadb; \
-	fi; \
-	\
-# some of the steps above generate a lot of "*.pyc" files (and setting "PYTHONDONTWRITEBYTECODE" beforehand doesn't propagate properly for some reason), so we clean them up manually (as long as they aren't owned by a package)
-	find /usr -name '*.pyc' -type f -exec bash -c 'for pyc; do dpkg -S "$pyc" &> /dev/null || rm -vf "$pyc"; done' -- '{}' +; \
-	\
 # purge and re-create /var/lib/mysql with appropriate ownership
 	rm -rf /var/lib/mysql; \
 	mkdir -p /var/lib/mysql /run/mysqld; \
