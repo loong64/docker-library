@@ -23,7 +23,7 @@ jobs:
         id: set-matrix
         run: |
           declare -a changed_apps
-          apps=("golang" "mariadb" "nextcloud" "nginx" "node" "php" "postgres" "python" "redis" "valkey")
+          apps=("gcc" "golang" "mariadb" "nextcloud" "nginx" "node" "php" "postgres" "python" "redis" "rust" "valkey")
           commit_message="build(app): bump app to latest"
           
           for app in "${apps[@]}"; do
