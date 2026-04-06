@@ -53,7 +53,7 @@ jobs:
       - name: Get Version
         run: |
           if [ "${{ matrix.suite }}" = "slim" ]; then
-            ln -sf ${{ matrix.name }}/${{ matrix.version }}/trixie/${{ matrix.suite }} ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}
+            cp -R ${{ matrix.name }}/${{ matrix.version }}/trixie/${{ matrix.suite }} ${{ matrix.name }}/${{ matrix.version }}/${{ matrix.suite }}
           fi
 
           echo "build=true" >> $GITHUB_ENV
@@ -112,18 +112,18 @@ jobs:
           case "$suite" in
             trixie)
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$version-$suite" "$repo:latest"
-                crane cp "$repo:$version-$suite" "$repo:$full_version"
-                crane cp "$repo:$version-$suite" "$repo:$minor_version"
-                crane cp "$repo:$version-$suite" "$repo:$major_version"
+                crane cp "$repo:$full_version-$suite" "$repo:latest"
+                crane cp "$repo:$full_version-$suite" "$repo:$full_version"
+                crane cp "$repo:$full_version-$suite" "$repo:$minor_version"
+                crane cp "$repo:$full_version-$suite" "$repo:$major_version"
               fi
               ;;
             slim)
               if [ "$version" = "$latest_version" ]; then
-                crane cp "$repo:$version-$suite" "$repo:slim-trixie"
-                crane cp "$repo:$version-$suite" "$repo:$full_version-slim-trixie"
-                crane cp "$repo:$version-$suite" "$repo:$minor_version-slim-trixie"
-                crane cp "$repo:$version-$suite" "$repo:$major_version-slim-trixie"
+                crane cp "$repo:$full_version-$suite" "$repo:slim-trixie"
+                crane cp "$repo:$full_version-$suite" "$repo:$full_version-slim-trixie"
+                crane cp "$repo:$full_version-$suite" "$repo:$minor_version-slim-trixie"
+                crane cp "$repo:$full_version-$suite" "$repo:$major_version-slim-trixie"
               fi
               ;;
             alpine3.23)
