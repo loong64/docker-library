@@ -404,8 +404,8 @@ if __name__ == "__main__":
 
         update_debian()
         update_alpine()
-        update_ci()
-        update_mirror_stable_ci()
-        update_nightly_ci()
+        # update_ci()
+        # update_mirror_stable_ci()
+        # update_nightly_ci()
     elif args.subcommand == "generate-stackbrew-library":
         generate_stackbrew_library()
