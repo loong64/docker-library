@@ -3,7 +3,7 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM ghcr.io/loong64/nginx:1.29.6-alpine-slim
+FROM ghcr.io/loong64/nginx:1.29.7-alpine-slim
 
 ENV NJS_VERSION   0.9.6
 ENV NJS_RELEASE   1

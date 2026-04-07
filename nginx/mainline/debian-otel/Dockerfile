@@ -3,7 +3,7 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM ghcr.io/loong64/nginx:1.29.6
+FROM ghcr.io/loong64/nginx:1.29.7
 
 ENV OTEL_VERSION     0.1.2
 

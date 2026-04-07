@@ -3,7 +3,7 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM ghcr.io/loong64/nginx:1.28.2-alpine
+FROM ghcr.io/loong64/nginx:1.28.3-alpine
 
 ENV OTEL_VERSION   0.1.2
 
