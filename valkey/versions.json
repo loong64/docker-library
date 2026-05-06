@@ -1,8 +1,8 @@
 {
   "7.2": {
-    "version": "7.2.12",
-    "url": "https://github.com/valkey-io/valkey/archive/refs/tags/7.2.12.tar.gz",
-    "sha256": "4444ee3d295acf7c1a47b24c9d7f8fcaeec20a079bf17020cf9302666460f893",
+    "version": "7.2.13",
+    "url": "https://github.com/valkey-io/valkey/archive/refs/tags/7.2.13.tar.gz",
+    "sha256": "31f19d42c983749e81e69654a8c45dcdc9dc212c23cf11b7bdc4928b328d50a9",
     "debian": {
       "version": "trixie"
     },
@@ -11,9 +11,9 @@
     }
   },
   "8.0": {
-    "version": "8.0.7",
-    "url": "https://github.com/valkey-io/valkey/archive/refs/tags/8.0.7.tar.gz",
-    "sha256": "6f8ec2c906c72f1d6fad41611396fc077c41931cdb865920c8a6c7bdf58aad5c",
+    "version": "8.0.9",
+    "url": "https://github.com/valkey-io/valkey/archive/refs/tags/8.0.9.tar.gz",
+    "sha256": "621427980c58c7605384365e82bc83f2b0618bf38d924a0c75606e393643aeb0",
     "debian": {
       "version": "trixie"
     },
@@ -22,9 +22,9 @@
     }
   },
   "8.1": {
-    "version": "8.1.6",
-    "url": "https://github.com/valkey-io/valkey/archive/refs/tags/8.1.6.tar.gz",
-    "sha256": "8898dea8a51d25334db1835aeb55d475027f39d672213941308b9d3d470f832c",
+    "version": "8.1.7",
+    "url": "https://github.com/valkey-io/valkey/archive/refs/tags/8.1.7.tar.gz",
+    "sha256": "15c984f3fa7ee5b45a79cf9641e4871bf999acb65654940304e1c0807f58f7bc",
     "debian": {
       "version": "trixie"
     },
@@ -33,9 +33,9 @@
     }
   },
   "9.0": {
-    "version": "9.0.3",
-    "url": "https://github.com/valkey-io/valkey/archive/refs/tags/9.0.3.tar.gz",
-    "sha256": "e220f4b0143292ee6ea6d705aa40d45a0c8a77759b3e94c201cb5c25dbdca42f",
+    "version": "9.0.4",
+    "url": "https://github.com/valkey-io/valkey/archive/refs/tags/9.0.4.tar.gz",
+    "sha256": "8d65e12cc9edb14d117b56fd33300e7b8cde2c087356de3f055d44689667670b",
     "debian": {
       "version": "trixie"
     },
