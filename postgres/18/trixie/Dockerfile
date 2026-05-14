@@ -95,7 +95,7 @@ RUN set -ex; \
 ENV PG_MAJOR 18
 ENV PATH $PATH:/usr/lib/postgresql/$PG_MAJOR/bin
 
-ENV PG_VERSION 18.3-1.pgdg13+1
+ENV PG_VERSION 18.4-1.pgdg13+1
 
 # Allowing overriding of REPOSITORY, a URL that includes suite and component for testing and Enterprise Versions
 ARG REPOSITORY="http://mirrors.loong64.com/postgresql/repos/apt trixie-pgdg main $PG_MAJOR"
