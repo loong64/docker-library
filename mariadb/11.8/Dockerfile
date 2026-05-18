@@ -77,18 +77,18 @@ LABEL org.opencontainers.image.authors="MariaDB Community" \
       org.opencontainers.image.licenses="GPL-2.0" \
       org.opencontainers.image.source="https://github.com/loong64/docker-library" \
       org.opencontainers.image.vendor="MariaDB Community" \
-      org.opencontainers.image.version="11.8.6" \
+      org.opencontainers.image.version="11.8.7" \
       org.opencontainers.image.url="https://github.com/loong64/docker-library"
 
 # bashbrew-architectures: amd64 arm64v8 ppc64le s390x
-ARG MARIADB_VERSION=1:11.8.6+maria~deb13
+ARG MARIADB_VERSION=1:11.8.7+maria~deb13
 ENV MARIADB_VERSION $MARIADB_VERSION
 # release-status:Stable
 # release-support-type:Long Term Support
 # (https://downloads.mariadb.org/rest-api/mariadb/)
 
 # Allowing overriding of REPOSITORY, a URL that includes suite and component for testing and Enterprise Versions
-ARG REPOSITORY="http://mirrors.loong64.com/mariadb/mariadb-11.8.6/repo/debian/ trixie main"
+ARG REPOSITORY="http://mirrors.loong64.com/mariadb/mariadb-11.8.7/repo/debian/ trixie main"
 
 RUN set -e;\
 	echo "deb ${REPOSITORY}" > /etc/apt/sources.list.d/mariadb.list; \
