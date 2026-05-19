@@ -1,6 +1,6 @@
 FROM ghcr.io/loong64/alpine:3.22
 
-ENV NODE_VERSION=20.20.2
+ENV NODE_VERSION=26.0.0
 
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
@@ -11,8 +11,7 @@ RUN addgroup -g 1000 node \
         curl \
     && ARCH= OPENSSL_ARCH='linux*' && alpineArch="$(apk --print-arch)" \
       && case "${alpineArch##*-}" in \
-        loongarch64) ARCH='loong64' OPENSSL_ARCH='linux*-loongarch64' \
-        CHECKSUM=$(curl -sSL --compressed "https://github.com/loong64/node/releases/download/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz.sha256" | cut -d ' ' -f 1);; \
+        loongarch64) ARCH='loong64' CHECKSUM="4d2d6d10725d698e0f05a7fc38baf6c552d480c8af366bde30f0e43e7140a2f0" OPENSSL_ARCH='linux*-loongarch64';; \
         *) ;; \
       esac \
   && if [ -n "${CHECKSUM}" ]; then \
@@ -45,6 +44,7 @@ RUN addgroup -g 1000 node \
       C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
       108F52B48DB57BB0CC439B2997B01419BD92F80A \
       A363A499291CBBC940DD62E41F10027AF002F8B0 \
+      F806E8C4741675050854E1E33617A873C05597AD \
     ; do \
       { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" && gpg --batch --fingerprint "$key"; } || \
       { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" && gpg --batch --fingerprint "$key"; } ; \
@@ -74,31 +74,6 @@ RUN addgroup -g 1000 node \
   && npm --version \
   && rm -rf /tmp/*
 
-ENV YARN_VERSION=1.22.22
-
-RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
-  # use pre-existing gpg directory, see https://github.com/nodejs/docker-node/pull/1895#issuecomment-1550389150
-  && export GNUPGHOME="$(mktemp -d)" \
-  && for key in \
-    6A010C5166006599AA17F08146C2130DFD2497F5 \
-  ; do \
-    { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" && gpg --batch --fingerprint "$key"; } || \
-    { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" && gpg --batch --fingerprint "$key"; } ; \
-  done \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
-  && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-  && gpgconf --kill all \
-  && rm -rf "$GNUPGHOME" \
-  && mkdir -p /opt \
-  && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
-  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
-  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
-  && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-  && apk del .build-deps-yarn \
-  # smoke test
-  && yarn --version \
-  && rm -rf /tmp/*
 
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]

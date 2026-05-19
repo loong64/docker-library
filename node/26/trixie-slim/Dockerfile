@@ -3,7 +3,7 @@ FROM ghcr.io/loong64/debian:trixie-slim
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
-ENV NODE_VERSION=20.20.2
+ENV NODE_VERSION=26.0.0
 
 RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && case "${dpkgArch##*-}" in \
@@ -26,13 +26,19 @@ RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
       C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
       108F52B48DB57BB0CC439B2997B01419BD92F80A \
       A363A499291CBBC940DD62E41F10027AF002F8B0 \
+      F806E8C4741675050854E1E33617A873C05597AD \
     ; do \
       { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" && gpg --batch --fingerprint "$key"; } || \
       { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" && gpg --batch --fingerprint "$key"; } ; \
     done \
     && curl -fsSLO --compressed "https://github.com/loong64/node/releases/download/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
+    && curl -fsSLO --compressed "https://github.com/loong64/node/releases/download/v$NODE_VERSION/SHASUMS256.txt.asc" \
+    && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
+    && gpgconf --kill all \
+    && rm -rf "$GNUPGHOME" \
+    && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
     && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
-    && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
+    && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
     # Remove unused OpenSSL headers to save ~34MB. See this NodeJS issue: https://github.com/nodejs/node/issues/46451
     && find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 ! -name "$OPENSSL_ARCH" -exec rm -rf {} \; \
     && apt-mark auto '.*' > /dev/null \
@@ -51,43 +57,6 @@ RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && npm --version \
     && rm -rf /tmp/*
 
-ENV YARN_VERSION=1.22.22
-
-RUN set -ex \
-  && savedAptMark="$(apt-mark showmanual)" \
-  && apt-get update && apt-get install -y ca-certificates curl wget gnupg dirmngr --no-install-recommends \
-  && rm -rf /var/lib/apt/lists/* \
-  # use pre-existing gpg directory, see https://github.com/nodejs/docker-node/pull/1895#issuecomment-1550389150
-  && export GNUPGHOME="$(mktemp -d)" \
-  && for key in \
-    6A010C5166006599AA17F08146C2130DFD2497F5 \
-  ; do \
-    { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" && gpg --batch --fingerprint "$key"; } || \
-    { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" && gpg --batch --fingerprint "$key"; } ; \
-  done \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
-  && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-  && gpgconf --kill all \
-  && rm -rf "$GNUPGHOME" \
-  && mkdir -p /opt \
-  && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
-  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
-  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
-  && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-  && apt-mark auto '.*' > /dev/null \
-  && { [ -z "$savedAptMark" ] || apt-mark manual $savedAptMark > /dev/null; } \
-  && find /usr/local -type f -executable -exec ldd '{}' ';' \
-    | awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
-    | sort -u \
-    | xargs -r dpkg-query --search \
-    | cut -d: -f1 \
-    | sort -u \
-    | xargs -r apt-mark manual \
-  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  # smoke test
-  && yarn --version \
-  && rm -rf /tmp/*
 
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
