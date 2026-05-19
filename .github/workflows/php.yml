@@ -434,6 +434,7 @@ jobs:
             trixie)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode"
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode"
+              crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version
               if [ "$version" = "$latest_version" ]; then
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-$suite"
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode"

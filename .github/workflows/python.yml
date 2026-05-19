@@ -113,6 +113,7 @@ jobs:
                 crane cp "$repo:$version-$suite" "$repo:$suite"
                 crane cp "$repo:$version-$suite" "$repo:$major_version"
                 crane cp "$repo:$version-$suite" "$repo:$major_version-$suite"
+                crane cp "$repo:$version-$suite" "$repo:$full_version"
               fi
               ;;
             alpine3.23)
