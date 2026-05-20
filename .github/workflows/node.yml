@@ -29,9 +29,9 @@ jobs:
       matrix:
         name: ['node']
         suite: ['trixie', 'trixie-slim', 'alpine3.22', 'alpine3.23']
-        version: ['20', '22', '24', '25']
-        lts_version: ['22']
-        latest_version: ['25']
+        version: ['22', '24', '25', '26']
+        lts_version: ['24']
+        latest_version: ['26']
 
     steps:
       - name: Checkout ${{ matrix.name }}

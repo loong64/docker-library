@@ -11,8 +11,7 @@ RUN addgroup -g 1000 node \
         curl \
     && ARCH= OPENSSL_ARCH='linux*' && alpineArch="$(apk --print-arch)" \
       && case "${alpineArch##*-}" in \
-        loongarch64) ARCH='loong64' OPENSSL_ARCH='linux*-loongarch64' \
-        CHECKSUM=$(curl -sSL --compressed "https://github.com/loong64/node/releases/download/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz.sha256" | cut -d ' ' -f 1);; \
+        loongarch64) ARCH='loong64' CHECKSUM="177f550dca2800009677e397a9a6387b347c1aa6a311a4b53d8929ddbf15ce6a" OPENSSL_ARCH='linux*-loongarch64';; \
         *) ;; \
       esac \
   && if [ -n "${CHECKSUM}" ]; then \
@@ -45,6 +44,7 @@ RUN addgroup -g 1000 node \
       C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
       108F52B48DB57BB0CC439B2997B01419BD92F80A \
       A363A499291CBBC940DD62E41F10027AF002F8B0 \
+      F806E8C4741675050854E1E33617A873C05597AD \
     ; do \
       { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" && gpg --batch --fingerprint "$key"; } || \
       { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" && gpg --batch --fingerprint "$key"; } ; \
