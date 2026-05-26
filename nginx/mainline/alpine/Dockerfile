@@ -3,9 +3,9 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM ghcr.io/loong64/nginx:1.31.0-alpine-slim
+FROM ghcr.io/loong64/nginx:1.31.1-alpine-slim
 
-ENV NJS_VERSION   0.9.8
+ENV NJS_VERSION   0.9.9
 ENV NJS_RELEASE   1
 ENV ACME_VERSION  0.4.1
 
@@ -54,16 +54,16 @@ RUN set -x \
             && su nobody -s /bin/sh -c " \
                 export HOME=${tempDir} \
                 && cd ${tempDir} \
-                && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
-                && PKGOSSCHECKSUM=\"7c1dddf7d510642b6f352a16e4c8d7696c791a042cf9758282498d8bc8ae0760263874fbcbbadc420129b15701b32c50cebdc432ad9d2adb9776600b42cfb149 *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\" \
-                && if [ \"\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\" = \"\$PKGOSSCHECKSUM\" ]; then \
+                && curl -f -L -O https://github.com/nginx/pkg-oss/archive/b151aac903a6fc121d57f0909415381d0a1c1bbd.tar.gz \
+                && PKGOSSCHECKSUM=\"72c13cfedc25a6c1e01c24dd1f736b0fefd1ef7f73ef569e2726fc99c0137327d2e71c8694bd8b0157be2a7247ec1769904746a852e7698caf7df8a5b0040440 *b151aac903a6fc121d57f0909415381d0a1c1bbd.tar.gz\" \
+                && if [ \"\$(openssl sha512 -r b151aac903a6fc121d57f0909415381d0a1c1bbd.tar.gz)\" = \"\$PKGOSSCHECKSUM\" ]; then \
                     echo \"pkg-oss tarball checksum verification succeeded!\"; \
                 else \
                     echo \"pkg-oss tarball checksum verification failed!\"; \
                     exit 1; \
                 fi \
-                && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz \
-                && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE} \
+                && tar xzvf b151aac903a6fc121d57f0909415381d0a1c1bbd.tar.gz \
+                && cd pkg-oss-b151aac903a6fc121d57f0909415381d0a1c1bbd \
                 && cd alpine \
                 && export BUILDTARGET=\"module-geoip module-image-filter module-njs module-xslt module-acme\" \
                 && if [ \"\$(apk --print-arch)\" = \"armhf\" ]; then BUILDTARGET=\"\$( echo \$BUILDTARGET | sed 's,module-acme,,' )\"; fi \

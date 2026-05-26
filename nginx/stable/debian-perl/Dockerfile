@@ -3,7 +3,7 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM ghcr.io/loong64/nginx:1.30.1
+FROM ghcr.io/loong64/nginx:1.30.2
 
 RUN set -x; \
     NGINX_GPGKEY_PATH=/etc/apt/keyrings/nginx-archive-keyring.gpg; \
@@ -46,10 +46,10 @@ RUN set -x; \
                 xsltproc \
             && ( \
                 cd "$tempDir" \
-                && REVISION="${NGINX_VERSION}-${PKG_RELEASE}" \
+                && REVISION="60789259bfab36b1669a414881a9d002fd246d6b" \
                 && REVISION=${REVISION%~*} \
                 && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${REVISION}.tar.gz \
-                && PKGOSSCHECKSUM="05e338105684bf659770c24af35264a25e6d02d4b850c3fb21091dd0815284ab567a0ae03a7756fb4ea94520a7a4057c1bd8967d62cf2fc4cf1fc11d424b56ba *${REVISION}.tar.gz" \
+                && PKGOSSCHECKSUM="9282a0265c921af3e2d5760cbdc06aae65e6efb145ed266fe02102326174a9e9405f6492979372556c14e2f4f8cf66a48c338d054d0ece375a1c41f343f244cc *${REVISION}.tar.gz" \
                 && if [ "$(openssl sha512 -r ${REVISION}.tar.gz)" = "$PKGOSSCHECKSUM" ]; then \
                     echo "pkg-oss tarball checksum verification succeeded!"; \
                 else \
