@@ -28,6 +28,14 @@ jobs:
           
           for app in "${apps[@]}"; do
             pushd $app
+            case "$app" in 
+              nginx)
+                curl -sSL -O --retry 3 https://github.com/nginx/docker-nginx/raw/refs/heads/master/update.sh
+                ;;
+              rust)
+                curl -sSL -O --retry 3 https://github.com/rust-lang/docker-rust/raw/refs/heads/master/versions.toml
+                ;;
+            esac
             chmod +x *.sh
             ./update.sh
             popd
