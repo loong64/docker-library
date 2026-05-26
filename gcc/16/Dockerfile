@@ -92,7 +92,7 @@ RUN set -ex; \
 	\
 # explicitly update autoconf config.guess and config.sub so they support more arches/libcs
 	for f in config.guess config.sub; do \
-		wget -O "$f" "https://git.savannah.gnu.org/cgit/config.git/plain/$f?id=7d3d27baf8107b630586c962c057e22149653deb"; \
+		wget -O "$f" "https://git.savannah.gnu.org/cgit/config.git/plain/$f"; \
 # find any more (shallow) copies of the file we grabbed and update them too
 		find -mindepth 2 -name "$f" -exec cp -v "$f" '{}' ';'; \
 	done; \
