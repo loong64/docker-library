@@ -1,24 +1,10 @@
 {
   "12.3": {
     "milestone": "12.3",
-    "version": "12.3.1",
-    "fullVersion": "1:12.3.1+maria~deb13",
-    "releaseStatus": "RC",
-    "supportType": "Long Term Support",
-    "base": "debian:trixie",
-    "arches": [
-      "amd64",
-      "arm64v8",
-      "ppc64le",
-      "s390x"
-    ]
-  },
-  "12.2": {
-    "milestone": "12.2",
-    "version": "12.2.2",
-    "fullVersion": "1:12.2.2+maria~deb13",
+    "version": "12.3.2",
+    "fullVersion": "1:12.3.2+maria~deb13",
     "releaseStatus": "Stable",
-    "supportType": "Rolling",
+    "supportType": "Long Term Support",
     "base": "debian:trixie",
     "arches": [
       "amd64",
@@ -29,8 +15,8 @@
   },
   "11.8": {
     "milestone": "11.8",
-    "version": "11.8.7",
-    "fullVersion": "1:11.8.7+maria~deb13",
+    "version": "11.8.8",
+    "fullVersion": "1:11.8.8+maria~deb13",
     "releaseStatus": "Stable",
     "supportType": "Long Term Support",
     "base": "debian:trixie",
