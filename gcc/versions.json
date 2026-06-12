@@ -13,9 +13,9 @@
     "debian": {
       "version": "trixie"
     },
-    "eol": "2027-02-08",
-    "lastModified": "2025-08-08",
-    "version": "15.2.0"
+    "eol": "2027-12-12",
+    "lastModified": "2026-06-12",
+    "version": "15.3.0"
   },
   "16": {
     "compression": "xz",
