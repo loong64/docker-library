@@ -107,6 +107,7 @@ jobs:
             trixie)
               if [ "$version" = "$latest_version" ]; then
                 crane cp "$repo:$version-$suite" "$repo:latest"
+                crane cp "$repo:$version-$suite" "$repo:$minor_version"
                 crane cp "$repo:$version-$suite" "$repo:$major_version"
                 crane cp "$repo:$version-$suite" "$repo:$full_version"
               fi
