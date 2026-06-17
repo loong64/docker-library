@@ -9,19 +9,19 @@
         "variant": "apache",
         "base": "debian",
         "baseVersion": "trixie",
-        "phpVersion": "8.4"
+        "phpVersion": "8.5"
       },
       "fpm": {
         "variant": "fpm",
         "base": "debian",
         "baseVersion": "trixie",
-        "phpVersion": "8.4"
+        "phpVersion": "8.5"
       },
       "fpm-alpine": {
         "variant": "fpm-alpine",
         "base": "alpine",
-        "baseVersion": "3.23",
-        "phpVersion": "8.4"
+        "baseVersion": "3.24",
+        "phpVersion": "8.5"
       }
     }
   },
@@ -46,7 +46,7 @@
       "fpm-alpine": {
         "variant": "fpm-alpine",
         "base": "alpine",
-        "baseVersion": "3.23",
+        "baseVersion": "3.24",
         "phpVersion": "8.4"
       }
     }
@@ -72,7 +72,7 @@
       "fpm-alpine": {
         "variant": "fpm-alpine",
         "base": "alpine",
-        "baseVersion": "3.23",
+        "baseVersion": "3.24",
         "phpVersion": "8.3"
       }
     }

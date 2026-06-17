@@ -116,7 +116,7 @@ jobs:
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode"
               fi
               ;;
-            alpine3.23)
+            alpine3.24)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
               if [ "$version" = "$latest_version" ]; then
@@ -135,7 +135,7 @@ jobs:
       matrix:
         name: ['php']
         mode: ['cli']
-        suite: ['trixie', 'alpine3.22', 'alpine3.23']
+        suite: ['trixie', 'alpine3.23', 'alpine3.24']
         version: ['8.2', '8.3', '8.4', '8.5']
         latest_version: ['8.5']
 
@@ -225,7 +225,7 @@ jobs:
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode-$suite"
               fi
               ;;
-            alpine3.23)
+            alpine3.24)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-alpine"
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
@@ -246,7 +246,7 @@ jobs:
       matrix:
         name: ['php']
         mode: ['fpm']
-        suite: ['trixie', 'alpine3.22', 'alpine3.23']
+        suite: ['trixie', 'alpine3.23', 'alpine3.24']
         version: ['8.2', '8.3', '8.4', '8.5']
         latest_version: ['8.5']
 
@@ -333,7 +333,7 @@ jobs:
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode"
               fi
               ;;
-            alpine3.23)
+            alpine3.24)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
               if [ "$version" = "$latest_version" ]; then
@@ -352,7 +352,7 @@ jobs:
       matrix:
         name: ['php']
         mode: ['zts']
-        suite: ['trixie', 'alpine3.22', 'alpine3.23']
+        suite: ['trixie', 'alpine3.23', 'alpine3.24']
         version: ['8.2', '8.3', '8.4', '8.5']
         latest_version: ['8.5']
 
@@ -440,7 +440,7 @@ jobs:
                 crane cp "$repo:$full_version-$mode-$suite" "$repo:$mode"
               fi
               ;;
-            alpine3.23)
+            alpine3.24)
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$full_version-$mode-alpine"
               crane cp "$repo:$full_version-$mode-$suite" "$repo:$minor_version-$mode-alpine"
               if [ "$version" = "$latest_version" ]; then

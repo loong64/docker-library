@@ -239,8 +239,8 @@ for version in "${versions[@]}"; do
 			"trixie",
 			"forky",
 			(
+				"3.24",
 				"3.23",
-				"3.22",
 				empty
 			| "alpine" + .)
 		],

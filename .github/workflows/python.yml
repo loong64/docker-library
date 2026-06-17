@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         name: ['python']
-        suite: ['trixie', 'slim-trixie', 'alpine3.22', 'alpine3.23']
+        suite: ['trixie', 'slim-trixie', 'alpine3.23', 'alpine3.24']
         version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         latest_version: ['3.14']
 
@@ -116,7 +116,7 @@ jobs:
                 crane cp "$repo:$version-$suite" "$repo:$full_version"
               fi
               ;;
-            alpine3.23)
+            alpine3.24)
               crane cp "$repo:$full_version-$suite" "$repo:$full_version-alpine"
               crane cp "$repo:$full_version-$suite" "$repo:$minor_version-alpine"
               if [ "$version" = "$latest_version" ]; then

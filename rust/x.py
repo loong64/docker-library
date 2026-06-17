@@ -66,10 +66,11 @@ alpine_arches = [
     AlpineArch("loong64", "loongarch64", "linux/loong64", "loongarch64-unknown-linux-musl"),
 ]
 
-latest_alpine_version = "3.23"
+latest_alpine_version = "3.24"
 alpine_versions = [
     "3.21",
     "3.22",
+    "3.23",
     latest_alpine_version,
 ]
 

@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         name: ['rust']
-        suite: ['trixie', 'slim', 'alpine3.21', 'alpine3.22', 'alpine3.23']
+        suite: ['trixie', 'slim', 'alpine3.21', 'alpine3.22', 'alpine3.23', 'alpine3.24']
         # version: ['stable', 'nightly']
         version: ['stable']
         latest_version: ['stable']
@@ -126,7 +126,7 @@ jobs:
                 crane cp "$repo:$full_version-$suite" "$repo:$major_version-slim-trixie"
               fi
               ;;
-            alpine3.23)
+            alpine3.24)
               crane cp "$repo:$full_version-$suite" "$repo:$full_version-alpine"
               crane cp "$repo:$full_version-$suite" "$repo:$minor_version-alpine"
               crane cp "$repo:$full_version-$suite" "$repo:$major_version-alpine"

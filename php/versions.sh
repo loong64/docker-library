@@ -91,8 +91,9 @@ for version in "${versions[@]}"; do
 					# order here controls the order of the library/ file
 					(
 						"trixie",
+						"bookworm",
+						"alpine3.24",
 						"alpine3.23",
-						"alpine3.22",
 						empty
 					) as $suite
 					| (

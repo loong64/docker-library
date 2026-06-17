@@ -56,18 +56,9 @@ jobs:
           echo "minor_version=${minor_version}" >> $GITHUB_ENV
 
           version=${{ matrix.branch }}
-          case ${version} in
-            mainline)
-              image_tag=${version}-alpine3.23-slim
-              minor_image_tag=${minor_version}-alpine3.23-slim
-              full_image_tag=${full_version}-alpine3.23-slim
-              ;;
-            stable)
-              image_tag=${version}-alpine3.21-slim
-              minor_image_tag=${minor_version}-alpine3.21-slim
-              full_image_tag=${full_version}-alpine3.21-slim
-              ;;
-          esac
+          image_tag=${version}-alpine3.23-slim
+          minor_image_tag=${minor_version}-alpine3.23-slim
+          full_image_tag=${full_version}-alpine3.23-slim
 
           echo "image_tag=${image_tag}" >> $GITHUB_ENV
           echo "minor_image_tag=${minor_image_tag}" >> $GITHUB_ENV
@@ -141,11 +132,7 @@ jobs:
               full_image_tag=${full_version}-trixie
               ;;
             alpine)
-              if [ "${{ matrix.branch }}" = "stable" ]; then
-                alpine_version="alpine3.21"
-              else
-                alpine_version="alpine3.23"
-              fi
+              alpine_version="alpine3.23"
               image_tag=${version}-${alpine_version}
               minor_image_tag=${minor_version}-${alpine_version}
               full_image_tag=${full_version}-${alpine_version}
@@ -239,11 +226,7 @@ jobs:
               full_image_tag=${full_version}-trixie
               ;;
             alpine*)
-              if [ "${{ matrix.branch }}" = "stable" ]; then
-                alpine_version="alpine3.21"
-              else
-                alpine_version="alpine3.23"
-              fi
+              alpine_version="alpine3.23"
               image_tag=${version}-${alpine_version}
               minor_image_tag=${minor_version}-${alpine_version}
               full_image_tag=${full_version}-${alpine_version}

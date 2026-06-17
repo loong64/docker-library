@@ -2,7 +2,7 @@
 set -eo pipefail
 
 declare -A alpine_version=(
-	[default]='3.23'
+	[default]='3.24'
 )
 
 declare -A debian_version=(
@@ -11,7 +11,8 @@ declare -A debian_version=(
 
 declare -A php_version=(
 	[32]='8.3'
-	[default]='8.4'
+	[33]='8.4'
+	[default]='8.5'
 )
 
 declare -A ftp_options=(
@@ -88,7 +89,9 @@ redis_version="$(
 
 declare -A pecl_versions=(
 	[APCu]="$apcu_version"
-	[igbinary]="$igbinary_version"
+	# https://github.com/nextcloud/docker/issues/2578
+	#[igbinary]="$igbinary_version"
+	[igbinary]="3.2.17RC1"
 	[imagick]="$imagick_version"
 	[memcached]="$memcached_version"
 	[redis]="$redis_version"

@@ -13,8 +13,8 @@
       "slim-trixie",
       "forky",
       "slim-forky",
-      "alpine3.23",
-      "alpine3.22"
+      "alpine3.24",
+      "alpine3.23"
     ],
     "version": "3.10.20"
   },
@@ -32,8 +32,8 @@
       "slim-trixie",
       "forky",
       "slim-forky",
-      "alpine3.23",
-      "alpine3.22"
+      "alpine3.24",
+      "alpine3.23"
     ],
     "version": "3.11.15"
   },
@@ -48,8 +48,8 @@
       "slim-trixie",
       "forky",
       "slim-forky",
-      "alpine3.23",
-      "alpine3.22"
+      "alpine3.24",
+      "alpine3.23"
     ],
     "version": "3.12.13"
   },
@@ -67,8 +67,8 @@
       "slim-trixie",
       "forky",
       "slim-forky",
-      "alpine3.23",
-      "alpine3.22"
+      "alpine3.24",
+      "alpine3.23"
     ],
     "version": "3.13.14"
   },
@@ -86,8 +86,8 @@
       "slim-trixie",
       "forky",
       "slim-forky",
-      "alpine3.23",
-      "alpine3.22"
+      "alpine3.24",
+      "alpine3.23"
     ],
     "version": "3.14.6"
   }
