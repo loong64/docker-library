@@ -4,9 +4,9 @@
     "debian": {
       "version": "trixie"
     },
-    "eol": "2026-11-23",
-    "lastModified": "2025-05-23",
-    "version": "14.3.0"
+    "eol": "2027-12-26",
+    "lastModified": "2026-06-26",
+    "version": "14.4.0"
   },
   "15": {
     "compression": "xz",
