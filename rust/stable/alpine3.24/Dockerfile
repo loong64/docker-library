@@ -10,7 +10,7 @@ RUN apk add --no-cache \
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.96.1
+    RUST_VERSION=1.97.0
 
 RUN set -eux; \
     \
