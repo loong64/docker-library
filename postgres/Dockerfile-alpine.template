@@ -58,7 +58,7 @@ ENV PG_SHA256 {{ .sha256 }}
 
 {{
 	def llvmver:
-		"19"
+		"21"
 -}}
 ENV DOCKER_PG_LLVM_DEPS \
 		llvm{{ llvmver }}-dev \

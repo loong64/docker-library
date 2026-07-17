@@ -57,8 +57,8 @@ ENV PG_VERSION 15.18
 ENV PG_SHA256 11df0df97fe3ea4ba9a791faaf39cee1d2fe571e78885b5b55d8517d27c323b4
 
 ENV DOCKER_PG_LLVM_DEPS \
-		llvm19-dev \
-		clang19
+		llvm21-dev \
+		clang21
 
 RUN set -eux; \
 	\
@@ -114,9 +114,9 @@ RUN set -eux; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 	\
 # https://git.alpinelinux.org/aports/tree/community/postgresql15/APKBUILD?h=3.22-stable#n176 ("export LLVM_CONFIG")
-	export LLVM_CONFIG="/usr/lib/llvm19/bin/llvm-config"; \
+	export LLVM_CONFIG="/usr/lib/llvm21/bin/llvm-config"; \
 # https://git.alpinelinux.org/aports/tree/community/postgresql15/APKBUILD?h=3.22-stable#n180 ("older clang versions don't have a 'clang' exe anymore.")
-	export CLANG=clang-19; \
+	export CLANG=clang-21; \
 	\
 # configure options mostly copying Debian:
 # https://salsa.debian.org/postgresql/postgresql-common/-/blob/6e26b5107295170cc8731a3acbf13228ea15941e/server/postgresql.mk#L32

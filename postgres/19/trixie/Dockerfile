@@ -86,10 +86,10 @@ RUN set -ex; \
 	gpgconf --kill all; \
 	rm -rf "$GNUPGHOME"
 
-ENV PG_MAJOR 16
+ENV PG_MAJOR 19
 ENV PATH $PATH:/usr/lib/postgresql/$PG_MAJOR/bin
 
-ENV PG_VERSION 16.14-1.pgdg13+1
+ENV PG_VERSION 19~beta2-1.pgdg13+1
 
 RUN set -ex; \
 	\
@@ -157,6 +157,10 @@ RUN set -ex; \
 	apt-get install -y --no-install-recommends \
 		"postgresql-$PG_MAJOR=$PG_VERSION" \
 	; \
+# https://github.com/docker-library/postgres/pull/1344#issuecomment-2936578203 (JIT is a separate package in 18+, but only supported for a subset of architectures)
+	if apt-get install -s "postgresql-$PG_MAJOR-jit" > /dev/null 2>&1; then \
+		apt-get install -y --no-install-recommends "postgresql-$PG_MAJOR-jit=$PG_VERSION"; \
+	fi; \
 	\
 	rm -rf /var/lib/apt/lists/*; \
 	\
@@ -181,10 +185,12 @@ RUN set -eux; \
 
 RUN install --verbose --directory --owner postgres --group postgres --mode 3777 /var/run/postgresql
 
-ENV PGDATA /var/lib/postgresql/data
-# this 1777 will be replaced by 0700 at runtime (allows semi-arbitrary "--user" values)
-RUN install --verbose --directory --owner postgres --group postgres --mode 1777 "$PGDATA"
-VOLUME /var/lib/postgresql/data
+#
+# NOTE: in 18+, PGDATA has changed to match the pg_ctlcluster standard directory structure, and the VOLUME has moved from /var/lib/postgresql/data to /var/lib/postgresql
+#
+ENV PGDATA /var/lib/postgresql/19/docker
+VOLUME /var/lib/postgresql
+# ("/var/lib/postgresql" is already pre-created with suitably usable permissions above)
 
 COPY docker-entrypoint.sh docker-ensure-initdb.sh /usr/local/bin/
 RUN ln -sT docker-ensure-initdb.sh /usr/local/bin/docker-enforce-initdb.sh

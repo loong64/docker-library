@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM ghcr.io/loong64/alpine:3.23
+FROM ghcr.io/loong64/alpine:3.24
 
 # 70 is the standard uid/gid for "postgres" in Alpine
 # https://git.alpinelinux.org/aports/tree/main/postgresql-common/postgresql-common.pre-install?h=3.22-stable
@@ -51,9 +51,9 @@ ENV LANG en_US.utf8
 
 RUN mkdir /docker-entrypoint-initdb.d
 
-ENV PG_MAJOR 18
-ENV PG_VERSION 18.4
-ENV PG_SHA256 81a81ec695fb0c7901407defaa1d2f7973617154cf27ba74e3a7ab8e64436094
+ENV PG_MAJOR 19
+ENV PG_VERSION 19beta2
+ENV PG_SHA256 f1fb4373f4b0f4db896964f3e5b01658ff0acebd595da7558436ccf0d63b82b2
 
 ENV DOCKER_PG_LLVM_DEPS \
 		llvm21-dev \
@@ -201,7 +201,7 @@ RUN install --verbose --directory --owner postgres --group postgres --mode 3777 
 #
 # NOTE: in 18+, PGDATA has changed to match the pg_ctlcluster standard directory structure, and the VOLUME has moved from /var/lib/postgresql/data to /var/lib/postgresql
 #
-ENV PGDATA /var/lib/postgresql/18/docker
+ENV PGDATA /var/lib/postgresql/19/docker
 VOLUME /var/lib/postgresql
 # ("/var/lib/postgresql" is already pre-created with suitably usable permissions above)
 
