@@ -1,4 +1,4 @@
-name: Sync to cnb.cool
+name: Sync Images
 
 on:
   schedule:
@@ -8,6 +8,14 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - registry: "docker.cnb.cool"
+          org: "loong64"
+        - registry: "docker.io"
+          org: "loong64v2"
     steps:
       - uses: actions/checkout@v6
       - uses: docker/setup-qemu-action@v4
@@ -20,7 +28,15 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Login to Docker Hub
+        if: matrix.registry == 'docker.io'
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Login to CNB Cloud Registry
+        if: matrix.registry == 'docker.cnb.cool'
         uses: docker/login-action@v4
         with:
           registry: docker.cnb.cool
@@ -39,6 +55,8 @@ jobs:
         run: |
           MAX_RETRIES=5
           WAIT_SECONDS=60
+
+          mkdir -p debian alpine
           for package_dir in */; do
             package=${package_dir%/}
 
@@ -47,12 +65,21 @@ jobs:
               jq -r '.[].metadata.container.tags.[] | select((. | endswith("-loong64") | not))')
 
             for tag in ${tags}; do
+              CUSTOM_FLAGS=()
               SOURCE_IMAGE="ghcr.io/loong64/${package}:${tag}"
-              DEST_IMAGE="docker.cnb.cool/loong64/library/${package}:${tag}"
+              case "${{ matrix.registry }}" in
+                'docker.cnb.cool') 
+                  DEST_IMAGE="${{ matrix.registry }}/${{ matrix.org }}/library/${package}:${tag}"
+                  ;;
+                'docker.io')
+                  DEST_IMAGE="${{ matrix.registry }}/${{ matrix.org }}/${package}:${tag}"
+                  CUSTOM_FLAGS=(--platform linux/loong64)
+                  ;;
+              esac
 
               echo "➡️ Attempting to copy: ${SOURCE_IMAGE} to ${DEST_IMAGE}"
               RETRY_COUNT=0
-              until crane cp "${SOURCE_IMAGE}" "${DEST_IMAGE}"; do
+              until crane cp "${CUSTOM_FLAGS[@]}" "${SOURCE_IMAGE}" "${DEST_IMAGE}"; do
                 RETRY_COUNT=$((RETRY_COUNT + 1))
                 if [ ${RETRY_COUNT} -ge ${MAX_RETRIES} ]; then
                   echo "❌ ERROR: Failed to copy ${SOURCE_IMAGE} after ${MAX_RETRIES} attempts. Skipping."
