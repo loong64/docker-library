@@ -3,7 +3,7 @@
     "alpine": "3.24",
     "debian": "trixie",
     "trixie": {
-      "version": "19~beta2-1.pgdg13+1",
+      "version": "19~beta3-1.pgdg13+1",
       "arches": [
         "amd64",
         "arm64",
@@ -16,15 +16,15 @@
       "alpine3.24",
       "alpine3.23"
     ],
-    "version": "19beta2",
-    "sha256": "f1fb4373f4b0f4db896964f3e5b01658ff0acebd595da7558436ccf0d63b82b2",
+    "version": "19beta3",
+    "sha256": "ea4ad8933121930a58f23c73dc99c26a4184faca26faefa77d15ce0fba7dfe2c",
     "major": 19
   },
   "18": {
     "alpine": "3.24",
     "debian": "trixie",
     "trixie": {
-      "version": "18.4-1.pgdg13+1",
+      "version": "18.6-1.pgdg13+2",
       "arches": [
         "amd64",
         "arm64",
@@ -37,15 +37,15 @@
       "alpine3.24",
       "alpine3.23"
     ],
-    "version": "18.4",
-    "sha256": "81a81ec695fb0c7901407defaa1d2f7973617154cf27ba74e3a7ab8e64436094",
+    "version": "18.6",
+    "sha256": "555610c24d53e4316da5b7d3fc25c279d96856d5e0e23ee308c328c5fa881d9f",
     "major": 18
   },
   "17": {
     "alpine": "3.24",
     "debian": "trixie",
     "trixie": {
-      "version": "17.10-1.pgdg13+1",
+      "version": "17.11-1.pgdg13+2",
       "arches": [
         "amd64",
         "arm64",
@@ -58,15 +58,15 @@
       "alpine3.24",
       "alpine3.23"
     ],
-    "version": "17.10",
-    "sha256": "078a03516dcdbdb705fecaf415ea3d13a956c589e46f09fed68a06fb00598c90",
+    "version": "17.11",
+    "sha256": "dd27f2b3c59e73ed14aa3324901242bf69a032a6347805f274e6260322d42979",
     "major": 17
   },
   "16": {
     "alpine": "3.24",
     "debian": "trixie",
     "trixie": {
-      "version": "16.14-1.pgdg13+1",
+      "version": "16.15-1.pgdg13+2",
       "arches": [
         "amd64",
         "arm64",
@@ -79,15 +79,15 @@
       "alpine3.24",
       "alpine3.23"
     ],
-    "version": "16.14",
-    "sha256": "f6d077142737920858ce958ccdb75c6ee137a63b5b0853c70693d401ac7e3471",
+    "version": "16.15",
+    "sha256": "c1575341fa7bd40f5274ea465b34390f4dc64cdd0770af327005caaeb9f6b7ed",
     "major": 16
   },
   "15": {
     "alpine": "3.24",
     "debian": "trixie",
     "trixie": {
-      "version": "15.18-1.pgdg13+1",
+      "version": "15.19-1.pgdg13+2",
       "arches": [
         "amd64",
         "arm64",
@@ -100,15 +100,15 @@
       "alpine3.24",
       "alpine3.23"
     ],
-    "version": "15.18",
-    "sha256": "11df0df97fe3ea4ba9a791faaf39cee1d2fe571e78885b5b55d8517d27c323b4",
+    "version": "15.19",
+    "sha256": "e1a64a87a46b825b88c082e4518161a47aab53c45694964f8ba1df28f7859f89",
     "major": 15
   },
   "14": {
     "alpine": "3.24",
     "debian": "trixie",
     "trixie": {
-      "version": "14.23-1.pgdg13+1",
+      "version": "14.24-1.pgdg13+2",
       "arches": [
         "amd64",
         "arm64",
@@ -121,8 +121,8 @@
       "alpine3.24",
       "alpine3.23"
     ],
-    "version": "14.23",
-    "sha256": "cc7216822b546330e29c2f91e123c8734a4c41795082145bb962aa712e8c94a5",
+    "version": "14.24",
+    "sha256": "a7fa7ed3d558172355f51406097a7bd4f6b473be80f311ef7cda96bf383d8897",
     "major": 14
   }
 }
