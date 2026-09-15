@@ -1,4 +1,30 @@
 {
+  "35": {
+    "branch": "35",
+    "version": "35.0.0",
+    "url": "https://github.com/nextcloud-releases/server/releases/download/v35.0.0/nextcloud-35.0.0.tar.bz2",
+    "ascUrl": "https://github.com/nextcloud-releases/server/releases/download/v35.0.0/nextcloud-35.0.0.tar.bz2.asc",
+    "variants": {
+      "apache": {
+        "variant": "apache",
+        "base": "debian",
+        "baseVersion": "trixie",
+        "phpVersion": "8.5"
+      },
+      "fpm": {
+        "variant": "fpm",
+        "base": "debian",
+        "baseVersion": "trixie",
+        "phpVersion": "8.5"
+      },
+      "fpm-alpine": {
+        "variant": "fpm-alpine",
+        "base": "alpine",
+        "baseVersion": "3.24",
+        "phpVersion": "8.5"
+      }
+    }
+  },
   "34": {
     "branch": "34",
     "version": "34.0.4",
