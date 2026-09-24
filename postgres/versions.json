@@ -3,7 +3,7 @@
     "alpine": "3.24",
     "debian": "trixie",
     "trixie": {
-      "version": "19~beta3-1.pgdg13+1",
+      "version": "19~beta4-1.pgdg13+1",
       "arches": [
         "amd64",
         "arm64",
@@ -16,8 +16,8 @@
       "alpine3.24",
       "alpine3.23"
     ],
-    "version": "19beta3",
-    "sha256": "ea4ad8933121930a58f23c73dc99c26a4184faca26faefa77d15ce0fba7dfe2c",
+    "version": "19beta4",
+    "sha256": "83157ee9c599d03b2f7a3d73ef3a56ec24e0e79cc2b3501a64d1364f56398c86",
     "major": 19
   },
   "18": {
