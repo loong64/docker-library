@@ -25,7 +25,7 @@ FROM ghcr.io/loong64/buildpack-deps:{{ env.variant }}
 # ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
 
-{{ if rcVersion | IN("3.10", "3.11", "3.12") then ( -}}
+{{ if rcVersion | IN("3.11", "3.12") then ( -}}
 {{ # only set LANG on versions less than 3.13 -}}
 # cannot remove LANG even though https://bugs.python.org/issue19846 is fixed
 # last attempted removal of LANG broke many users:
@@ -62,15 +62,11 @@ RUN set -eux; \
 		# https://github.com/docker-library/python/issues/977
 		# https://peps.python.org/pep-0761/
 		# https://discuss.python.org/t/pep-761-deprecating-pgp-signatures-for-cpython-artifacts/67180
-		rcVersion | IN("3.10", "3.11", "3.12", "3.13")
+		rcVersion | IN("3.11", "3.12", "3.13")
 -}}
 {{ if should_pgp then ( -}}
 ENV GPG_KEY {{
 	{
-		# gpg: key 64E628F8D684696D: public key "Pablo Galindo Salgado <pablogsal@gmail.com>" imported
-		"3.10": "A035C8C19219BA821ECEA86B64E628F8D684696D",
-		# https://peps.python.org/pep-0619/#release-manager-and-crew
-
 		# gpg: key 64E628F8D684696D: public key "Pablo Galindo Salgado <pablogsal@gmail.com>" imported
 		"3.11": "A035C8C19219BA821ECEA86B64E628F8D684696D",
 		# https://peps.python.org/pep-0664/#release-manager-and-crew
@@ -98,6 +94,7 @@ RUN set -eux; \
 		"bzip2-dev",
 		"dpkg-dev dpkg",
 		"findutils",
+		"g++",
 		"gcc",
 		"gdbm-dev",
 		"gnupg",
@@ -120,13 +117,14 @@ RUN set -eux; \
 		"xz",
 		"xz-dev",
 		"zlib-dev",
-		if IN(env.version; "3.10", "3.11", "3.12", "3.13") then empty else
+		if IN(env.version; "3.11", "3.12", "3.13") then empty else
 			"zstd-dev"
 		end,
 		empty
 	else
 		if is_slim then
 			"dpkg-dev",
+			"g++",
 			"gcc",
 			"gnupg",
 			"libbluetooth-dev",
@@ -148,7 +146,7 @@ RUN set -eux; \
 			"zlib1g-dev",
 			empty
 		else empty end,
-		if IN(env.version; "3.10", "3.11", "3.12", "3.13") then empty else
+		if IN(env.version; "3.11", "3.12", "3.13") then empty else
 			"libzstd-dev"
 		end,
 		empty
@@ -225,42 +223,42 @@ RUN set -eux; \
 	LDFLAGS="$(dpkg-buildflags --get LDFLAGS)"; \
 {{ ) end -}}
 {{ if is_slim or is_alpine then ( -}}
-	LDFLAGS="${LDFLAGS:--Wl},--strip-all"; \
+	LDFLAGS="${LDFLAGS:-} -Wl,--strip-all"; \
 {{ ) else "" end -}}
 {{
 	# Enabling frame-pointers only makes sense for Python 3.12 and newer as those have perf profiler support
-	if rcVersion | IN("3.10", "3.11") then "" else (
+	if rcVersion | IN("3.11") then "" else (
 -}}
 {{ if is_alpine then ( -}}
-		arch="$(apk --print-arch)"; \
+	arch="$(apk --print-arch)"; \
 {{ ) else ( -}}
-		arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
+	arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
 {{ ) end -}}
 # https://docs.python.org/3.12/howto/perf_profiling.html
 # https://github.com/docker-library/python/pull/1000#issuecomment-2597021615
-		case "$arch" in \
+	case "$arch" in \
 {{ if is_alpine then ( -}}
-			x86_64|aarch64) \
+		x86_64|aarch64) \
 {{ ) else ( -}}
-			amd64|arm64) \
+		amd64|arm64) \
 {{ ) end -}}
-				# only add "-mno-omit-leaf" on arches that support it
-				# https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/x86-Options.html#index-momit-leaf-frame-pointer-2
-				# https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/AArch64-Options.html#index-momit-leaf-frame-pointer
-				EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"; \
-				;; \
+			# only add "-mno-omit-leaf" on arches that support it
+			# https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/x86-Options.html#index-momit-leaf-frame-pointer-2
+			# https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/AArch64-Options.html#index-momit-leaf-frame-pointer
+			EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"; \
+			;; \
 {{ if is_alpine then ( -}}
-			x86) \
+		x86) \
 {{ ) else ( -}}
-			i386) \
+		i386) \
 {{ ) end -}}
-				# don't enable frame-pointers on 32bit x86 due to performance drop.
-				;; \
-			*) \
-				# other arches don't support "-mno-omit-leaf"
-				EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer"; \
-				;; \
-		esac; \
+			# don't enable frame-pointers on 32bit x86 due to performance drop.
+			;; \
+		*) \
+			# other arches don't support "-mno-omit-leaf"
+			EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer"; \
+			;; \
+	esac; \
 {{ ) end -}}
 	make -j "$nproc" \
 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
@@ -271,7 +269,7 @@ RUN set -eux; \
 	rm python; \
 	make -j "$nproc" \
 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
-		"LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
+		"LDFLAGS=${LDFLAGS:-} -Wl,-rpath='\$\$ORIGIN/../lib'" \
 		python \
 	; \
 	make install; \
@@ -331,8 +329,7 @@ RUN set -eux; \
 		--no-cache-dir \
 		--no-compile \
 		{{ "setuptools==\( .setuptools.version )" | @sh }} \
-		# https://github.com/docker-library/python/issues/1023
-		'wheel<0.46' \
+		'wheel==0.46.3' \
 	; \
 {{ ) else "" end -}}
 	pip3 --version
