@@ -71,7 +71,7 @@ RUN set -eux; \
 	rm python; \
 	make -j "$nproc" \
 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
-		"LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
+		"LDFLAGS=${LDFLAGS:-} -Wl,-rpath='\$\$ORIGIN/../lib'" \
 		python \
 	; \
 	make install; \
@@ -102,8 +102,7 @@ RUN set -eux; \
 		--no-cache-dir \
 		--no-compile \
 		'setuptools==79.0.1' \
-		# https://github.com/docker-library/python/issues/1023
-		'wheel<0.46' \
+		'wheel==0.46.3' \
 	; \
 	pip3 --version
 

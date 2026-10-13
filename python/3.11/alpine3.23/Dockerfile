@@ -33,6 +33,7 @@ RUN set -eux; \
 		bzip2-dev \
 		dpkg-dev dpkg \
 		findutils \
+		g++ \
 		gcc \
 		gdbm-dev \
 		gnupg \
@@ -89,7 +90,7 @@ RUN set -eux; \
 # set thread stack size to 1MB so we don't segfault before we hit sys.getrecursionlimit()
 # https://github.com/alpinelinux/aports/commit/2026e1259422d4e0cf92391ca2d3844356c649d0
 	EXTRA_CFLAGS="-DTHREAD_STACK_SIZE=0x100000"; \
-	LDFLAGS="${LDFLAGS:--Wl},--strip-all"; \
+	LDFLAGS="${LDFLAGS:-} -Wl,--strip-all"; \
 	make -j "$nproc" \
 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
 		"LDFLAGS=${LDFLAGS:-}" \
@@ -99,7 +100,7 @@ RUN set -eux; \
 	rm python; \
 	make -j "$nproc" \
 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
-		"LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
+		"LDFLAGS=${LDFLAGS:-} -Wl,-rpath='\$\$ORIGIN/../lib'" \
 		python \
 	; \
 	make install; \
@@ -130,8 +131,7 @@ RUN set -eux; \
 		--no-cache-dir \
 		--no-compile \
 		'setuptools==79.0.1' \
-		# https://github.com/docker-library/python/issues/1023
-		'wheel<0.46' \
+		'wheel==0.46.3' \
 	; \
 	pip3 --version
 
