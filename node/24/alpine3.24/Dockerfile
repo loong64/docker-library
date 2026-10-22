@@ -1,6 +1,6 @@
 FROM ghcr.io/loong64/alpine:3.24
 
-ENV NODE_VERSION=24.22.0
+ENV NODE_VERSION=24.22.1
 
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
@@ -11,7 +11,7 @@ RUN addgroup -g 1000 node \
         curl \
     && ARCH= OPENSSL_ARCH='linux*' && alpineArch="$(apk --print-arch)" \
       && case "${alpineArch##*-}" in \
-        loongarch64) ARCH='loong64' CHECKSUM="fac64f348d16fe54fb9416ff4000c083c18390b866ad3dcc9ca2651e77969251" OPENSSL_ARCH='linux*-loongarch64';; \
+        loongarch64) ARCH='loong64' CHECKSUM="b11eb1eb2a3fbcd5628612a56a7c84366a0aed388bbfbf0f737a46704f4ff74d" OPENSSL_ARCH='linux*-loongarch64';; \
         *) ;; \
       esac \
   && if [ -n "${CHECKSUM}" ]; then \

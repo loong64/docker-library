@@ -1,9 +1,9 @@
 {
   "8.2": {
-    "version": "8.2.34",
-    "url": "https://www.php.net/distributions/php-8.2.34.tar.xz",
-    "ascUrl": "https://www.php.net/distributions/php-8.2.34.tar.xz.asc",
-    "sha256": "5351330c54de240f54f7527c26ef292e239749e6fe11db0330acb5317e02bb39",
+    "version": "8.2.35",
+    "url": "https://www.php.net/distributions/php-8.2.35.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.2.35.tar.xz.asc",
+    "sha256": "5737b98601fe5ab1b8c5db0c82ed3158acb9283ed3081ffe2faffb9ac81455e6",
     "variants": [
       "trixie/cli",
       "trixie/apache",
@@ -23,10 +23,10 @@
   },
   "8.2-rc": null,
   "8.3": {
-    "version": "8.3.35",
-    "url": "https://www.php.net/distributions/php-8.3.35.tar.xz",
-    "ascUrl": "https://www.php.net/distributions/php-8.3.35.tar.xz.asc",
-    "sha256": "ff4630fbbbd94359134b7d3c223db59329905bdc4f5a9ef93d257b48e358619a",
+    "version": "8.3.36",
+    "url": "https://www.php.net/distributions/php-8.3.36.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.3.36.tar.xz.asc",
+    "sha256": "dd54693aa334c5c4d72e9aee96b082c2473750a18a6c1d105789c93a3b1692fd",
     "variants": [
       "trixie/cli",
       "trixie/apache",
@@ -46,10 +46,10 @@
   },
   "8.3-rc": null,
   "8.4": {
-    "version": "8.4.26",
-    "url": "https://www.php.net/distributions/php-8.4.26.tar.xz",
-    "ascUrl": "https://www.php.net/distributions/php-8.4.26.tar.xz.asc",
-    "sha256": "32a2de53862ad44ed4a5005244ce4f1b50c271e74dced215449a4443b40569f1",
+    "version": "8.4.27",
+    "url": "https://www.php.net/distributions/php-8.4.27.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.4.27.tar.xz.asc",
+    "sha256": "dcf93923b0e38e0d5252b25b796520b5a47761a08b3488b6d0b5d1115764d3f0",
     "variants": [
       "trixie/cli",
       "trixie/apache",
@@ -69,10 +69,10 @@
   },
   "8.4-rc": null,
   "8.5": {
-    "version": "8.5.11",
-    "url": "https://www.php.net/distributions/php-8.5.11.tar.xz",
-    "ascUrl": "https://www.php.net/distributions/php-8.5.11.tar.xz.asc",
-    "sha256": "d9be75c08e8c316f4c8f4194d8fbe1750a15f6a6d9d4e3fe72082abeeb800360",
+    "version": "8.5.12",
+    "url": "https://www.php.net/distributions/php-8.5.12.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.5.12.tar.xz.asc",
+    "sha256": "08bc2eba2a588654ade1357174aa646b761556c862dda0678345ee29ed481209",
     "variants": [
       "trixie/cli",
       "trixie/apache",
