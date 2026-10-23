@@ -100,6 +100,7 @@ RUN set -eux; \
 		openssl-dev \
 		readline-dev \
 		sqlite-dev \
+		libucontext-dev \
 	; \
 	\
 # make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
@@ -108,7 +109,7 @@ RUN set -eux; \
 	export \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
-		LDFLAGS="$PHP_LDFLAGS" \
+		LDFLAGS="$PHP_LDFLAGS -lucontext" \
 # https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
 		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
 		PHP_UNAME='Linux - Docker' \
@@ -167,6 +168,7 @@ RUN set -eux; \
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
+		--without-pcre-jit \
 		\
 		\
 # https://github.com/docker-library/php/pull/939#issuecomment-730501748

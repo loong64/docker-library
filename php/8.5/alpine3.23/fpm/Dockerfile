@@ -166,6 +166,7 @@ RUN set -eux; \
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
+		--without-pcre-jit \
 		\
 		\
 		--disable-cgi \
