@@ -56,7 +56,7 @@ jobs:
           MAX_RETRIES=5
           WAIT_SECONDS=60
 
-          mkdir -p debian alpine
+          mkdir -p debian alpine busybox
           for package_dir in */; do
             package=${package_dir%/}
 
