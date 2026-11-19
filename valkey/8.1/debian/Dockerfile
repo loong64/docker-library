@@ -8,9 +8,9 @@ FROM ghcr.io/loong64/debian:trixie-slim AS base
 
 FROM base AS build
 
-ENV VALKEY_DOWNLOAD_SHA db3642dfc2fb24e42313b9e9c1557cf0160acce3bf2cd366ce654ce291133b50
+ENV VALKEY_DOWNLOAD_SHA 675bd143a4c42022f7ce10fb012a7a61e0a70b139ff166e3e63fca2bdf05027b
 
-ADD "https://github.com/valkey-io/valkey/archive/refs/tags/8.1.11.tar.gz" /valkey.tar.gz
+ADD "https://github.com/valkey-io/valkey/archive/refs/tags/8.1.12.tar.gz" /valkey.tar.gz
 
 RUN set -eux; \
 	\
@@ -54,7 +54,7 @@ RUN set -eux; \
 	sed -ri 's!cd jemalloc && ./configure !&'"$extraJemallocConfigureFlags"' !' /usr/src/valkey/deps/Makefile; \
 	grep -F "cd jemalloc && ./configure $extraJemallocConfigureFlags " /usr/src/valkey/deps/Makefile; \
 	\
-	echo "Version 8.1.11 is 8.1 or higher - enabling USE_FAST_FLOAT"; \
+	echo "Version 8.1.12 is 8.1 or higher - enabling USE_FAST_FLOAT"; \
 			apt-get update; \
 		apt-get install -y --no-install-recommends g++; \
 		rm -rf /var/lib/apt/lists/*; \
@@ -73,11 +73,11 @@ RUN set -eux; \
 		-exec ln -svfT 'valkey-server' '{}' ';' \
 	; \
 	\
-	echo '{"spdxVersion":"SPDX-2.3","SPDXID":"SPDXRef-DOCUMENT","name":"valkey-server-sbom","packages":[{"name":"valkey-server","versionInfo":"8.1.11","SPDXID":"SPDXRef-Package--valkey-server","externalRefs":[{"referenceCategory":"PACKAGE-MANAGER","referenceType":"purl","referenceLocator":"pkg:generic/valkey-server@8.1.11?os_name=debian&os_version=trixie"}],"licenseDeclared":"BSD-3-Clause"}]}' > /usr/local/valkey.spdx.json
+	echo '{"spdxVersion":"SPDX-2.3","SPDXID":"SPDXRef-DOCUMENT","name":"valkey-server-sbom","packages":[{"name":"valkey-server","versionInfo":"8.1.12","SPDXID":"SPDXRef-Package--valkey-server","externalRefs":[{"referenceCategory":"PACKAGE-MANAGER","referenceType":"purl","referenceLocator":"pkg:generic/valkey-server@8.1.12?os_name=debian&os_version=trixie"}],"licenseDeclared":"BSD-3-Clause"}]}' > /usr/local/valkey.spdx.json
 
 FROM base
 
-ENV VALKEY_VERSION 8.1.11
+ENV VALKEY_VERSION 8.1.12
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN set -eux; \
