@@ -29,8 +29,8 @@ jobs:
       matrix:
         name: ['nextcloud']
         suite: ['fpm', 'fpm-alpine']
-        version: ['31', '32', '33']
-        latest_version: ['33']
+        version: ['31', '32', '33', '34', '35']
+        latest_version: ['35']
 
     steps:
       - name: Checkout ${{ matrix.name }}
