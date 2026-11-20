@@ -353,8 +353,8 @@ jobs:
         name: ['php']
         mode: ['zts']
         suite: ['trixie', 'alpine3.23', 'alpine3.24']
-        version: ['8.2', '8.3', '8.4', '8.5']
-        latest_version: ['8.5']
+        version: ['8.2', '8.3', '8.4', '8.5', '8.6']
+        latest_version: ['8.6']
 
     steps:
       - name: Checkout ${{ matrix.name }}
