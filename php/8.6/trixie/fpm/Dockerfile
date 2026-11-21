@@ -58,11 +58,11 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-ENV GPG_KEYS 1198C0117593497A5EC5C199286AF1F9897469DC 49D9AF6BC72A80D6691719C8AA23F5BE9C7097D4 D95C03BC702BE9515344AE3374E44BC9067701A5
+ENV GPG_KEYS D95C03BC702BE9515344AE3374E44BC9067701A5 016895DE9A475111D537A6E69134FF30BC5A99B5 5CFF17B64DC1C244F5D0EAC3E43535E2EB19010E
 
-ENV PHP_VERSION 8.5.13
-ENV PHP_URL="https://www.php.net/distributions/php-8.5.13.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.5.13.tar.xz.asc"
-ENV PHP_SHA256="607602acaf0c3061818e9916ec44a058e8b3d43959a83862b9cd3ec7bf5b785f"
+ENV PHP_VERSION 8.6.0
+ENV PHP_URL="https://www.php.net/distributions/php-8.6.0.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.6.0.tar.xz.asc"
+ENV PHP_SHA256="5f84beaa3d763aee1e4feed99bf54ec692c383b322e25626807b589238c3a087"
 
 RUN set -eux; \
 	\
@@ -102,7 +102,6 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 		libargon2-dev \
 		libcurl4-openssl-dev \
-		libonig-dev \
 		libreadline-dev \
 		libsodium-dev \
 		libsqlite3-dev \
@@ -151,11 +150,7 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/439
 		--with-mhash \
 		\
-# https://github.com/docker-library/php/issues/822
-		--with-pic \
-		\
-# --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
-		--enable-mbstring \
+# no --enable-pic; forcing PIC also removes -fpie from executable objects, preventing local-exec TLS: https://github.com/docker-library/php/pull/1692
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
 		--enable-mysqlnd \
 # https://wiki.php.net/rfc/argon2_password_hash
@@ -175,10 +170,6 @@ RUN set -eux; \
 # https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
 		--disable-phpdbg \
 		\
-# in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
-		--with-pear \
-		--without-pcre-jit \
-		\
 		--with-libdir="lib/$debMultiarch" \
 		\
 		--disable-cgi \
@@ -186,6 +177,10 @@ RUN set -eux; \
 		--enable-fpm \
 		--with-fpm-user=www-data \
 		--with-fpm-group=www-data \
+		\
+		--enable-zts \
+# https://externals.io/message/118859
+		--disable-zend-signals \
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -220,10 +215,6 @@ RUN set -eux; \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	apt-get dist-clean; \
-	\
-# update pecl channel definitions https://github.com/docker-library/php/issues/443
-	pecl update-channels; \
-	rm -rf /tmp/pear ~/.pearrc; \
 	\
 # smoke test
 	php --version
@@ -269,9 +260,6 @@ RUN set -eux; \
 	{ \
 		echo '[global]'; \
 		echo 'daemonize = no'; \
-		echo; \
-		echo '; the [www] ini section below is for backwards compatibility and will be removed in 8.6+'; \
-		echo '[www]'; \
 	} | tee php-fpm.d/zz-docker.conf; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
 	{ \

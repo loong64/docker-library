@@ -8,9 +8,9 @@ FROM ghcr.io/loong64/alpine:3.24 AS base
 
 FROM base AS build
 
-ENV VALKEY_DOWNLOAD_SHA fe3d623600a1c046b4668feec097c507b4ae52f20c1fc7f1ebd384c07a165e77
+ENV VALKEY_DOWNLOAD_SHA a02cb44db1269b699629e419d4949e6e51e984b1f0e9a984e8ee1e1b3b7cc36f
 
-ADD "https://github.com/valkey-io/valkey/archive/refs/tags/9.1.4.tar.gz" /valkey.tar.gz
+ADD "https://github.com/valkey-io/valkey/archive/refs/tags/9.2.0.tar.gz" /valkey.tar.gz
 
 RUN set -eux; \
 	\
@@ -54,7 +54,7 @@ RUN set -eux; \
 	sed -ri 's!cd jemalloc && ./configure !&'"$extraJemallocConfigureFlags"' !' /usr/src/valkey/deps/Makefile; \
 	grep -F "cd jemalloc && ./configure $extraJemallocConfigureFlags " /usr/src/valkey/deps/Makefile; \
 	\
-	echo "Version 9.1.4 is 8.1 or higher - enabling USE_FAST_FLOAT"; \
+	echo "Version 9.2.0 is 8.1 or higher - enabling USE_FAST_FLOAT"; \
 			export BUILD_TLS=yes USE_FAST_FLOAT=yes; \
 	\
 	make -C /usr/src/valkey -j "$(nproc)" all; \
@@ -70,11 +70,11 @@ RUN set -eux; \
 		-exec ln -svfT 'valkey-server' '{}' ';' \
 	; \
 	\
-	echo '{"spdxVersion":"SPDX-2.3","SPDXID":"SPDXRef-DOCUMENT","name":"valkey-server-sbom","packages":[{"name":"valkey-server","versionInfo":"9.1.4","SPDXID":"SPDXRef-Package--valkey-server","externalRefs":[{"referenceCategory":"PACKAGE-MANAGER","referenceType":"purl","referenceLocator":"pkg:generic/valkey-server@9.1.4?os_name=alpine&os_version=3.24"}],"licenseDeclared":"BSD-3-Clause"}]}' > /usr/local/valkey.spdx.json
+	echo '{"spdxVersion":"SPDX-2.3","SPDXID":"SPDXRef-DOCUMENT","name":"valkey-server-sbom","packages":[{"name":"valkey-server","versionInfo":"9.2.0","SPDXID":"SPDXRef-Package--valkey-server","externalRefs":[{"referenceCategory":"PACKAGE-MANAGER","referenceType":"purl","referenceLocator":"pkg:generic/valkey-server@9.2.0?os_name=alpine&os_version=3.24"}],"licenseDeclared":"BSD-3-Clause"}]}' > /usr/local/valkey.spdx.json
 
 FROM base
 
-ENV VALKEY_VERSION 9.1.4
+ENV VALKEY_VERSION 9.2.0
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN set -eux; \
